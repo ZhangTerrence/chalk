@@ -1,0 +1,6 @@
+﻿services:
+  chalk.server:
+    image: chalk.server
+    build:
+      context: .
+      dockerfile: chalk.Server/Dockerfile
