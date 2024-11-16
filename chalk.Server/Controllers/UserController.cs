@@ -88,4 +88,12 @@ public class UserController : ControllerBase
 
         return Ok(new ApiResponseDTO<UserResponseDTO>(user.ToUserResponseDTO()));
     }
+
+    [HttpDelete("logout")]
+    [Authorize(Roles = "User,Admin")]
+    public IActionResult Logout()
+    {
+        HttpContext.Response.Cookies.Delete("AccessToken");
+        return Ok();
+    }
 }
