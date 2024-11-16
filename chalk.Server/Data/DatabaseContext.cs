@@ -1,3 +1,4 @@
+using chalk.Server.Data.Configurations;
 using chalk.Server.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -22,5 +23,7 @@ public class DatabaseContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>
         builder.Entity<IdentityUserLogin<Guid>>(e => e.ToTable("UserLogins"));
         builder.Entity<IdentityRoleClaim<Guid>>(e => e.ToTable("RoleClaims"));
         builder.Entity<IdentityUserRole<Guid>>(e => e.ToTable("UserRoles"));
+
+        new UserConfiguration().Configure(builder.Entity<User>());
     }
 }
