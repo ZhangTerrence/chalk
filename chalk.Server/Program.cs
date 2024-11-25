@@ -14,7 +14,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Connects PostgreSQL database
 builder.Services.AddDbContext<DatabaseContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options
+        .UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
+        .UseSnakeCaseNamingConvention());
 builder.Services
     .AddIdentity<User, IdentityRole<Guid>>()
     .AddEntityFrameworkStores<DatabaseContext>();

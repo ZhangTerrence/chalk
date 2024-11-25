@@ -9,9 +9,11 @@ public static class UserExtensions
     {
         return new User
         {
-            UserName = registerRequestDTO.Email,
-            Email = registerRequestDTO.Email,
             DisplayName = registerRequestDTO.DisplayName,
+            Email = registerRequestDTO.Email,
+            Description = "",
+            CreatedDate = DateTime.Now.ToUniversalTime(),
+            UpdatedDate = DateTime.Now.ToUniversalTime()
         };
     }
 

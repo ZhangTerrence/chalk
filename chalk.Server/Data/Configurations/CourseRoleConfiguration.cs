@@ -4,20 +4,23 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace chalk.Server.Data.Configurations;
 
-public class UserConfiguration : IEntityTypeConfiguration<User>
+public class CourseRoleConfiguration : IEntityTypeConfiguration<CourseRole>
 {
-    public void Configure(EntityTypeBuilder<User> builder)
+    public void Configure(EntityTypeBuilder<CourseRole> builder)
     {
-        builder.Property(e => e.DisplayName)
+        builder.ToTable("course_roles");
+
+        builder.HasKey(e => e.Id);
+
+        builder.Property(e => e.Name)
             .HasMaxLength(31)
             .IsRequired();
         builder.Property(e => e.Description)
             .HasDefaultValue(null)
             .HasMaxLength(255);
-        builder.Property(e => e.RefreshToken)
-            .HasDefaultValue(null);
-        builder.Property(e => e.RefreshTokenExpiryDate)
-            .HasDefaultValue(null);
+        builder.Property(e => e.Permissions)
+            .HasDefaultValue(0L)
+            .IsRequired();
         builder.Property(e => e.CreatedDate)
             .HasDefaultValue(DateTime.UtcNow)
             .IsRequired();
@@ -26,24 +29,24 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .IsRequired();
 
         builder
-            .HasMany(e => e.UserOrganizations)
-            .WithOne(e => e.User)
-            .HasForeignKey(e => e.UserId)
+            .HasOne(e => e.Course)
+            .WithMany(e => e.CourseRoles)
+            .HasForeignKey(e => e.CourseId)
             .IsRequired();
         builder
             .HasMany(e => e.UserCourses)
-            .WithOne(e => e.User)
-            .HasForeignKey(e => e.UserId)
+            .WithOne(e => e.CourseRole)
+            .HasForeignKey(e => e.CourseRoleId)
             .IsRequired();
         builder
             .HasMany(e => e.ChannelParticipants)
-            .WithOne(e => e.User)
-            .HasForeignKey(e => e.UserId)
+            .WithOne(e => e.CourseRole)
+            .HasForeignKey(e => e.CourseRoleId)
             .IsRequired();
         builder
-            .HasMany(e => e.Submissions)
-            .WithOne(e => e.User)
-            .HasForeignKey(e => e.UserId)
+            .HasMany(e => e.ChannelRolePermissions)
+            .WithOne(e => e.CourseRole)
+            .HasForeignKey(e => e.CourseRoleId)
             .IsRequired();
     }
 }
