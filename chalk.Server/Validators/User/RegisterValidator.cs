@@ -1,17 +1,17 @@
-using chalk.Server.DTOs;
+using chalk.Server.DTOs.User;
 using FluentValidation;
 
-namespace chalk.Server.Validators;
+namespace chalk.Server.Validators.User;
 
-public class RegisterRequestValidator : AbstractValidator<RegisterRequestDTO>
+public class RegisterValidator : AbstractValidator<RegisterDTO>
 {
-    public RegisterRequestValidator()
+    public RegisterValidator()
     {
         RuleFor(e => e.Email)
             .NotNull()
             .WithMessage("Email is required.")
             .EmailAddress()
-            .WithMessage("Email must be a valid email address.");
+            .WithMessage("Email is invalid.");
 
         RuleFor(e => e.DisplayName)
             .NotNull()
@@ -24,6 +24,6 @@ public class RegisterRequestValidator : AbstractValidator<RegisterRequestDTO>
             .WithMessage("Password is required.")
             .Matches("^(?:(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[-._@+]).*){8,}$")
             .WithMessage(
-                "Password must have at least 8 characters with least one number, one lowercase letter, one upper case letter, one special character.");
+                "Password must be at least 8 characters with least one number, one lowercase letter, one upper case letter, one special character.");
     }
 }

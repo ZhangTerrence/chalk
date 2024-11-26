@@ -3,6 +3,7 @@ using chalk.Server.Data;
 using chalk.Server.Entities;
 using chalk.Server.Middleware;
 using chalk.Server.Services;
+using chalk.Server.Services.Interfaces;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -81,6 +82,7 @@ builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 // Adds scoped services
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IOrganizationService, OrganizationService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

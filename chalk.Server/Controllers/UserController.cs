@@ -1,6 +1,6 @@
 using chalk.Server.DTOs;
-using chalk.Server.Extensions;
-using chalk.Server.Services;
+using chalk.Server.DTOs.User;
+using chalk.Server.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,15 +21,15 @@ public class UserController : ControllerBase
 
     [HttpPost("register")]
     [AllowAnonymous]
-    public async Task<IActionResult> Register([FromBody] RegisterRequestDTO registerRequestDTO)
+    public async Task<IActionResult> Register([FromBody] RegisterDTO registerDTO)
     {
         if (!ModelState.IsValid)
         {
             return BadRequest(new ApiResponseDTO<object>(ModelState));
         }
 
-        var user = await _userService.RegisterUserAsync(registerRequestDTO);
-        var accessToken = _tokenService.CreateAccessToken(user.DisplayName, ["User"]);
+        var createdUser = await _userService.RegisterUserAsync(registerDTO);
+        var accessToken = _tokenService.CreateAccessToken(createdUser.DisplayName, ["User"]);
         var refreshToken = _tokenService.CreateRefreshToken();
 
         HttpContext.Response.Cookies.Append("AccessToken", accessToken, new CookieOptions
@@ -49,22 +49,22 @@ public class UserController : ControllerBase
             IsEssential = true
         });
 
-        await _userService.AddRefreshTokenAsync(user, refreshToken);
+        await _userService.AddRefreshTokenAsync(createdUser.Id, refreshToken);
 
-        return Ok(new ApiResponseDTO<UserResponseDTO>(user.ToUserResponseDTO()));
+        return Ok(new ApiResponseDTO<UserDTO>(createdUser));
     }
 
     [HttpPost("login")]
     [AllowAnonymous]
-    public async Task<IActionResult> Login([FromBody] LoginRequestDTO loginRequestDTO)
+    public async Task<IActionResult> Login([FromBody] LoginDTO loginDTO)
     {
         if (!ModelState.IsValid)
         {
             return BadRequest(new ApiResponseDTO<object>(ModelState));
         }
 
-        var (user, roles) = await _userService.AuthenticateUserAsync(loginRequestDTO);
-        var accessToken = _tokenService.CreateAccessToken(user.DisplayName, roles);
+        var (user, roles) = await _userService.AuthenticateUserAsync(loginDTO);
+        var accessToken = _tokenService.CreateAccessToken(user.Email, roles);
         var refreshToken = _tokenService.CreateRefreshToken();
 
         HttpContext.Response.Cookies.Append("AccessToken", accessToken, new CookieOptions
@@ -84,9 +84,9 @@ public class UserController : ControllerBase
             IsEssential = true
         });
 
-        await _userService.AddRefreshTokenAsync(user, refreshToken);
+        await _userService.AddRefreshTokenAsync(user.Id, refreshToken);
 
-        return Ok(new ApiResponseDTO<UserResponseDTO>(user.ToUserResponseDTO()));
+        return Ok(new ApiResponseDTO<UserDTO>(user));
     }
 
     [HttpDelete("logout")]

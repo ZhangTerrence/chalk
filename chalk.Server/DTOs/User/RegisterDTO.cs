@@ -1,8 +1,8 @@
-namespace chalk.Server.DTOs;
+namespace chalk.Server.DTOs.User;
 
-public record RegisterRequestDTO
+public record RegisterDTO
 {
-    public RegisterRequestDTO(string displayName, string email, string password)
+    public RegisterDTO(string displayName, string email, string password)
     {
         DisplayName = displayName;
         Email = email;

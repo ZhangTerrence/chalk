@@ -1,6 +1,7 @@
-using chalk.Server.DTOs;
+using chalk.Server.DTOs.User;
 using chalk.Server.Entities;
 using chalk.Server.Extensions;
+using chalk.Server.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,17 +18,17 @@ public class UserService : IUserService
         _roleManager = roleManager;
     }
 
-    public async Task<User> RegisterUserAsync(RegisterRequestDTO registerRequestDTO)
+    public async Task<UserDTO> RegisterUserAsync(RegisterDTO registerDTO)
     {
-        if (await _userManager.Users.FirstOrDefaultAsync(e => e.Email == registerRequestDTO.Email)
+        if (await _userManager.Users.FirstOrDefaultAsync(e => e.Email == registerDTO.Email)
             is not null)
         {
             throw new BadHttpRequestException("User already exists.", StatusCodes.Status400BadRequest);
         }
 
-        var user = registerRequestDTO.ToUser();
+        var user = registerDTO.ToUser();
 
-        var createdUser = await _userManager.CreateAsync(user, registerRequestDTO.Password);
+        var createdUser = await _userManager.CreateAsync(user, registerDTO.Password);
         if (!createdUser.Succeeded)
         {
             throw new BadHttpRequestException("Unable to create user.", StatusCodes.Status500InternalServerError);
@@ -38,7 +39,7 @@ public class UserService : IUserService
             var createdRole = await _roleManager.CreateAsync(new IdentityRole<Guid>("User"));
             if (!createdRole.Succeeded)
             {
-                throw new BadHttpRequestException("Unable to create user role.",
+                throw new BadHttpRequestException("Unable to create 'User' role.",
                     StatusCodes.Status500InternalServerError);
             }
         }
@@ -50,18 +51,18 @@ public class UserService : IUserService
                 StatusCodes.Status500InternalServerError);
         }
 
-        return user;
+        return user.ToUserResponseDTO();
     }
 
-    public async Task<(User, IEnumerable<string>)> AuthenticateUserAsync(LoginRequestDTO loginRequestDTO)
+    public async Task<(UserDTO, IEnumerable<string>)> AuthenticateUserAsync(LoginDTO loginDTO)
     {
-        var user = await _userManager.Users.FirstOrDefaultAsync(e => e.Email == loginRequestDTO.Email);
+        var user = await _userManager.Users.FirstOrDefaultAsync(e => e.Email == loginDTO.Email);
         if (user is null)
         {
             throw new BadHttpRequestException("User not found.", StatusCodes.Status404NotFound);
         }
 
-        var authenticated = await _userManager.CheckPasswordAsync(user, loginRequestDTO.Password);
+        var authenticated = await _userManager.CheckPasswordAsync(user, loginDTO.Password);
         if (!authenticated)
         {
             throw new BadHttpRequestException("Invalid email or password.", StatusCodes.Status401Unauthorized);
@@ -69,11 +70,17 @@ public class UserService : IUserService
 
         var roles = await _userManager.GetRolesAsync(user);
 
-        return (user, roles);
+        return (user.ToUserResponseDTO(), roles);
     }
 
-    public async Task AddRefreshTokenAsync(User user, string refreshToken)
+    public async Task AddRefreshTokenAsync(Guid userId, string refreshToken)
     {
+        var user = await _userManager.Users.FirstOrDefaultAsync(e => e.Id == userId);
+        if (user is null)
+        {
+            throw new BadHttpRequestException("User not found.", StatusCodes.Status404NotFound);
+        }
+
         user.RefreshToken = refreshToken;
         user.RefreshTokenExpiryDate = DateTime.Now.AddDays(1).ToUniversalTime();
         var updatedUser = await _userManager.UpdateAsync(user);
