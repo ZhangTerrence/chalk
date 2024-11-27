@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace chalk.Server.Entities;
 
-public class User : IdentityUser<Guid>
+public class User : IdentityUser<long>
 {
     public required string DisplayName { get; set; }
     public string? Description { get; set; }

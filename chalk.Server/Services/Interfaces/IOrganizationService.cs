@@ -6,13 +6,13 @@ public interface IOrganizationService
 {
     public Task<IEnumerable<OrganizationDTO>> GetOrganizationsAsync();
 
-    public Task<OrganizationDTO> GetOrganizationAsync(Guid organizationId);
+    public Task<OrganizationDTO> GetOrganizationAsync(long organizationId);
 
     public Task<OrganizationDTO> CreateOrganizationAsync(CreateOrganizationDTO createOrganizationDTO);
 
     public Task<OrganizationDTO> UpdateOrganizationAsync(
-        Guid organizationId,
+        long organizationId,
         UpdateOrganizationDTO updateOrganizationDTO);
 
-    public Task DeleteOrganizationAsync(Guid organizationId);
+    public Task DeleteOrganizationAsync(long organizationId);
 }

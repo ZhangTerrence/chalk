@@ -12,6 +12,8 @@ public class SubmissionConfiguration : IEntityTypeConfiguration<Submission>
 
         builder.HasKey(e => e.Id);
 
+        builder.Property(e => e.Id)
+            .ValueGeneratedOnAdd();
         builder.Property(e => e.Grade)
             .HasDefaultValue(null);
         builder.Property(e => e.Feedback)

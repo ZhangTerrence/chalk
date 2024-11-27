@@ -10,6 +10,10 @@ public class OrganizationConfiguration : IEntityTypeConfiguration<Organization>
     {
         builder.ToTable("organizations");
 
+        builder.HasKey(x => x.Id);
+
+        builder.Property(e => e.Id)
+            .ValueGeneratedOnAdd();
         builder.Property(e => e.Name)
             .HasMaxLength(31)
             .IsRequired();

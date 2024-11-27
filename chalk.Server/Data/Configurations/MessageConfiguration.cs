@@ -12,6 +12,8 @@ public class MessageConfiguration : IEntityTypeConfiguration<Message>
 
         builder.HasKey(e => e.Id);
 
+        builder.Property(e => e.Id)
+            .ValueGeneratedOnAdd();
         builder.Property(e => e.Text)
             .HasMaxLength(1023)
             .IsRequired();

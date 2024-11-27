@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace chalk.Server.Data;
 
-public class DatabaseContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>
+public class DatabaseContext : IdentityDbContext<User, IdentityRole<long>, long>
 {
     public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options)
     {
@@ -32,12 +32,12 @@ public class DatabaseContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>
         base.OnModelCreating(builder);
 
         builder.Entity<User>(e => e.ToTable("users"));
-        builder.Entity<IdentityRole<Guid>>(e => e.ToTable("roles"));
-        builder.Entity<IdentityUserClaim<Guid>>(e => e.ToTable("user_claims"));
-        builder.Entity<IdentityUserToken<Guid>>(e => e.ToTable("user_tokens"));
-        builder.Entity<IdentityUserLogin<Guid>>(e => e.ToTable("user_logins"));
-        builder.Entity<IdentityRoleClaim<Guid>>(e => e.ToTable("role_claims"));
-        builder.Entity<IdentityUserRole<Guid>>(e => e.ToTable("user_roles"));
+        builder.Entity<IdentityRole<long>>(e => e.ToTable("roles"));
+        builder.Entity<IdentityUserClaim<long>>(e => e.ToTable("user_claims"));
+        builder.Entity<IdentityUserToken<long>>(e => e.ToTable("user_tokens"));
+        builder.Entity<IdentityUserLogin<long>>(e => e.ToTable("user_logins"));
+        builder.Entity<IdentityRoleClaim<long>>(e => e.ToTable("role_claims"));
+        builder.Entity<IdentityUserRole<long>>(e => e.ToTable("user_roles"));
 
         new UserConfiguration().Configure(builder.Entity<User>());
         new OrganizationConfiguration().Configure(builder.Entity<Organization>());

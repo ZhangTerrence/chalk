@@ -9,7 +9,6 @@ public static class OrganizationExtension
     {
         return new Organization
         {
-            Id = new Guid(),
             Name = createOrganizationDTO.Name,
             Description = createOrganizationDTO.Description,
             CreatedDate = DateTime.UtcNow,

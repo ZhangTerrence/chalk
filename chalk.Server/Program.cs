@@ -19,7 +19,7 @@ builder.Services.AddDbContext<DatabaseContext>(options =>
         .UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
         .UseSnakeCaseNamingConvention());
 builder.Services
-    .AddIdentity<User, IdentityRole<Guid>>()
+    .AddIdentity<User, IdentityRole<long>>()
     .AddEntityFrameworkStores<DatabaseContext>();
 
 // Adds authentication and authorization

@@ -18,15 +18,15 @@ public class OrganizationService : IOrganizationService
     public async Task<IEnumerable<OrganizationDTO>> GetOrganizationsAsync()
     {
         return await _context.Organizations
-            .Include(e => e.Owner)
+            .Include(e => e.Courses)
             .Select(e => e.ToOrganizationResponseDTO())
             .ToListAsync();
     }
 
-    public async Task<OrganizationDTO> GetOrganizationAsync(Guid organizationId)
+    public async Task<OrganizationDTO> GetOrganizationAsync(long organizationId)
     {
         var organization = await _context.Organizations
-            .Include(e => e.Owner)
+            .Include(e => e.Courses)
             .FirstOrDefaultAsync(e => e.Id == organizationId);
         if (organization is null)
         {
@@ -45,19 +45,18 @@ public class OrganizationService : IOrganizationService
         }
 
         var organization = createOrganizationDTO.ToOrganization(user);
-        await _context.Organizations.AddAsync(organization);
+        var createdOrganization = await _context.Organizations.AddAsync(organization);
 
         await _context.SaveChangesAsync();
-        return organization.ToOrganizationResponseDTO();
+
+        return createdOrganization.Entity.ToOrganizationResponseDTO();
     }
 
     public async Task<OrganizationDTO> UpdateOrganizationAsync(
-        Guid organizationId,
+        long organizationId,
         UpdateOrganizationDTO updateOrganizationDTO)
     {
-        var organization = _context.Organizations
-            .Include(e => e.Owner)
-            .FirstOrDefault(e => e.Id == organizationId);
+        var organization = await _context.Organizations.FindAsync(organizationId);
         if (organization is null)
         {
             throw new BadHttpRequestException("Organization not found.", StatusCodes.Status404NotFound);
@@ -79,15 +78,24 @@ public class OrganizationService : IOrganizationService
             organization.Description = updateOrganizationDTO.Description;
         }
 
+        if (updateOrganizationDTO.OwnerId is not null)
+        {
+            var user = await _context.Users.FindAsync(updateOrganizationDTO.OwnerId);
+            if (user is null)
+            {
+                throw new BadHttpRequestException("User not found.", StatusCodes.Status404NotFound);
+            }
+
+            organization.Owner = user;
+        }
+
         await _context.SaveChangesAsync();
         return organization.ToOrganizationResponseDTO();
     }
 
-    public async Task DeleteOrganizationAsync(Guid organizationId)
+    public async Task DeleteOrganizationAsync(long organizationId)
     {
-        var organization = _context.Organizations
-            .Include(e => e.Owner)
-            .FirstOrDefault(e => e.Id == organizationId);
+        var organization = await _context.Organizations.FindAsync(organizationId);
         if (organization is null)
         {
             throw new BadHttpRequestException("Organization not found.", StatusCodes.Status404NotFound);

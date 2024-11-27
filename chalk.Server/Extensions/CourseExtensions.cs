@@ -9,7 +9,6 @@ public static class CourseExtensions
     {
         return new Course
         {
-            Id = new Guid(),
             Name = createCourseDTO.Name,
             Code = createCourseDTO.Code,
             Description = createCourseDTO.Description,

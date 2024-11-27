@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace chalk.Server.Controllers;
 
 [ApiController]
+[Authorize(Roles = "User,Admin")]
 [Route("/api/[controller]")]
 public class OrganizationController : ControllerBase
 {
@@ -18,43 +19,48 @@ public class OrganizationController : ControllerBase
     }
 
     [HttpGet]
-    [Authorize(Roles = "User,Admin")]
     public async Task<IActionResult> GetOrganizations()
     {
         var organizations = await _organizationService.GetOrganizationsAsync();
         return Ok(new ApiResponseDTO<IEnumerable<OrganizationDTO>>(organizations));
     }
 
-    [HttpGet("{organizationId:guid}")]
-    [Authorize(Roles = "User,Admin")]
-    public async Task<IActionResult> GetOrganization([FromRoute] Guid organizationId)
+    [HttpGet("{organizationId:long}")]
+    public async Task<IActionResult> GetOrganization([FromRoute] long organizationId)
     {
         var organization = await _organizationService.GetOrganizationAsync(organizationId);
         return Ok(new ApiResponseDTO<OrganizationDTO>(organization));
     }
 
     [HttpPost]
-    [Authorize(Roles = "User,Admin")]
     public async Task<IActionResult> CreateOrganization([FromBody] CreateOrganizationDTO createOrganizationDTO)
     {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(new ApiResponseDTO<object>(ModelState));
+        }
+
         var createdOrganization = await _organizationService.CreateOrganizationAsync(createOrganizationDTO);
         return Ok(new ApiResponseDTO<OrganizationDTO>(createdOrganization));
     }
 
-    [HttpPatch("{organizationId:guid}")]
-    [Authorize(Roles = "User,Admin")]
+    [HttpPatch("{organizationId:long}")]
     public async Task<IActionResult> UpdateOrganization(
-        [FromRoute] Guid organizationId,
+        [FromRoute] long organizationId,
         [FromBody] UpdateOrganizationDTO updateOrganizationDTO)
     {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(new ApiResponseDTO<object>(ModelState));
+        }
+
         var updatedOrganization =
             await _organizationService.UpdateOrganizationAsync(organizationId, updateOrganizationDTO);
         return Ok(new ApiResponseDTO<OrganizationDTO>(updatedOrganization));
     }
 
-    [HttpDelete("{organizationId:guid}")]
-    [Authorize(Roles = "User,Admin")]
-    public async Task<IActionResult> DeleteOrganization([FromRoute] Guid organizationId)
+    [HttpDelete("{organizationId:long}")]
+    public async Task<IActionResult> DeleteOrganization([FromRoute] long organizationId)
     {
         await _organizationService.DeleteOrganizationAsync(organizationId);
         return NoContent();

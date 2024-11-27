@@ -10,9 +10,9 @@ namespace chalk.Server.Services;
 public class UserService : IUserService
 {
     private readonly UserManager<User> _userManager;
-    private readonly RoleManager<IdentityRole<Guid>> _roleManager;
+    private readonly RoleManager<IdentityRole<long>> _roleManager;
 
-    public UserService(UserManager<User> userManager, RoleManager<IdentityRole<Guid>> roleManager)
+    public UserService(UserManager<User> userManager, RoleManager<IdentityRole<long>> roleManager)
     {
         _userManager = userManager;
         _roleManager = roleManager;
@@ -36,7 +36,7 @@ public class UserService : IUserService
 
         if (!await _roleManager.RoleExistsAsync("User"))
         {
-            var createdRole = await _roleManager.CreateAsync(new IdentityRole<Guid>("User"));
+            var createdRole = await _roleManager.CreateAsync(new IdentityRole<long>("User"));
             if (!createdRole.Succeeded)
             {
                 throw new BadHttpRequestException("Unable to create 'User' role.",
@@ -73,9 +73,9 @@ public class UserService : IUserService
         return (user.ToUserResponseDTO(), roles);
     }
 
-    public async Task AddRefreshTokenAsync(Guid userId, string refreshToken)
+    public async Task AddRefreshTokenAsync(long userId, string refreshToken)
     {
-        var user = await _userManager.Users.FirstOrDefaultAsync(e => e.Id == userId);
+        var user = await _userManager.FindByIdAsync(userId.ToString());
         if (user is null)
         {
             throw new BadHttpRequestException("User not found.", StatusCodes.Status404NotFound);

@@ -12,12 +12,14 @@ public class CourseConfiguration : IEntityTypeConfiguration<Course>
 
         builder.HasKey(e => e.Id);
 
+        builder.Property(e => e.Id)
+            .ValueGeneratedOnAdd();
         builder.Property(e => e.Name)
             .HasMaxLength(31)
             .IsRequired();
         builder.Property(e => e.Code)
-            .HasDefaultValue(null)
-            .HasMaxLength(31);
+            .HasMaxLength(31)
+            .IsRequired();
         builder.Property(e => e.Description)
             .HasDefaultValue(null)
             .HasMaxLength(255);

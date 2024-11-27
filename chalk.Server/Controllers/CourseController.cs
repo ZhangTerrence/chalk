@@ -25,8 +25,8 @@ public class CourseController : ControllerBase
         return Ok(new ApiResponseDTO<IEnumerable<CourseDTO>>(courses));
     }
 
-    [HttpGet("{courseId:guid}")]
-    public async Task<IActionResult> GetCourse([FromRoute] Guid courseId)
+    [HttpGet("{courseId:long}")]
+    public async Task<IActionResult> GetCourse([FromRoute] long courseId)
     {
         var course = await _courseService.GetCourseAsync(courseId);
         return Ok(new ApiResponseDTO<CourseDTO>(course));
@@ -35,19 +35,31 @@ public class CourseController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateCourse([FromBody] CreateCourseDTO createCourseDTO)
     {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(new ApiResponseDTO<object>(ModelState));
+        }
+
         var createdCourse = await _courseService.CreateCourseAsync(createCourseDTO);
         return Ok(new ApiResponseDTO<CourseDTO>(createdCourse));
     }
 
-    [HttpPatch("{courseId:guid}")]
-    public async Task<IActionResult> UpdateCourse([FromRoute] Guid courseId, [FromBody] UpdateCourseDTO updateCourseDTO)
+    [HttpPatch("{courseId:long}")]
+    public async Task<IActionResult> UpdateCourse(
+        [FromRoute] long courseId,
+        [FromBody] UpdateCourseDTO updateCourseDTO)
     {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(new ApiResponseDTO<object>(ModelState));
+        }
+
         var updatedCourse = await _courseService.UpdateCourseAsync(courseId, updateCourseDTO);
         return Ok(new ApiResponseDTO<CourseDTO>(updatedCourse));
     }
 
-    [HttpDelete("{courseId:guid}")]
-    public async Task<IActionResult> DeleteCourse([FromRoute] Guid courseId)
+    [HttpDelete("{courseId:long}")]
+    public async Task<IActionResult> DeleteCourse([FromRoute] long courseId)
     {
         await _courseService.DeleteCourseAsync(courseId);
         return NoContent();

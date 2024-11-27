@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace chalk.Server.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class BaseSchema : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -16,7 +16,8 @@ namespace chalk.Server.Data.Migrations
                 name: "roles",
                 columns: table => new
                 {
-                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     normalized_name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     concurrency_stamp = table.Column<string>(type: "text", nullable: true)
@@ -30,13 +31,14 @@ namespace chalk.Server.Data.Migrations
                 name: "users",
                 columns: table => new
                 {
-                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     display_name = table.Column<string>(type: "character varying(31)", maxLength: 31, nullable: false),
                     description = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
                     refresh_token = table.Column<string>(type: "text", nullable: true),
                     refresh_token_expiry_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    created_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2024, 11, 25, 5, 34, 46, 86, DateTimeKind.Utc).AddTicks(9054)),
-                    updated_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2024, 11, 25, 5, 34, 46, 86, DateTimeKind.Utc).AddTicks(9733)),
+                    created_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2024, 11, 26, 17, 23, 12, 124, DateTimeKind.Utc).AddTicks(2888)),
+                    updated_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2024, 11, 26, 17, 23, 12, 124, DateTimeKind.Utc).AddTicks(3290)),
                     user_name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     normalized_user_name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
@@ -63,7 +65,7 @@ namespace chalk.Server.Data.Migrations
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    role_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    role_id = table.Column<long>(type: "bigint", nullable: false),
                     claim_type = table.Column<string>(type: "text", nullable: true),
                     claim_value = table.Column<string>(type: "text", nullable: true)
                 },
@@ -82,12 +84,13 @@ namespace chalk.Server.Data.Migrations
                 name: "organizations",
                 columns: table => new
                 {
-                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     name = table.Column<string>(type: "character varying(31)", maxLength: 31, nullable: false),
                     description = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
-                    created_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2024, 11, 25, 5, 34, 46, 87, DateTimeKind.Utc).AddTicks(7304)),
-                    updated_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2024, 11, 25, 5, 34, 46, 87, DateTimeKind.Utc).AddTicks(7809)),
-                    owner_id = table.Column<Guid>(type: "uuid", nullable: false)
+                    created_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2024, 11, 26, 17, 23, 12, 124, DateTimeKind.Utc).AddTicks(8735)),
+                    updated_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2024, 11, 26, 17, 23, 12, 124, DateTimeKind.Utc).AddTicks(9100)),
+                    owner_id = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -106,7 +109,7 @@ namespace chalk.Server.Data.Migrations
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    user_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    user_id = table.Column<long>(type: "bigint", nullable: false),
                     claim_type = table.Column<string>(type: "text", nullable: true),
                     claim_value = table.Column<string>(type: "text", nullable: true)
                 },
@@ -128,7 +131,7 @@ namespace chalk.Server.Data.Migrations
                     login_provider = table.Column<string>(type: "text", nullable: false),
                     provider_key = table.Column<string>(type: "text", nullable: false),
                     provider_display_name = table.Column<string>(type: "text", nullable: true),
-                    user_id = table.Column<Guid>(type: "uuid", nullable: false)
+                    user_id = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -145,8 +148,8 @@ namespace chalk.Server.Data.Migrations
                 name: "user_roles",
                 columns: table => new
                 {
-                    user_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    role_id = table.Column<Guid>(type: "uuid", nullable: false)
+                    user_id = table.Column<long>(type: "bigint", nullable: false),
+                    role_id = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -169,7 +172,7 @@ namespace chalk.Server.Data.Migrations
                 name: "user_tokens",
                 columns: table => new
                 {
-                    user_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    user_id = table.Column<long>(type: "bigint", nullable: false),
                     login_provider = table.Column<string>(type: "text", nullable: false),
                     name = table.Column<string>(type: "text", nullable: false),
                     value = table.Column<string>(type: "text", nullable: true)
@@ -189,13 +192,14 @@ namespace chalk.Server.Data.Migrations
                 name: "courses",
                 columns: table => new
                 {
-                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     name = table.Column<string>(type: "character varying(31)", maxLength: 31, nullable: false),
-                    code = table.Column<string>(type: "character varying(31)", maxLength: 31, nullable: true),
+                    code = table.Column<string>(type: "character varying(31)", maxLength: 31, nullable: false),
                     description = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
-                    created_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2024, 11, 25, 5, 34, 46, 88, DateTimeKind.Utc).AddTicks(3789)),
-                    updated_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2024, 11, 25, 5, 34, 46, 88, DateTimeKind.Utc).AddTicks(4225)),
-                    organization_id = table.Column<Guid>(type: "uuid", nullable: false)
+                    created_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2024, 11, 26, 17, 23, 12, 125, DateTimeKind.Utc).AddTicks(3294)),
+                    updated_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2024, 11, 26, 17, 23, 12, 125, DateTimeKind.Utc).AddTicks(3616)),
+                    organization_id = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -212,13 +216,14 @@ namespace chalk.Server.Data.Migrations
                 name: "organization_roles",
                 columns: table => new
                 {
-                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     name = table.Column<string>(type: "character varying(31)", maxLength: 31, nullable: false),
                     description = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
                     permissions = table.Column<long>(type: "bigint", nullable: false, defaultValue: 0L),
-                    created_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2024, 11, 25, 5, 34, 46, 91, DateTimeKind.Utc).AddTicks(4762)),
-                    updated_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2024, 11, 25, 5, 34, 46, 91, DateTimeKind.Utc).AddTicks(5065)),
-                    organization_id = table.Column<Guid>(type: "uuid", nullable: false)
+                    created_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2024, 11, 26, 17, 23, 12, 127, DateTimeKind.Utc).AddTicks(5427)),
+                    updated_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2024, 11, 26, 17, 23, 12, 127, DateTimeKind.Utc).AddTicks(5784)),
+                    organization_id = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -235,16 +240,17 @@ namespace chalk.Server.Data.Migrations
                 name: "assignments",
                 columns: table => new
                 {
-                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     title = table.Column<string>(type: "character varying(31)", maxLength: 31, nullable: false),
                     description = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
                     open = table.Column<bool>(type: "boolean", nullable: false, defaultValue: true),
                     max_grade = table.Column<int>(type: "integer", nullable: true),
                     due_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     allowed_attempts = table.Column<int>(type: "integer", nullable: true),
-                    created_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2024, 11, 25, 5, 34, 46, 89, DateTimeKind.Utc).AddTicks(9386)),
-                    updated_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2024, 11, 25, 5, 34, 46, 90, DateTimeKind.Utc).AddTicks(78)),
-                    course_id = table.Column<Guid>(type: "uuid", nullable: false)
+                    created_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2024, 11, 26, 17, 23, 12, 126, DateTimeKind.Utc).AddTicks(5057)),
+                    updated_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2024, 11, 26, 17, 23, 12, 126, DateTimeKind.Utc).AddTicks(5378)),
+                    course_id = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -261,12 +267,13 @@ namespace chalk.Server.Data.Migrations
                 name: "channels",
                 columns: table => new
                 {
-                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     name = table.Column<string>(type: "character varying(31)", maxLength: 31, nullable: false),
                     description = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
-                    created_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2024, 11, 25, 5, 34, 46, 89, DateTimeKind.Utc).AddTicks(2087)),
-                    updated_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2024, 11, 25, 5, 34, 46, 89, DateTimeKind.Utc).AddTicks(2643)),
-                    course_id = table.Column<Guid>(type: "uuid", nullable: true)
+                    created_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2024, 11, 26, 17, 23, 12, 125, DateTimeKind.Utc).AddTicks(9801)),
+                    updated_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2024, 11, 26, 17, 23, 12, 126, DateTimeKind.Utc).AddTicks(172)),
+                    course_id = table.Column<long>(type: "bigint", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -282,12 +289,13 @@ namespace chalk.Server.Data.Migrations
                 name: "course_modules",
                 columns: table => new
                 {
-                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     name = table.Column<string>(type: "character varying(31)", maxLength: 31, nullable: false),
                     description = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
-                    created_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2024, 11, 25, 5, 34, 46, 96, DateTimeKind.Utc).AddTicks(4422)),
-                    updated_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2024, 11, 25, 5, 34, 46, 96, DateTimeKind.Utc).AddTicks(4848)),
-                    course_id = table.Column<Guid>(type: "uuid", nullable: false)
+                    created_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2024, 11, 26, 17, 23, 12, 131, DateTimeKind.Utc).AddTicks(1396)),
+                    updated_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2024, 11, 26, 17, 23, 12, 131, DateTimeKind.Utc).AddTicks(1772)),
+                    course_id = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -304,13 +312,14 @@ namespace chalk.Server.Data.Migrations
                 name: "course_roles",
                 columns: table => new
                 {
-                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     name = table.Column<string>(type: "character varying(31)", maxLength: 31, nullable: false),
                     description = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
                     permissions = table.Column<long>(type: "bigint", nullable: false, defaultValue: 0L),
-                    created_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2024, 11, 25, 5, 34, 46, 92, DateTimeKind.Utc).AddTicks(3135)),
-                    updated_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2024, 11, 25, 5, 34, 46, 92, DateTimeKind.Utc).AddTicks(3510)),
-                    course_id = table.Column<Guid>(type: "uuid", nullable: false)
+                    created_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2024, 11, 26, 17, 23, 12, 128, DateTimeKind.Utc).AddTicks(1494)),
+                    updated_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2024, 11, 26, 17, 23, 12, 128, DateTimeKind.Utc).AddTicks(1723)),
+                    course_id = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -327,10 +336,10 @@ namespace chalk.Server.Data.Migrations
                 name: "user_organizations",
                 columns: table => new
                 {
-                    user_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    organization_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    joined_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2024, 11, 25, 5, 34, 46, 91, DateTimeKind.Utc).AddTicks(589)),
-                    organization_role_id = table.Column<Guid>(type: "uuid", nullable: false)
+                    user_id = table.Column<long>(type: "bigint", nullable: false),
+                    organization_id = table.Column<long>(type: "bigint", nullable: false),
+                    joined_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2024, 11, 26, 17, 23, 12, 127, DateTimeKind.Utc).AddTicks(2622)),
+                    organization_role_id = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -359,13 +368,14 @@ namespace chalk.Server.Data.Migrations
                 name: "submissions",
                 columns: table => new
                 {
-                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     grade = table.Column<int>(type: "integer", nullable: true),
                     feedback = table.Column<string>(type: "text", nullable: true),
-                    created_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2024, 11, 25, 5, 34, 46, 90, DateTimeKind.Utc).AddTicks(4529)),
-                    updated_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2024, 11, 25, 5, 34, 46, 90, DateTimeKind.Utc).AddTicks(5068)),
-                    user_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    assignment_id = table.Column<Guid>(type: "uuid", nullable: false)
+                    created_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2024, 11, 26, 17, 23, 12, 126, DateTimeKind.Utc).AddTicks(8476)),
+                    updated_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2024, 11, 26, 17, 23, 12, 126, DateTimeKind.Utc).AddTicks(8813)),
+                    user_id = table.Column<long>(type: "bigint", nullable: false),
+                    assignment_id = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -388,8 +398,8 @@ namespace chalk.Server.Data.Migrations
                 name: "channel_role_permissions",
                 columns: table => new
                 {
-                    channel_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    course_role_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    channel_id = table.Column<long>(type: "bigint", nullable: false),
+                    course_role_id = table.Column<long>(type: "bigint", nullable: false),
                     permissions = table.Column<long>(type: "bigint", nullable: false, defaultValue: 0L)
                 },
                 constraints: table =>
@@ -413,10 +423,10 @@ namespace chalk.Server.Data.Migrations
                 name: "user_courses",
                 columns: table => new
                 {
-                    user_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    course_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    joined_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2024, 11, 25, 5, 34, 46, 91, DateTimeKind.Utc).AddTicks(9348)),
-                    course_role_id = table.Column<Guid>(type: "uuid", nullable: false)
+                    user_id = table.Column<long>(type: "bigint", nullable: false),
+                    course_id = table.Column<long>(type: "bigint", nullable: false),
+                    joined_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2024, 11, 26, 17, 23, 12, 127, DateTimeKind.Utc).AddTicks(8658)),
+                    course_role_id = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -445,14 +455,15 @@ namespace chalk.Server.Data.Migrations
                 name: "attachments",
                 columns: table => new
                 {
-                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     name = table.Column<string>(type: "character varying(31)", maxLength: 31, nullable: false),
                     uri = table.Column<string>(type: "text", nullable: false),
-                    created_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2024, 11, 25, 5, 34, 46, 96, DateTimeKind.Utc).AddTicks(791)),
-                    updated_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2024, 11, 25, 5, 34, 46, 96, DateTimeKind.Utc).AddTicks(1335)),
-                    assignment_id = table.Column<Guid>(type: "uuid", nullable: true),
-                    submission_id = table.Column<Guid>(type: "uuid", nullable: true),
-                    course_module_id = table.Column<Guid>(type: "uuid", nullable: true)
+                    created_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2024, 11, 26, 17, 23, 12, 130, DateTimeKind.Utc).AddTicks(8619)),
+                    updated_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2024, 11, 26, 17, 23, 12, 130, DateTimeKind.Utc).AddTicks(8970)),
+                    assignment_id = table.Column<long>(type: "bigint", nullable: true),
+                    submission_id = table.Column<long>(type: "bigint", nullable: true),
+                    course_module_id = table.Column<long>(type: "bigint", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -478,10 +489,10 @@ namespace chalk.Server.Data.Migrations
                 name: "channel_participants",
                 columns: table => new
                 {
-                    user_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    channel_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    user_id = table.Column<long>(type: "bigint", nullable: false),
+                    channel_id = table.Column<long>(type: "bigint", nullable: false),
                     joined_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    course_role_id = table.Column<Guid>(type: "uuid", nullable: false)
+                    course_role_id = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -516,12 +527,13 @@ namespace chalk.Server.Data.Migrations
                 name: "messages",
                 columns: table => new
                 {
-                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     text = table.Column<string>(type: "character varying(1023)", maxLength: 1023, nullable: false),
-                    created_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2024, 11, 25, 5, 34, 46, 96, DateTimeKind.Utc).AddTicks(6461)),
-                    updated_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2024, 11, 25, 5, 34, 46, 96, DateTimeKind.Utc).AddTicks(6881)),
-                    channel_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    user_id = table.Column<Guid>(type: "uuid", nullable: false)
+                    created_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2024, 11, 26, 17, 23, 12, 131, DateTimeKind.Utc).AddTicks(2907)),
+                    updated_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2024, 11, 26, 17, 23, 12, 131, DateTimeKind.Utc).AddTicks(3218)),
+                    channel_id = table.Column<long>(type: "bigint", nullable: false),
+                    user_id = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {

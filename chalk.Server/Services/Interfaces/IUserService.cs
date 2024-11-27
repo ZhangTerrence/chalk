@@ -8,5 +8,5 @@ public interface IUserService
 
     public Task<(UserDTO, IEnumerable<string>)> AuthenticateUserAsync(LoginDTO loginDTO);
 
-    public Task AddRefreshTokenAsync(Guid userId, string refreshToken);
+    public Task AddRefreshTokenAsync(long userId, string refreshToken);
 }

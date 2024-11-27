@@ -14,6 +14,8 @@ public class CreateCourseValidator : AbstractValidator<CreateCourseDTO>
             .WithMessage("Name must be between 3 and 31 characters.");
 
         RuleFor(e => e.Code)
+            .NotNull()
+            .WithMessage("Code is required.")
             .MaximumLength(31)
             .WithMessage("Code must be at most 31 characters.");
 
@@ -22,7 +24,7 @@ public class CreateCourseValidator : AbstractValidator<CreateCourseDTO>
             .WithMessage("Description must be at most 255 characters.");
 
         RuleFor(e => e.OrganizationId)
-            .NotNull()
+            .Must(organizationId => organizationId > 0)
             .WithMessage("Organization id is required.");
     }
 }

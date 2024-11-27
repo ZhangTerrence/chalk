@@ -13,11 +13,11 @@ public record CourseDTO
         UpdatedDate = course.UpdatedDate;
     }
 
-    public Guid Id { get; init; }
+    public long Id { get; init; }
     public string Name { get; init; }
     public string? Code { get; init; }
     public string? Description { get; init; }
-    public Guid OrganizationId { get; init; }
+    public long OrganizationId { get; init; }
     public DateTime CreatedDate { get; init; }
     public DateTime UpdatedDate { get; init; }
 }

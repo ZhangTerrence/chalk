@@ -16,5 +16,9 @@ public class CreateOrganizationValidator : AbstractValidator<CreateOrganizationD
         RuleFor(e => e.Description)
             .MaximumLength(255)
             .WithMessage("Description must be at most 255 characters.");
+
+        RuleFor(e => e.OwnerId)
+            .Must(ownerId => ownerId > 0)
+            .WithMessage("Owner id is required.");
     }
 }

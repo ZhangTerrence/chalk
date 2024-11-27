@@ -2,14 +2,14 @@ namespace chalk.Server.Entities;
 
 public class Course
 {
-    public Guid Id { get; set; }
+    public long Id { get; set; }
     public required string Name { get; set; }
-    public string? Code { get; set; }
+    public required string Code { get; set; }
     public string? Description { get; set; }
     public DateTime CreatedDate { get; set; }
     public DateTime UpdatedDate { get; set; }
 
-    public Guid OrganizationId { get; set; }
+    public long OrganizationId { get; set; }
 
     public Organization Organization { get; set; } = null!;
     public ICollection<UserCourse> UserCourses { get; set; } = [];

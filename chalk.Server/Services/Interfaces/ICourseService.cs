@@ -6,11 +6,11 @@ public interface ICourseService
 {
     public Task<IEnumerable<CourseDTO>> GetCoursesAsync();
 
-    public Task<CourseDTO> GetCourseAsync(Guid courseId);
+    public Task<CourseDTO> GetCourseAsync(long courseId);
 
     public Task<CourseDTO> CreateCourseAsync(CreateCourseDTO createCourseDto);
 
-    public Task<CourseDTO> UpdateCourseAsync(Guid courseId, UpdateCourseDTO updateCourseDTO);
+    public Task<CourseDTO> UpdateCourseAsync(long courseId, UpdateCourseDTO updateCourseDTO);
 
-    public Task DeleteCourseAsync(Guid courseId);
+    public Task DeleteCourseAsync(long courseId);
 }

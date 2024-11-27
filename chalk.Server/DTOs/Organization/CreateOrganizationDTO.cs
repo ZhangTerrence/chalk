@@ -2,7 +2,7 @@ namespace chalk.Server.DTOs.Organization;
 
 public record CreateOrganizationDTO
 {
-    public CreateOrganizationDTO(string name, string description, Guid ownerId)
+    public CreateOrganizationDTO(string name, string description, long ownerId)
     {
         Name = name;
         Description = description;
@@ -11,5 +11,5 @@ public record CreateOrganizationDTO
 
     public string Name { get; set; }
     public string Description { get; set; }
-    public Guid OwnerId { get; set; }
+    public long OwnerId { get; set; }
 }

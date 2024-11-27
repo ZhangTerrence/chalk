@@ -20,7 +20,7 @@ public class CourseService : ICourseService
         return await _context.Courses.Select(e => e.ToCourseDTO()).ToListAsync();
     }
 
-    public async Task<CourseDTO> GetCourseAsync(Guid courseId)
+    public async Task<CourseDTO> GetCourseAsync(long courseId)
     {
         var course = await _context.Courses.FindAsync(courseId);
         if (course is null)
@@ -46,7 +46,7 @@ public class CourseService : ICourseService
         return course.ToCourseDTO();
     }
 
-    public async Task<CourseDTO> UpdateCourseAsync(Guid courseId, UpdateCourseDTO updateCourseDTO)
+    public async Task<CourseDTO> UpdateCourseAsync(long courseId, UpdateCourseDTO updateCourseDTO)
     {
         var course = await _context.Courses.FindAsync(courseId);
         if (course is null)
@@ -84,7 +84,7 @@ public class CourseService : ICourseService
         return course.ToCourseDTO();
     }
 
-    public async Task DeleteCourseAsync(Guid courseId)
+    public async Task DeleteCourseAsync(long courseId)
     {
         var course = await _context.Courses.FindAsync(courseId);
         if (course is null)

@@ -22,12 +22,14 @@ namespace chalk.Server.Data.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<long>", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
+                        .HasColumnType("bigint")
                         .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -54,7 +56,7 @@ namespace chalk.Server.Data.Migrations
                     b.ToTable("roles", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<long>", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -71,8 +73,8 @@ namespace chalk.Server.Data.Migrations
                         .HasColumnType("text")
                         .HasColumnName("claim_value");
 
-                    b.Property<Guid>("RoleId")
-                        .HasColumnType("uuid")
+                    b.Property<long>("RoleId")
+                        .HasColumnType("bigint")
                         .HasColumnName("role_id");
 
                     b.HasKey("Id")
@@ -84,7 +86,7 @@ namespace chalk.Server.Data.Migrations
                     b.ToTable("role_claims", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<long>", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -101,8 +103,8 @@ namespace chalk.Server.Data.Migrations
                         .HasColumnType("text")
                         .HasColumnName("claim_value");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid")
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint")
                         .HasColumnName("user_id");
 
                     b.HasKey("Id")
@@ -114,7 +116,7 @@ namespace chalk.Server.Data.Migrations
                     b.ToTable("user_claims", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<long>", b =>
                 {
                     b.Property<string>("LoginProvider")
                         .HasColumnType("text")
@@ -128,8 +130,8 @@ namespace chalk.Server.Data.Migrations
                         .HasColumnType("text")
                         .HasColumnName("provider_display_name");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid")
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint")
                         .HasColumnName("user_id");
 
                     b.HasKey("LoginProvider", "ProviderKey")
@@ -141,14 +143,14 @@ namespace chalk.Server.Data.Migrations
                     b.ToTable("user_logins", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<long>", b =>
                 {
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid")
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint")
                         .HasColumnName("user_id");
 
-                    b.Property<Guid>("RoleId")
-                        .HasColumnType("uuid")
+                    b.Property<long>("RoleId")
+                        .HasColumnType("bigint")
                         .HasColumnName("role_id");
 
                     b.HasKey("UserId", "RoleId")
@@ -160,10 +162,10 @@ namespace chalk.Server.Data.Migrations
                     b.ToTable("user_roles", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<long>", b =>
                 {
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid")
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint")
                         .HasColumnName("user_id");
 
                     b.Property<string>("LoginProvider")
@@ -186,23 +188,25 @@ namespace chalk.Server.Data.Migrations
 
             modelBuilder.Entity("chalk.Server.Entities.Assignment", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
+                        .HasColumnType("bigint")
                         .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<int?>("AllowedAttempts")
                         .HasColumnType("integer")
                         .HasColumnName("allowed_attempts");
 
-                    b.Property<Guid>("CourseId")
-                        .HasColumnType("uuid")
+                    b.Property<long>("CourseId")
+                        .HasColumnType("bigint")
                         .HasColumnName("course_id");
 
                     b.Property<DateTime>("CreatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 11, 25, 5, 34, 46, 89, DateTimeKind.Utc).AddTicks(9386))
+                        .HasDefaultValue(new DateTime(2024, 11, 26, 17, 23, 12, 126, DateTimeKind.Utc).AddTicks(5057))
                         .HasColumnName("created_date");
 
                     b.Property<string>("Description")
@@ -233,7 +237,7 @@ namespace chalk.Server.Data.Migrations
                     b.Property<DateTime>("UpdatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 11, 25, 5, 34, 46, 90, DateTimeKind.Utc).AddTicks(78))
+                        .HasDefaultValue(new DateTime(2024, 11, 26, 17, 23, 12, 126, DateTimeKind.Utc).AddTicks(5378))
                         .HasColumnName("updated_date");
 
                     b.HasKey("Id")
@@ -247,23 +251,25 @@ namespace chalk.Server.Data.Migrations
 
             modelBuilder.Entity("chalk.Server.Entities.Attachment", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
+                        .HasColumnType("bigint")
                         .HasColumnName("id");
 
-                    b.Property<Guid?>("AssignmentId")
-                        .HasColumnType("uuid")
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<long?>("AssignmentId")
+                        .HasColumnType("bigint")
                         .HasColumnName("assignment_id");
 
-                    b.Property<Guid?>("CourseModuleId")
-                        .HasColumnType("uuid")
+                    b.Property<long?>("CourseModuleId")
+                        .HasColumnType("bigint")
                         .HasColumnName("course_module_id");
 
                     b.Property<DateTime>("CreatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 11, 25, 5, 34, 46, 96, DateTimeKind.Utc).AddTicks(791))
+                        .HasDefaultValue(new DateTime(2024, 11, 26, 17, 23, 12, 130, DateTimeKind.Utc).AddTicks(8619))
                         .HasColumnName("created_date");
 
                     b.Property<string>("Name")
@@ -272,14 +278,14 @@ namespace chalk.Server.Data.Migrations
                         .HasColumnType("character varying(31)")
                         .HasColumnName("name");
 
-                    b.Property<Guid?>("SubmissionId")
-                        .HasColumnType("uuid")
+                    b.Property<long?>("SubmissionId")
+                        .HasColumnType("bigint")
                         .HasColumnName("submission_id");
 
                     b.Property<DateTime>("UpdatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 11, 25, 5, 34, 46, 96, DateTimeKind.Utc).AddTicks(1335))
+                        .HasDefaultValue(new DateTime(2024, 11, 26, 17, 23, 12, 130, DateTimeKind.Utc).AddTicks(8970))
                         .HasColumnName("updated_date");
 
                     b.Property<string>("Uri")
@@ -304,19 +310,21 @@ namespace chalk.Server.Data.Migrations
 
             modelBuilder.Entity("chalk.Server.Entities.Channel", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
+                        .HasColumnType("bigint")
                         .HasColumnName("id");
 
-                    b.Property<Guid?>("CourseId")
-                        .HasColumnType("uuid")
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<long?>("CourseId")
+                        .HasColumnType("bigint")
                         .HasColumnName("course_id");
 
                     b.Property<DateTime>("CreatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 11, 25, 5, 34, 46, 89, DateTimeKind.Utc).AddTicks(2087))
+                        .HasDefaultValue(new DateTime(2024, 11, 26, 17, 23, 12, 125, DateTimeKind.Utc).AddTicks(9801))
                         .HasColumnName("created_date");
 
                     b.Property<string>("Description")
@@ -333,7 +341,7 @@ namespace chalk.Server.Data.Migrations
                     b.Property<DateTime>("UpdatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 11, 25, 5, 34, 46, 89, DateTimeKind.Utc).AddTicks(2643))
+                        .HasDefaultValue(new DateTime(2024, 11, 26, 17, 23, 12, 126, DateTimeKind.Utc).AddTicks(172))
                         .HasColumnName("updated_date");
 
                     b.HasKey("Id")
@@ -347,16 +355,16 @@ namespace chalk.Server.Data.Migrations
 
             modelBuilder.Entity("chalk.Server.Entities.ChannelParticipant", b =>
                 {
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid")
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint")
                         .HasColumnName("user_id");
 
-                    b.Property<Guid>("ChannelId")
-                        .HasColumnType("uuid")
+                    b.Property<long>("ChannelId")
+                        .HasColumnType("bigint")
                         .HasColumnName("channel_id");
 
-                    b.Property<Guid>("CourseRoleId")
-                        .HasColumnType("uuid")
+                    b.Property<long>("CourseRoleId")
+                        .HasColumnType("bigint")
                         .HasColumnName("course_role_id");
 
                     b.Property<DateTime>("JoinedDate")
@@ -377,12 +385,12 @@ namespace chalk.Server.Data.Migrations
 
             modelBuilder.Entity("chalk.Server.Entities.ChannelRolePermission", b =>
                 {
-                    b.Property<Guid>("ChannelId")
-                        .HasColumnType("uuid")
+                    b.Property<long>("ChannelId")
+                        .HasColumnType("bigint")
                         .HasColumnName("channel_id");
 
-                    b.Property<Guid>("CourseRoleId")
-                        .HasColumnType("uuid")
+                    b.Property<long>("CourseRoleId")
+                        .HasColumnType("bigint")
                         .HasColumnName("course_role_id");
 
                     b.Property<long>("Permissions")
@@ -402,12 +410,15 @@ namespace chalk.Server.Data.Migrations
 
             modelBuilder.Entity("chalk.Server.Entities.Course", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
+                        .HasColumnType("bigint")
                         .HasColumnName("id");
 
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
                     b.Property<string>("Code")
+                        .IsRequired()
                         .HasMaxLength(31)
                         .HasColumnType("character varying(31)")
                         .HasColumnName("code");
@@ -415,7 +426,7 @@ namespace chalk.Server.Data.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 11, 25, 5, 34, 46, 88, DateTimeKind.Utc).AddTicks(3789))
+                        .HasDefaultValue(new DateTime(2024, 11, 26, 17, 23, 12, 125, DateTimeKind.Utc).AddTicks(3294))
                         .HasColumnName("created_date");
 
                     b.Property<string>("Description")
@@ -429,14 +440,14 @@ namespace chalk.Server.Data.Migrations
                         .HasColumnType("character varying(31)")
                         .HasColumnName("name");
 
-                    b.Property<Guid>("OrganizationId")
-                        .HasColumnType("uuid")
+                    b.Property<long>("OrganizationId")
+                        .HasColumnType("bigint")
                         .HasColumnName("organization_id");
 
                     b.Property<DateTime>("UpdatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 11, 25, 5, 34, 46, 88, DateTimeKind.Utc).AddTicks(4225))
+                        .HasDefaultValue(new DateTime(2024, 11, 26, 17, 23, 12, 125, DateTimeKind.Utc).AddTicks(3616))
                         .HasColumnName("updated_date");
 
                     b.HasKey("Id")
@@ -450,19 +461,21 @@ namespace chalk.Server.Data.Migrations
 
             modelBuilder.Entity("chalk.Server.Entities.CourseModule", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
+                        .HasColumnType("bigint")
                         .HasColumnName("id");
 
-                    b.Property<Guid>("CourseId")
-                        .HasColumnType("uuid")
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("CourseId")
+                        .HasColumnType("bigint")
                         .HasColumnName("course_id");
 
                     b.Property<DateTime>("CreatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 11, 25, 5, 34, 46, 96, DateTimeKind.Utc).AddTicks(4422))
+                        .HasDefaultValue(new DateTime(2024, 11, 26, 17, 23, 12, 131, DateTimeKind.Utc).AddTicks(1396))
                         .HasColumnName("created_date");
 
                     b.Property<string>("Description")
@@ -479,7 +492,7 @@ namespace chalk.Server.Data.Migrations
                     b.Property<DateTime>("UpdatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 11, 25, 5, 34, 46, 96, DateTimeKind.Utc).AddTicks(4848))
+                        .HasDefaultValue(new DateTime(2024, 11, 26, 17, 23, 12, 131, DateTimeKind.Utc).AddTicks(1772))
                         .HasColumnName("updated_date");
 
                     b.HasKey("Id")
@@ -493,19 +506,21 @@ namespace chalk.Server.Data.Migrations
 
             modelBuilder.Entity("chalk.Server.Entities.CourseRole", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
+                        .HasColumnType("bigint")
                         .HasColumnName("id");
 
-                    b.Property<Guid>("CourseId")
-                        .HasColumnType("uuid")
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("CourseId")
+                        .HasColumnType("bigint")
                         .HasColumnName("course_id");
 
                     b.Property<DateTime>("CreatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 11, 25, 5, 34, 46, 92, DateTimeKind.Utc).AddTicks(3135))
+                        .HasDefaultValue(new DateTime(2024, 11, 26, 17, 23, 12, 128, DateTimeKind.Utc).AddTicks(1494))
                         .HasColumnName("created_date");
 
                     b.Property<string>("Description")
@@ -528,7 +543,7 @@ namespace chalk.Server.Data.Migrations
                     b.Property<DateTime>("UpdatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 11, 25, 5, 34, 46, 92, DateTimeKind.Utc).AddTicks(3510))
+                        .HasDefaultValue(new DateTime(2024, 11, 26, 17, 23, 12, 128, DateTimeKind.Utc).AddTicks(1723))
                         .HasColumnName("updated_date");
 
                     b.HasKey("Id")
@@ -542,19 +557,21 @@ namespace chalk.Server.Data.Migrations
 
             modelBuilder.Entity("chalk.Server.Entities.Message", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
+                        .HasColumnType("bigint")
                         .HasColumnName("id");
 
-                    b.Property<Guid>("ChannelId")
-                        .HasColumnType("uuid")
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("ChannelId")
+                        .HasColumnType("bigint")
                         .HasColumnName("channel_id");
 
                     b.Property<DateTime>("CreatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 11, 25, 5, 34, 46, 96, DateTimeKind.Utc).AddTicks(6461))
+                        .HasDefaultValue(new DateTime(2024, 11, 26, 17, 23, 12, 131, DateTimeKind.Utc).AddTicks(2907))
                         .HasColumnName("created_date");
 
                     b.Property<string>("Text")
@@ -566,11 +583,11 @@ namespace chalk.Server.Data.Migrations
                     b.Property<DateTime>("UpdatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 11, 25, 5, 34, 46, 96, DateTimeKind.Utc).AddTicks(6881))
+                        .HasDefaultValue(new DateTime(2024, 11, 26, 17, 23, 12, 131, DateTimeKind.Utc).AddTicks(3218))
                         .HasColumnName("updated_date");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid")
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint")
                         .HasColumnName("user_id");
 
                     b.HasKey("Id")
@@ -584,15 +601,17 @@ namespace chalk.Server.Data.Migrations
 
             modelBuilder.Entity("chalk.Server.Entities.Organization", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
+                        .HasColumnType("bigint")
                         .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("CreatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 11, 25, 5, 34, 46, 87, DateTimeKind.Utc).AddTicks(7304))
+                        .HasDefaultValue(new DateTime(2024, 11, 26, 17, 23, 12, 124, DateTimeKind.Utc).AddTicks(8735))
                         .HasColumnName("created_date");
 
                     b.Property<string>("Description")
@@ -606,14 +625,14 @@ namespace chalk.Server.Data.Migrations
                         .HasColumnType("character varying(31)")
                         .HasColumnName("name");
 
-                    b.Property<Guid>("OwnerId")
-                        .HasColumnType("uuid")
+                    b.Property<long>("OwnerId")
+                        .HasColumnType("bigint")
                         .HasColumnName("owner_id");
 
                     b.Property<DateTime>("UpdatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 11, 25, 5, 34, 46, 87, DateTimeKind.Utc).AddTicks(7809))
+                        .HasDefaultValue(new DateTime(2024, 11, 26, 17, 23, 12, 124, DateTimeKind.Utc).AddTicks(9100))
                         .HasColumnName("updated_date");
 
                     b.HasKey("Id")
@@ -627,15 +646,17 @@ namespace chalk.Server.Data.Migrations
 
             modelBuilder.Entity("chalk.Server.Entities.OrganizationRole", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
+                        .HasColumnType("bigint")
                         .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("CreatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 11, 25, 5, 34, 46, 91, DateTimeKind.Utc).AddTicks(4762))
+                        .HasDefaultValue(new DateTime(2024, 11, 26, 17, 23, 12, 127, DateTimeKind.Utc).AddTicks(5427))
                         .HasColumnName("created_date");
 
                     b.Property<string>("Description")
@@ -649,8 +670,8 @@ namespace chalk.Server.Data.Migrations
                         .HasColumnType("character varying(31)")
                         .HasColumnName("name");
 
-                    b.Property<Guid>("OrganizationId")
-                        .HasColumnType("uuid")
+                    b.Property<long>("OrganizationId")
+                        .HasColumnType("bigint")
                         .HasColumnName("organization_id");
 
                     b.Property<long>("Permissions")
@@ -662,7 +683,7 @@ namespace chalk.Server.Data.Migrations
                     b.Property<DateTime>("UpdatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 11, 25, 5, 34, 46, 91, DateTimeKind.Utc).AddTicks(5065))
+                        .HasDefaultValue(new DateTime(2024, 11, 26, 17, 23, 12, 127, DateTimeKind.Utc).AddTicks(5784))
                         .HasColumnName("updated_date");
 
                     b.HasKey("Id")
@@ -676,19 +697,21 @@ namespace chalk.Server.Data.Migrations
 
             modelBuilder.Entity("chalk.Server.Entities.Submission", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
+                        .HasColumnType("bigint")
                         .HasColumnName("id");
 
-                    b.Property<Guid>("AssignmentId")
-                        .HasColumnType("uuid")
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("AssignmentId")
+                        .HasColumnType("bigint")
                         .HasColumnName("assignment_id");
 
                     b.Property<DateTime>("CreatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 11, 25, 5, 34, 46, 90, DateTimeKind.Utc).AddTicks(4529))
+                        .HasDefaultValue(new DateTime(2024, 11, 26, 17, 23, 12, 126, DateTimeKind.Utc).AddTicks(8476))
                         .HasColumnName("created_date");
 
                     b.Property<string>("Feedback")
@@ -702,11 +725,11 @@ namespace chalk.Server.Data.Migrations
                     b.Property<DateTime>("UpdatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 11, 25, 5, 34, 46, 90, DateTimeKind.Utc).AddTicks(5068))
+                        .HasDefaultValue(new DateTime(2024, 11, 26, 17, 23, 12, 126, DateTimeKind.Utc).AddTicks(8813))
                         .HasColumnName("updated_date");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid")
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint")
                         .HasColumnName("user_id");
 
                     b.HasKey("Id")
@@ -723,10 +746,12 @@ namespace chalk.Server.Data.Migrations
 
             modelBuilder.Entity("chalk.Server.Entities.User", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
+                        .HasColumnType("bigint")
                         .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("integer")
@@ -740,7 +765,7 @@ namespace chalk.Server.Data.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 11, 25, 5, 34, 46, 86, DateTimeKind.Utc).AddTicks(9054))
+                        .HasDefaultValue(new DateTime(2024, 11, 26, 17, 23, 12, 124, DateTimeKind.Utc).AddTicks(2888))
                         .HasColumnName("created_date");
 
                     b.Property<string>("Description")
@@ -812,7 +837,7 @@ namespace chalk.Server.Data.Migrations
                     b.Property<DateTime>("UpdatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 11, 25, 5, 34, 46, 86, DateTimeKind.Utc).AddTicks(9733))
+                        .HasDefaultValue(new DateTime(2024, 11, 26, 17, 23, 12, 124, DateTimeKind.Utc).AddTicks(3290))
                         .HasColumnName("updated_date");
 
                     b.Property<string>("UserName")
@@ -835,22 +860,22 @@ namespace chalk.Server.Data.Migrations
 
             modelBuilder.Entity("chalk.Server.Entities.UserCourse", b =>
                 {
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid")
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint")
                         .HasColumnName("user_id");
 
-                    b.Property<Guid>("CourseId")
-                        .HasColumnType("uuid")
+                    b.Property<long>("CourseId")
+                        .HasColumnType("bigint")
                         .HasColumnName("course_id");
 
-                    b.Property<Guid>("CourseRoleId")
-                        .HasColumnType("uuid")
+                    b.Property<long>("CourseRoleId")
+                        .HasColumnType("bigint")
                         .HasColumnName("course_role_id");
 
                     b.Property<DateTime>("JoinedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 11, 25, 5, 34, 46, 91, DateTimeKind.Utc).AddTicks(9348))
+                        .HasDefaultValue(new DateTime(2024, 11, 26, 17, 23, 12, 127, DateTimeKind.Utc).AddTicks(8658))
                         .HasColumnName("joined_date");
 
                     b.HasKey("UserId", "CourseId")
@@ -867,22 +892,22 @@ namespace chalk.Server.Data.Migrations
 
             modelBuilder.Entity("chalk.Server.Entities.UserOrganization", b =>
                 {
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid")
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint")
                         .HasColumnName("user_id");
 
-                    b.Property<Guid>("OrganizationId")
-                        .HasColumnType("uuid")
+                    b.Property<long>("OrganizationId")
+                        .HasColumnType("bigint")
                         .HasColumnName("organization_id");
 
                     b.Property<DateTime>("JoinedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 11, 25, 5, 34, 46, 91, DateTimeKind.Utc).AddTicks(589))
+                        .HasDefaultValue(new DateTime(2024, 11, 26, 17, 23, 12, 127, DateTimeKind.Utc).AddTicks(2622))
                         .HasColumnName("joined_date");
 
-                    b.Property<Guid>("OrganizationRoleId")
-                        .HasColumnType("uuid")
+                    b.Property<long>("OrganizationRoleId")
+                        .HasColumnType("bigint")
                         .HasColumnName("organization_role_id");
 
                     b.HasKey("UserId", "OrganizationId")
@@ -897,9 +922,9 @@ namespace chalk.Server.Data.Migrations
                     b.ToTable("user_organizations", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<long>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", null)
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<long>", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -907,7 +932,7 @@ namespace chalk.Server.Data.Migrations
                         .HasConstraintName("fk_role_claims_roles_role_id");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<long>", b =>
                 {
                     b.HasOne("chalk.Server.Entities.User", null)
                         .WithMany()
@@ -917,7 +942,7 @@ namespace chalk.Server.Data.Migrations
                         .HasConstraintName("fk_user_claims_users_user_id");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<long>", b =>
                 {
                     b.HasOne("chalk.Server.Entities.User", null)
                         .WithMany()
@@ -927,9 +952,9 @@ namespace chalk.Server.Data.Migrations
                         .HasConstraintName("fk_user_logins_users_user_id");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<long>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", null)
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<long>", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -944,7 +969,7 @@ namespace chalk.Server.Data.Migrations
                         .HasConstraintName("fk_user_roles_users_user_id");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<long>", b =>
                 {
                     b.HasOne("chalk.Server.Entities.User", null)
                         .WithMany()

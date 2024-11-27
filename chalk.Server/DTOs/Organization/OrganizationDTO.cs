@@ -1,4 +1,4 @@
-using chalk.Server.DTOs.User;
+using chalk.Server.DTOs.Course;
 using chalk.Server.Extensions;
 
 namespace chalk.Server.DTOs.Organization;
@@ -10,15 +10,17 @@ public class OrganizationDTO
         Id = organization.Id;
         Name = organization.Name;
         Description = organization.Description;
-        Owner = organization.Owner.ToUserResponseDTO();
+        OwnerId = organization.OwnerId;
         CreatedDate = organization.CreatedDate;
         UpdatedDate = organization.UpdatedDate;
+        Courses = organization.Courses.Select(e => e.ToCourseDTO()).ToList();
     }
 
-    public Guid Id { get; init; }
+    public long Id { get; init; }
     public string Name { get; init; }
     public string? Description { get; init; }
-    public UserDTO Owner { get; init; }
+    public long OwnerId { get; init; }
     public DateTime CreatedDate { get; init; }
     public DateTime UpdatedDate { get; init; }
+    public ICollection<CourseDTO> Courses { get; init; }
 }

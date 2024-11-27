@@ -11,7 +11,7 @@ public record UserDTO
         UpdatedDate = user.UpdatedDate;
     }
 
-    public Guid Id { get; init; }
+    public long Id { get; init; }
     public string Email { get; init; }
     public string DisplayName { get; init; }
     public DateTime CreatedDate { get; init; }
