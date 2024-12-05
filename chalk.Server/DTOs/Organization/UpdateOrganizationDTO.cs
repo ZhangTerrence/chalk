@@ -1,6 +1,6 @@
 namespace chalk.Server.DTOs.Organization;
 
-public class UpdateOrganizationDTO
+public record UpdateOrganizationDTO
 {
     public UpdateOrganizationDTO(string? name, string? description, long? ownerId)
     {
@@ -9,7 +9,7 @@ public class UpdateOrganizationDTO
         OwnerId = ownerId;
     }
 
-    public string? Name { get; set; }
-    public string? Description { get; set; }
-    public long? OwnerId { get; set; }
+    public string? Name { get; }
+    public string? Description { get; }
+    public long? OwnerId { get; }
 }

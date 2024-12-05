@@ -1,8 +1,11 @@
+using chalk.Server.Common;
+
 namespace chalk.Server.Entities;
 
 public class UserOrganization
 {
-    public required DateTime JoinedDate { get; set; }
+    public required MemberStatus Status { get; set; }
+    public DateTime? JoinedDate { get; set; }
 
     public long UserId { get; set; }
     public long OrganizationId { get; set; }

@@ -18,11 +18,11 @@ public class TokenService : ITokenService
         _securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));
     }
 
-    public string CreateAccessToken(string email, IEnumerable<string> roles)
+    public string CreateAccessToken(long userId, string fullName, IEnumerable<string> roles)
     {
         var tokenDescriptor = new SecurityTokenDescriptor
         {
-            Subject = CreateClaims(email, roles),
+            Subject = CreateClaims(userId, fullName, roles),
             Issuer = _configuration["Jwt:Issuer"],
             Audience = _configuration["Jwt:Audience"],
             Expires = DateTime.UtcNow.AddHours(1).ToUniversalTime(),
@@ -41,10 +41,11 @@ public class TokenService : ITokenService
         return Convert.ToBase64String(randomNumber);
     }
 
-    private static ClaimsIdentity CreateClaims(string email, IEnumerable<string> roles)
+    private static ClaimsIdentity CreateClaims(long userId, string fullName, IEnumerable<string> roles)
     {
         var claims = new ClaimsIdentity();
-        claims.AddClaim(new Claim(ClaimTypes.Email, email));
+        claims.AddClaim(new Claim(ClaimTypes.NameIdentifier, userId.ToString()));
+        claims.AddClaim(new Claim(ClaimTypes.Name, fullName));
         claims.AddClaims(roles.Select(role => new Claim(ClaimTypes.Role, role)));
         return claims;
     }

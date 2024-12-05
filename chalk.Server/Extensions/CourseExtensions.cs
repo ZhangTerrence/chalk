@@ -1,4 +1,6 @@
+using chalk.Server.Common;
 using chalk.Server.DTOs.Course;
+using chalk.Server.DTOs.User;
 using chalk.Server.Entities;
 
 namespace chalk.Server.Extensions;
@@ -16,6 +18,11 @@ public static class CourseExtensions
             CreatedDate = DateTime.UtcNow,
             UpdatedDate = DateTime.UtcNow,
         };
+    }
+
+    public static InviteDTO ToInviteDTO(this UserCourse userCourse)
+    {
+        return new InviteDTO(InviteType.Course, null, userCourse.Course);
     }
 
     public static CourseDTO ToCourseDTO(this Course course)

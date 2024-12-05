@@ -26,11 +26,6 @@ public class SubmissionConfiguration : IEntityTypeConfiguration<Submission>
             .IsRequired();
 
         builder
-            .HasOne(e => e.User)
-            .WithMany(e => e.Submissions)
-            .HasForeignKey(e => e.UserId)
-            .IsRequired();
-        builder
             .HasOne(e => e.Assignment)
             .WithMany(e => e.Submissions)
             .HasForeignKey(e => e.AssignmentId)

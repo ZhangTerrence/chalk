@@ -9,16 +9,18 @@ public static class UserExtensions
     {
         return new User
         {
+            FirstName = registerDTO.FirstName,
+            LastName = registerDTO.LastName,
+            FullName = $"{registerDTO.FirstName} {registerDTO.LastName}",
             DisplayName = registerDTO.DisplayName,
             Email = registerDTO.Email,
             UserName = registerDTO.Email,
-            Description = "",
             CreatedDate = DateTime.Now.ToUniversalTime(),
             UpdatedDate = DateTime.Now.ToUniversalTime()
         };
     }
 
-    public static UserDTO ToUserResponseDTO(this User user)
+    public static UserDTO ToUserDTO(this User user)
     {
         return new UserDTO(user);
     }

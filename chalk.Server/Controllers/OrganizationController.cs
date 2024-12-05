@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using chalk.Server.DTOs;
 using chalk.Server.DTOs.Organization;
 using chalk.Server.Services.Interfaces;
@@ -64,5 +65,18 @@ public class OrganizationController : ControllerBase
     {
         await _organizationService.DeleteOrganizationAsync(organizationId);
         return NoContent();
+    }
+
+    [HttpPost("invite")]
+    public async Task<IActionResult> SendInvite([FromBody] SendInviteDTO sendInviteDTO)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(new ApiResponseDTO<object>(ModelState));
+        }
+
+        var userId = User.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier)!.Value;
+        var invite = await _organizationService.SendInviteAsync(long.Parse(userId), sendInviteDTO);
+        return Ok(new ApiResponseDTO<UserOrganizationDTO>(invite));
     }
 }

@@ -8,9 +8,20 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
 {
     public void Configure(EntityTypeBuilder<User> builder)
     {
+        builder.Property(e => e.FirstName)
+            .HasMaxLength(31)
+            .IsRequired();
+        builder.Property(e => e.LastName)
+            .HasMaxLength(31)
+            .IsRequired();
+        builder.Property(e => e.FullName)
+            .HasMaxLength(63)
+            .IsRequired();
         builder.Property(e => e.DisplayName)
             .HasMaxLength(31)
             .IsRequired();
+        builder.Property(e => e.ProfilePicture)
+            .HasDefaultValue(null);
         builder.Property(e => e.Description)
             .HasDefaultValue(null)
             .HasMaxLength(255);
@@ -37,11 +48,6 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .IsRequired();
         builder
             .HasMany(e => e.ChannelParticipants)
-            .WithOne(e => e.User)
-            .HasForeignKey(e => e.UserId)
-            .IsRequired();
-        builder
-            .HasMany(e => e.Submissions)
             .WithOne(e => e.User)
             .HasForeignKey(e => e.UserId)
             .IsRequired();

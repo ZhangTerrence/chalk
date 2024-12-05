@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using chalk.Server.DTOs;
 using chalk.Server.DTOs.User;
 using chalk.Server.Services.Interfaces;
@@ -11,12 +12,10 @@ namespace chalk.Server.Controllers;
 public class UserController : ControllerBase
 {
     private readonly IUserService _userService;
-    private readonly ITokenService _tokenService;
 
-    public UserController(IUserService userService, ITokenService tokenService)
+    public UserController(IUserService userService)
     {
         _userService = userService;
-        _tokenService = tokenService;
     }
 
     [HttpPost("register")]
@@ -28,9 +27,7 @@ public class UserController : ControllerBase
             return BadRequest(new ApiResponseDTO<object>(ModelState));
         }
 
-        var createdUser = await _userService.RegisterUserAsync(registerDTO);
-        var accessToken = _tokenService.CreateAccessToken(createdUser.DisplayName, ["User"]);
-        var refreshToken = _tokenService.CreateRefreshToken();
+        var (createdUser, accessToken, refreshToken) = await _userService.RegisterUserAsync(registerDTO);
 
         HttpContext.Response.Cookies.Append("AccessToken", accessToken, new CookieOptions
         {
@@ -48,8 +45,6 @@ public class UserController : ControllerBase
             HttpOnly = true,
             IsEssential = true
         });
-
-        await _userService.AddRefreshTokenAsync(createdUser.Id, refreshToken);
 
         return Ok(new ApiResponseDTO<UserDTO>(createdUser));
     }
@@ -63,9 +58,7 @@ public class UserController : ControllerBase
             return BadRequest(new ApiResponseDTO<object>(ModelState));
         }
 
-        var (user, roles) = await _userService.AuthenticateUserAsync(loginDTO);
-        var accessToken = _tokenService.CreateAccessToken(user.Email, roles);
-        var refreshToken = _tokenService.CreateRefreshToken();
+        var (user, accessToken, refreshToken) = await _userService.AuthenticateUserAsync(loginDTO);
 
         HttpContext.Response.Cookies.Append("AccessToken", accessToken, new CookieOptions
         {
@@ -84,8 +77,6 @@ public class UserController : ControllerBase
             IsEssential = true
         });
 
-        await _userService.AddRefreshTokenAsync(user.Id, refreshToken);
-
         return Ok(new ApiResponseDTO<UserDTO>(user));
     }
 
@@ -95,5 +86,43 @@ public class UserController : ControllerBase
     {
         HttpContext.Response.Cookies.Delete("AccessToken");
         return Ok();
+    }
+
+    [HttpGet]
+    [Authorize(Roles = "User,Admin")]
+    public async Task<IActionResult> GetUsers()
+    {
+        var users = await _userService.GetUsersAsync();
+        return Ok(new ApiResponseDTO<IEnumerable<UserDTO>>(users));
+    }
+
+    [HttpGet("{userId:long}")]
+    [Authorize(Roles = "User,Admin")]
+    public async Task<IActionResult> GetUser([FromRoute] long userId)
+    {
+        var user = await _userService.GetUserAsync(userId);
+        return Ok(new ApiResponseDTO<UserDTO>(user));
+    }
+
+    [HttpGet("invite")]
+    [Authorize(Roles = "User,Admin")]
+    public async Task<IActionResult> GetInvites()
+    {
+        var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)!.Value;
+        var invites = await _userService.GetPendingInvitesAsync(long.Parse(userId));
+        return Ok(new ApiResponseDTO<IEnumerable<InviteDTO>>(invites));
+    }
+
+    [HttpPost("invite")]
+    [Authorize(Roles = "User,Admin")]
+    public async Task<IActionResult> RespondInvite([FromBody] InviteResponseDTO inviteResponseDTO)
+    {
+        if (ModelState.IsValid)
+        {
+            return BadRequest(new ApiResponseDTO<object>(ModelState));
+        }
+
+        await _userService.RespondInviteAsync(inviteResponseDTO);
+        return NoContent();
     }
 }

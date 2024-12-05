@@ -8,6 +8,6 @@ public record LoginDTO
         Password = password;
     }
 
-    public string Email { get; init; }
-    public string Password { get; init; }
+    public string Email { get; }
+    public string Password { get; }
 }

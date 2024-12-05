@@ -19,6 +19,6 @@ public class CreateOrganizationValidator : AbstractValidator<CreateOrganizationD
 
         RuleFor(e => e.OwnerId)
             .Must(ownerId => ownerId > 0)
-            .WithMessage("Owner id is required.");
+            .WithMessage("OwnerId is required.");
     }
 }

@@ -1,3 +1,4 @@
+using chalk.Server.Common;
 using chalk.Server.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -12,9 +13,10 @@ public class UserOrganizationConfiguration : IEntityTypeConfiguration<UserOrgani
 
         builder.HasKey(e => new { e.UserId, e.OrganizationId });
 
-        builder.Property(e => e.JoinedDate)
-            .HasDefaultValue(DateTime.UtcNow)
+        builder.Property(e => e.Status)
             .IsRequired();
+        builder.Property(e => e.JoinedDate)
+            .HasDefaultValue(null);
 
         builder
             .HasOne(e => e.User)

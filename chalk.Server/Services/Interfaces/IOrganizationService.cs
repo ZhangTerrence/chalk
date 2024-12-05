@@ -15,4 +15,6 @@ public interface IOrganizationService
         UpdateOrganizationDTO updateOrganizationDTO);
 
     public Task DeleteOrganizationAsync(long organizationId);
+
+    public Task<UserOrganizationDTO> SendInviteAsync(long senderId, SendInviteDTO sendInviteDTO);
 }
