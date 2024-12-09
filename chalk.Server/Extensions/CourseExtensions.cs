@@ -25,8 +25,8 @@ public static class CourseExtensions
         return new InviteDTO(InviteType.Course, null, userCourse.Course);
     }
 
-    public static CourseDTO ToCourseDTO(this Course course)
+    public static CourseResponseDTO ToCourseDTO(this Course course)
     {
-        return new CourseDTO(course);
+        return new CourseResponseDTO(course);
     }
 }

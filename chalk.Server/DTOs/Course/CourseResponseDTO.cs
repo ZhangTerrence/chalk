@@ -1,8 +1,8 @@
 namespace chalk.Server.DTOs.Course;
 
-public record CourseDTO
+public record CourseResponseDTO
 {
-    public CourseDTO(Entities.Course course)
+    public CourseResponseDTO(Entities.Course course)
     {
         Id = course.Id;
         Name = course.Name;

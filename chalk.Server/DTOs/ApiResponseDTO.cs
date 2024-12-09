@@ -1,29 +1,20 @@
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace chalk.Server.DTOs;
 
-public record ApiResponseDTO<T>
+[Serializable]
+[method: JsonConstructor]
+public record ApiResponseDTO<T>(
+    [property: JsonRequired]
+    [property: JsonPropertyName("errors")]
+    IEnumerable<string>? Errors,
+    [property: JsonRequired]
+    [property: JsonPropertyName("data")]
+    T? Data)
 {
-    public ApiResponseDTO(string error)
+    public ApiResponseDTO(ModelStateDictionary modelState) :
+        this(modelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage)), default)
     {
-        Errors = [error];
     }
-
-    public ApiResponseDTO(IEnumerable<string> errors)
-    {
-        Errors = errors;
-    }
-
-    public ApiResponseDTO(ModelStateDictionary modelState)
-    {
-        Errors = modelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage));
-    }
-
-    public ApiResponseDTO(T data)
-    {
-        Data = data;
-    }
-
-    public IEnumerable<string>? Errors { get; init; }
-    public T? Data { get; init; }
 }

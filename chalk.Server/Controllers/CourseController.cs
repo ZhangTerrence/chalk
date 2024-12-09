@@ -8,7 +8,7 @@ namespace chalk.Server.Controllers;
 
 [ApiController]
 [Authorize(Roles = "User,Admin")]
-[Route("/api/[controller]")]
+[Route("/api/course")]
 public class CourseController : ControllerBase
 {
     private readonly ICourseService _courseService;
@@ -22,14 +22,14 @@ public class CourseController : ControllerBase
     public async Task<IActionResult> GetCourses()
     {
         var courses = await _courseService.GetCoursesAsync();
-        return Ok(new ApiResponseDTO<IEnumerable<CourseDTO>>(courses));
+        return Ok(new ApiResponseDTO<IEnumerable<CourseResponseDTO>>(null, courses));
     }
 
     [HttpGet("{courseId:long}")]
     public async Task<IActionResult> GetCourse([FromRoute] long courseId)
     {
         var course = await _courseService.GetCourseAsync(courseId);
-        return Ok(new ApiResponseDTO<CourseDTO>(course));
+        return Ok(new ApiResponseDTO<CourseResponseDTO>(null, course));
     }
 
     [HttpPost]
@@ -41,7 +41,7 @@ public class CourseController : ControllerBase
         }
 
         var createdCourse = await _courseService.CreateCourseAsync(createCourseDTO);
-        return Ok(new ApiResponseDTO<CourseDTO>(createdCourse));
+        return Ok(new ApiResponseDTO<CourseResponseDTO>(null, createdCourse));
     }
 
     [HttpPatch("{courseId:long}")]
@@ -55,7 +55,7 @@ public class CourseController : ControllerBase
         }
 
         var updatedCourse = await _courseService.UpdateCourseAsync(courseId, updateCourseDTO);
-        return Ok(new ApiResponseDTO<CourseDTO>(updatedCourse));
+        return Ok(new ApiResponseDTO<CourseResponseDTO>(null, updatedCourse));
     }
 
     [HttpDelete("{courseId:long}")]

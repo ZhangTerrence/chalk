@@ -9,7 +9,7 @@ namespace chalk.Server.Controllers;
 
 [ApiController]
 [Authorize(Roles = "User,Admin")]
-[Route("/api/[controller]")]
+[Route("/api/organization")]
 public class OrganizationController : ControllerBase
 {
     private readonly IOrganizationService _organizationService;
@@ -23,14 +23,14 @@ public class OrganizationController : ControllerBase
     public async Task<IActionResult> GetOrganizations()
     {
         var organizations = await _organizationService.GetOrganizationsAsync();
-        return Ok(new ApiResponseDTO<IEnumerable<OrganizationDTO>>(organizations));
+        return Ok(new ApiResponseDTO<IEnumerable<OrganizationResponseDTO>>(null, organizations));
     }
 
     [HttpGet("{organizationId:long}")]
     public async Task<IActionResult> GetOrganization([FromRoute] long organizationId)
     {
         var organization = await _organizationService.GetOrganizationAsync(organizationId);
-        return Ok(new ApiResponseDTO<OrganizationDTO>(organization));
+        return Ok(new ApiResponseDTO<OrganizationResponseDTO>(null, organization));
     }
 
     [HttpPost]
@@ -42,7 +42,7 @@ public class OrganizationController : ControllerBase
         }
 
         var createdOrganization = await _organizationService.CreateOrganizationAsync(createOrganizationDTO);
-        return Ok(new ApiResponseDTO<OrganizationDTO>(createdOrganization));
+        return Ok(new ApiResponseDTO<OrganizationResponseDTO>(null, createdOrganization));
     }
 
     [HttpPatch("{organizationId:long}")]
@@ -57,7 +57,7 @@ public class OrganizationController : ControllerBase
 
         var updatedOrganization =
             await _organizationService.UpdateOrganizationAsync(organizationId, updateOrganizationDTO);
-        return Ok(new ApiResponseDTO<OrganizationDTO>(updatedOrganization));
+        return Ok(new ApiResponseDTO<OrganizationResponseDTO>(null, updatedOrganization));
     }
 
     [HttpDelete("{organizationId:long}")]
@@ -77,6 +77,6 @@ public class OrganizationController : ControllerBase
 
         var userId = User.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier)!.Value;
         var invite = await _organizationService.SendInviteAsync(long.Parse(userId), sendInviteDTO);
-        return Ok(new ApiResponseDTO<UserOrganizationDTO>(invite));
+        return Ok(new ApiResponseDTO<UserOrganizationDTO>(null, invite));
     }
 }

@@ -2,9 +2,9 @@ using chalk.Server.Common;
 
 namespace chalk.Server.DTOs.Organization;
 
-public record OrganizationDTO
+public record OrganizationResponseDTO
 {
-    public OrganizationDTO(Entities.Organization organization)
+    public OrganizationResponseDTO(Entities.Organization organization)
     {
         Id = organization.Id;
         Name = organization.Name;

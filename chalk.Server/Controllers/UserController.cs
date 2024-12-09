@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace chalk.Server.Controllers;
 
 [ApiController]
-[Route("/api/[controller]")]
+[Route("/api/user")]
 public class UserController : ControllerBase
 {
     private readonly IUserService _userService;
@@ -46,7 +46,7 @@ public class UserController : ControllerBase
             IsEssential = true
         });
 
-        return Ok(new ApiResponseDTO<UserDTO>(createdUser));
+        return Ok(new ApiResponseDTO<UserResponseDTO>(null, createdUser));
     }
 
     [HttpPost("login")]
@@ -77,7 +77,7 @@ public class UserController : ControllerBase
             IsEssential = true
         });
 
-        return Ok(new ApiResponseDTO<UserDTO>(user));
+        return Ok(new ApiResponseDTO<UserResponseDTO>(null, user));
     }
 
     [HttpDelete("logout")]
@@ -93,7 +93,7 @@ public class UserController : ControllerBase
     public async Task<IActionResult> GetUsers()
     {
         var users = await _userService.GetUsersAsync();
-        return Ok(new ApiResponseDTO<IEnumerable<UserDTO>>(users));
+        return Ok(new ApiResponseDTO<IEnumerable<UserResponseDTO>>(null, users));
     }
 
     [HttpGet("{userId:long}")]
@@ -101,7 +101,7 @@ public class UserController : ControllerBase
     public async Task<IActionResult> GetUser([FromRoute] long userId)
     {
         var user = await _userService.GetUserAsync(userId);
-        return Ok(new ApiResponseDTO<UserDTO>(user));
+        return Ok(new ApiResponseDTO<UserResponseDTO>(null, user));
     }
 
     [HttpGet("invite")]
@@ -110,7 +110,7 @@ public class UserController : ControllerBase
     {
         var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)!.Value;
         var invites = await _userService.GetPendingInvitesAsync(long.Parse(userId));
-        return Ok(new ApiResponseDTO<IEnumerable<InviteDTO>>(invites));
+        return Ok(new ApiResponseDTO<IEnumerable<InviteDTO>>(null, invites));
     }
 
     [HttpPost("invite")]

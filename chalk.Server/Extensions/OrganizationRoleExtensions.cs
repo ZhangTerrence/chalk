@@ -17,8 +17,8 @@ public static class OrganizationRoleExtensions
         };
     }
 
-    public static OrganizationRoleDTO ToOrganizationRoleDTO(this OrganizationRole organizationRole)
+    public static OrganizationRoleResponseDTO ToOrganizationRoleDTO(this OrganizationRole organizationRole)
     {
-        return new OrganizationRoleDTO(organizationRole);
+        return new OrganizationRoleResponseDTO(organizationRole);
     }
 }

@@ -4,5 +4,6 @@ namespace chalk.Server.Services.Interfaces;
 
 public interface IOrganizationRoleService
 {
-    public Task<OrganizationRoleDTO> CreateOrganizationRoleAsync(CreateOrganizationRoleDTO createOrganizationRoleDTO);
+    public Task<OrganizationRoleResponseDTO> CreateOrganizationRoleAsync(
+        CreateOrganizationRoleDTO createOrganizationRoleDTO);
 }

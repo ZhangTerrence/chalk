@@ -40,9 +40,9 @@ public static class OrganizationExtensions
         return new InviteDTO(InviteType.Organization, userOrganization.Organization, null);
     }
 
-    public static OrganizationDTO ToOrganizationDTO(this Organization organization)
+    public static OrganizationResponseDTO ToOrganizationDTO(this Organization organization)
     {
-        return new OrganizationDTO(organization);
+        return new OrganizationResponseDTO(organization);
     }
 
     public static UserOrganizationDTO ToUserOrganizationDTO(this UserOrganization userOrganization)

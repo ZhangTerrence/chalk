@@ -4,13 +4,13 @@ namespace chalk.Server.Services.Interfaces;
 
 public interface IUserService
 {
-    public Task<(UserDTO, string, string)> RegisterUserAsync(RegisterDTO registerDTO);
+    public Task<(UserResponseDTO, string, string)> RegisterUserAsync(RegisterDTO registerDTO);
 
-    public Task<(UserDTO, string, string)> AuthenticateUserAsync(LoginDTO loginDTO);
+    public Task<(UserResponseDTO, string, string)> AuthenticateUserAsync(LoginDTO loginDTO);
 
-    public Task<IEnumerable<UserDTO>> GetUsersAsync();
+    public Task<IEnumerable<UserResponseDTO>> GetUsersAsync();
 
-    public Task<UserDTO> GetUserAsync(long userId);
+    public Task<UserResponseDTO> GetUserAsync(long userId);
 
     public Task<IEnumerable<InviteDTO>> GetPendingInvitesAsync(long userId);
 

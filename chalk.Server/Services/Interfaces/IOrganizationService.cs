@@ -4,13 +4,13 @@ namespace chalk.Server.Services.Interfaces;
 
 public interface IOrganizationService
 {
-    public Task<IEnumerable<OrganizationDTO>> GetOrganizationsAsync();
+    public Task<IEnumerable<OrganizationResponseDTO>> GetOrganizationsAsync();
 
-    public Task<OrganizationDTO> GetOrganizationAsync(long organizationId);
+    public Task<OrganizationResponseDTO> GetOrganizationAsync(long organizationId);
 
-    public Task<OrganizationDTO> CreateOrganizationAsync(CreateOrganizationDTO createOrganizationDTO);
+    public Task<OrganizationResponseDTO> CreateOrganizationAsync(CreateOrganizationDTO createOrganizationDTO);
 
-    public Task<OrganizationDTO> UpdateOrganizationAsync(
+    public Task<OrganizationResponseDTO> UpdateOrganizationAsync(
         long organizationId,
         UpdateOrganizationDTO updateOrganizationDTO);
 

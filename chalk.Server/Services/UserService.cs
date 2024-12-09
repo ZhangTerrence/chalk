@@ -29,7 +29,7 @@ public class UserService : IUserService
         _tokenService = tokenService;
     }
 
-    public async Task<(UserDTO, string, string)> RegisterUserAsync(RegisterDTO registerDTO)
+    public async Task<(UserResponseDTO, string, string)> RegisterUserAsync(RegisterDTO registerDTO)
     {
         if (await _userManager.Users.FirstOrDefaultAsync(e => e.Email == registerDTO.Email) is not null)
         {
@@ -75,7 +75,7 @@ public class UserService : IUserService
         return (user.ToUserDTO(), accessToken, refreshToken);
     }
 
-    public async Task<(UserDTO, string, string)> AuthenticateUserAsync(LoginDTO loginDTO)
+    public async Task<(UserResponseDTO, string, string)> AuthenticateUserAsync(LoginDTO loginDTO)
     {
         var user = await _userManager.Users.FirstOrDefaultAsync(e => e.Email == loginDTO.Email);
         if (user is null)
@@ -105,7 +105,7 @@ public class UserService : IUserService
         return (user.ToUserDTO(), accessToken, refreshToken);
     }
 
-    public async Task<IEnumerable<UserDTO>> GetUsersAsync()
+    public async Task<IEnumerable<UserResponseDTO>> GetUsersAsync()
     {
         return await _userManager.Users
             .Include(e => e.UserOrganizations).ThenInclude(e => e.Organization)
@@ -115,7 +115,7 @@ public class UserService : IUserService
             .ToListAsync();
     }
 
-    public async Task<UserDTO> GetUserAsync(long userId)
+    public async Task<UserResponseDTO> GetUserAsync(long userId)
     {
         var user = await _userManager.Users
             .Include(e => e.UserOrganizations).ThenInclude(e => e.Organization)

@@ -1,8 +1,8 @@
 namespace chalk.Server.DTOs.OrganizationRole;
 
-public record OrganizationRoleDTO
+public record OrganizationRoleResponseDTO
 {
-    public OrganizationRoleDTO(Entities.OrganizationRole organizationRole)
+    public OrganizationRoleResponseDTO(Entities.OrganizationRole organizationRole)
     {
         Id = organizationRole.Id;
         Name = organizationRole.Name;

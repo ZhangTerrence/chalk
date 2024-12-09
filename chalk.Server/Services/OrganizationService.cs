@@ -18,7 +18,7 @@ public class OrganizationService : IOrganizationService
         _context = context;
     }
 
-    public async Task<IEnumerable<OrganizationDTO>> GetOrganizationsAsync()
+    public async Task<IEnumerable<OrganizationResponseDTO>> GetOrganizationsAsync()
     {
         return await _context.Organizations
             .Include(e => e.Owner)
@@ -30,7 +30,7 @@ public class OrganizationService : IOrganizationService
     }
 
 
-    public async Task<OrganizationDTO> GetOrganizationAsync(long organizationId)
+    public async Task<OrganizationResponseDTO> GetOrganizationAsync(long organizationId)
     {
         var organization = await _context.Organizations
             .Include(e => e.Owner)
@@ -46,7 +46,7 @@ public class OrganizationService : IOrganizationService
         return organization.ToOrganizationDTO();
     }
 
-    public async Task<OrganizationDTO> CreateOrganizationAsync(CreateOrganizationDTO createOrganizationDTO)
+    public async Task<OrganizationResponseDTO> CreateOrganizationAsync(CreateOrganizationDTO createOrganizationDTO)
     {
         var user = await _context.Users.FindAsync(createOrganizationDTO.OwnerId);
         if (user is null)
@@ -95,7 +95,7 @@ public class OrganizationService : IOrganizationService
         return await GetOrganizationAsync(createdOrganization.Entity.Id);
     }
 
-    public async Task<OrganizationDTO> UpdateOrganizationAsync(
+    public async Task<OrganizationResponseDTO> UpdateOrganizationAsync(
         long organizationId,
         UpdateOrganizationDTO updateOrganizationDTO)
     {
