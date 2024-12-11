@@ -22,10 +22,10 @@ public record UserResponseDTO(
     string? ProfilePicture,
     [property: JsonRequired]
     [property: JsonPropertyName("createdDate")]
-    DateTime CreatedDate,
+    string CreatedDate,
     [property: JsonRequired]
     [property: JsonPropertyName("updatedDate")]
-    DateTime UpdatedDate,
+    string UpdatedDate,
     [property: JsonRequired]
     [property: JsonPropertyName("organizations")]
     IEnumerable<UserResponseDTO.OrganizationDTO> Organizations,

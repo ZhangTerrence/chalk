@@ -46,7 +46,7 @@ public class UserController : ControllerBase
             IsEssential = true
         });
 
-        return Ok(new ApiResponseDTO<UserResponseDTO>(null, createdUser));
+        return Created(nameof(Register), new ApiResponseDTO<UserResponseDTO>(null, createdUser));
     }
 
     [HttpPost("login")]
@@ -85,7 +85,7 @@ public class UserController : ControllerBase
     public IActionResult Logout()
     {
         HttpContext.Response.Cookies.Delete("AccessToken");
-        return Ok();
+        return NoContent();
     }
 
     [HttpGet]

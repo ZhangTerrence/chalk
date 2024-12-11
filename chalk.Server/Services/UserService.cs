@@ -33,7 +33,7 @@ public class UserService : IUserService
     {
         if (await _userManager.Users.FirstOrDefaultAsync(e => e.Email == registerDTO.Email) is not null)
         {
-            throw new BadHttpRequestException("User already exists.", StatusCodes.Status400BadRequest);
+            throw new BadHttpRequestException("User already exists.", StatusCodes.Status409Conflict);
         }
 
         var user = registerDTO.ToUser();
@@ -72,7 +72,7 @@ public class UserService : IUserService
             throw new BadHttpRequestException("Unable to update user.", StatusCodes.Status500InternalServerError);
         }
 
-        return (user.ToUserDTO(), accessToken, refreshToken);
+        return (user.ToUserResponseDTO(), accessToken, refreshToken);
     }
 
     public async Task<(UserResponseDTO, string, string)> AuthenticateUserAsync(LoginDTO loginDTO)
@@ -102,7 +102,7 @@ public class UserService : IUserService
             throw new BadHttpRequestException("Unable to update user.", StatusCodes.Status500InternalServerError);
         }
 
-        return (user.ToUserDTO(), accessToken, refreshToken);
+        return (user.ToUserResponseDTO(), accessToken, refreshToken);
     }
 
     public async Task<IEnumerable<UserResponseDTO>> GetUsersAsync()
@@ -111,7 +111,7 @@ public class UserService : IUserService
             .Include(e => e.UserOrganizations).ThenInclude(e => e.Organization)
             .Include(e => e.UserCourses).ThenInclude(e => e.Course)
             .Include(e => e.ChannelParticipants).ThenInclude(e => e.Channel)
-            .Select(e => e.ToUserDTO())
+            .Select(e => e.ToUserResponseDTO())
             .ToListAsync();
     }
 
@@ -127,7 +127,7 @@ public class UserService : IUserService
             throw new BadHttpRequestException("User not found.", StatusCodes.Status404NotFound);
         }
 
-        return user.ToUserDTO();
+        return user.ToUserResponseDTO();
     }
 
     public async Task<IEnumerable<InviteDTO>> GetPendingInvitesAsync(long userId)

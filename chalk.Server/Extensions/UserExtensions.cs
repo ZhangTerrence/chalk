@@ -1,3 +1,4 @@
+using System.Globalization;
 using chalk.Server.DTOs.User;
 using chalk.Server.Entities;
 
@@ -15,12 +16,12 @@ public static class UserExtensions
             FullName = $"{registerDTO.FirstName} {registerDTO.LastName}",
             DisplayName = registerDTO.DisplayName,
             UserName = registerDTO.Email,
-            CreatedDate = DateTime.Now.ToUniversalTime(),
-            UpdatedDate = DateTime.Now.ToUniversalTime()
+            CreatedDate = DateTime.UtcNow,
+            UpdatedDate = DateTime.UtcNow
         };
     }
 
-    public static UserResponseDTO ToUserDTO(this User user)
+    public static UserResponseDTO ToUserResponseDTO(this User user)
     {
         return new UserResponseDTO(
             user.Id,
@@ -28,8 +29,8 @@ public static class UserExtensions
             user.FullName,
             user.DisplayName,
             user.ProfilePicture,
-            user.CreatedDate,
-            user.UpdatedDate,
+            user.CreatedDate.ToString(CultureInfo.CurrentCulture),
+            user.UpdatedDate.ToString(CultureInfo.CurrentCulture),
             user.UserOrganizations
                 .Select(e => new UserResponseDTO.OrganizationDTO(e.Organization.Id, e.Organization.Name))
                 .ToList(),
