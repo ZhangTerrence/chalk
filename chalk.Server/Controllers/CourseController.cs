@@ -8,7 +8,7 @@ namespace chalk.Server.Controllers;
 
 [ApiController]
 [Route("/api/course")]
-[Authorize(Roles = "User,Admin")]
+[Authorize]
 public class CourseController : ControllerBase
 {
     private readonly ICourseService _courseService;

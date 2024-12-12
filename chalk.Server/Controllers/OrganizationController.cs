@@ -8,7 +8,7 @@ namespace chalk.Server.Controllers;
 
 [ApiController]
 [Route("/api/organization")]
-[Authorize(Roles = "User,Admin")]
+[Authorize]
 public class OrganizationController : ControllerBase
 {
     private readonly IOrganizationService _organizationService;

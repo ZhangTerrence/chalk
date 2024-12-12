@@ -7,7 +7,7 @@ namespace chalk.Server.Controllers;
 
 [ApiController]
 [Route("/api/organization-role")]
-[Authorize(Roles = "User,Admin")]
+[Authorize]
 public class OrganizationRoleController : ControllerBase
 {
     public OrganizationRoleController()

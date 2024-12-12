@@ -10,5 +10,5 @@ public interface IAuthService
 
     public Task<UserResponseDTO> AuthenticateUserAsync(LoginDTO loginDTO);
 
-    public Task RefreshTokenAsync(ClaimsPrincipal identity, string? refreshToken);
+    public Task RefreshTokensAsync(ClaimsPrincipal identity, string? refreshToken);
 }

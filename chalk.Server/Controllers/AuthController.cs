@@ -18,7 +18,6 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("register")]
-    [AllowAnonymous]
     public async Task<IActionResult> Register([FromBody] RegisterDTO registerDTO)
     {
         if (!ModelState.IsValid)
@@ -31,7 +30,6 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("login")]
-    [AllowAnonymous]
     public async Task<IActionResult> Login([FromBody] LoginDTO loginDTO)
     {
         if (!ModelState.IsValid)
@@ -44,7 +42,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpDelete("logout")]
-    [Authorize(Roles = "User,Admin")]
+    [Authorize]
     public IActionResult Logout()
     {
         HttpContext.Response.Cookies.Delete("AccessToken");
@@ -53,7 +51,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("refresh")]
-    [Authorize(Roles = "User,Admin")]
+    [Authorize]
     public async Task<IActionResult> RefreshTokens()
     {
         if (!ModelState.IsValid)
@@ -62,7 +60,7 @@ public class AuthController : ControllerBase
         }
 
         Request.HttpContext.Items.TryGetValue("RefreshToken", out var refreshToken);
-        await _authService.RefreshTokenAsync(User, refreshToken as string);
+        await _authService.RefreshTokensAsync(User, refreshToken as string);
         return NoContent();
     }
 }

@@ -126,7 +126,7 @@ public class AuthService : IAuthService
         return user.ToUserResponseDTO();
     }
 
-    public async Task RefreshTokenAsync(ClaimsPrincipal identity, string? refreshToken)
+    public async Task RefreshTokensAsync(ClaimsPrincipal identity, string? refreshToken)
     {
         var currentUserId = identity.FindFirstValue(ClaimTypes.NameIdentifier);
         if (currentUserId is null || refreshToken is null)
@@ -182,14 +182,6 @@ public class AuthService : IAuthService
         return tokenHandler.WriteToken(token);
     }
 
-    private static string CreateRefreshToken()
-    {
-        var bytes = new byte[64];
-        using var rng = RandomNumberGenerator.Create();
-        rng.GetBytes(bytes);
-        return Convert.ToBase64String(bytes);
-    }
-
     private static ClaimsIdentity CreateClaims(long userId, string displayName, IEnumerable<string> roles)
     {
         var claims = new ClaimsIdentity();
@@ -197,6 +189,14 @@ public class AuthService : IAuthService
         claims.AddClaim(new Claim(ClaimTypes.Name, displayName));
         claims.AddClaims(roles.Select(role => new Claim(ClaimTypes.Role, role)));
         return claims;
+    }
+
+    private static string CreateRefreshToken()
+    {
+        var bytes = new byte[64];
+        using var rng = RandomNumberGenerator.Create();
+        rng.GetBytes(bytes);
+        return Convert.ToBase64String(bytes);
     }
 
     private void AddCookie(TokenType tokenType, string token)
