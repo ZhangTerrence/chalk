@@ -12,29 +12,15 @@ public class AssignmentConfiguration : IEntityTypeConfiguration<Assignment>
 
         builder.HasKey(e => e.Id);
 
-        builder.Property(e => e.Id)
-            .ValueGeneratedOnAdd();
-        builder.Property(e => e.Title)
-            .HasMaxLength(31)
-            .IsRequired();
-        builder.Property(e => e.Description)
-            .HasDefaultValue(null)
-            .HasMaxLength(255);
-        builder.Property(e => e.Open)
-            .HasDefaultValue(true)
-            .IsRequired();
-        builder.Property(e => e.MaxGrade)
-            .HasDefaultValue(null);
-        builder.Property(e => e.DueDate)
-            .HasDefaultValue(null);
-        builder.Property(e => e.AllowedAttempts)
-            .HasDefaultValue(null);
-        builder.Property(e => e.CreatedDate)
-            .HasDefaultValue(DateTime.UtcNow)
-            .IsRequired();
-        builder.Property(e => e.UpdatedDate)
-            .HasDefaultValue(DateTime.UtcNow)
-            .IsRequired();
+        builder.Property(e => e.Id).ValueGeneratedOnAdd();
+        builder.Property(e => e.Name).HasMaxLength(31).IsRequired();
+        builder.Property(e => e.Description).HasMaxLength(255);
+        builder.Property(e => e.Open).IsRequired();
+        builder.Property(e => e.MaxGrade);
+        builder.Property(e => e.DueDate);
+        builder.Property(e => e.AllowedAttempts);
+        builder.Property(e => e.CreatedDate).IsRequired();
+        builder.Property(e => e.UpdatedDate).IsRequired();
 
         builder
             .HasOne(e => e.Course)

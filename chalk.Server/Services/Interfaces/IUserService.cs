@@ -1,18 +1,20 @@
-using chalk.Server.DTOs.User;
+using System.Security.Claims;
+using chalk.Server.DTOs;
+using chalk.Server.DTOs.Responses;
 
 namespace chalk.Server.Services.Interfaces;
 
 public interface IUserService
 {
-    public Task<(UserResponseDTO, string, string)> RegisterUserAsync(RegisterDTO registerDTO);
+    public Task<AuthResponseDTO> RegisterUserAsync(RegisterDTO registerDTO);
 
-    public Task<(UserResponseDTO, string, string)> AuthenticateUserAsync(LoginDTO loginDTO);
+    public Task<AuthResponseDTO> AuthenticateUserAsync(LoginDTO loginDTO);
 
     public Task<IEnumerable<UserResponseDTO>> GetUsersAsync();
 
     public Task<UserResponseDTO> GetUserAsync(long userId);
 
-    public Task<IEnumerable<InviteDTO>> GetPendingInvitesAsync(long userId);
+    public Task<IEnumerable<InviteResponseDTO>> GetPendingInvitesAsync(long userId, ClaimsPrincipal authUser);
 
-    public Task RespondInviteAsync(InviteResponseDTO inviteResponseDTO);
+    public Task RespondToInviteAsync(RespondToInviteDTO respondToInviteDTO);
 }

@@ -14,10 +14,9 @@ using Microsoft.IdentityModel.Tokens;
 var builder = WebApplication.CreateBuilder(args);
 
 // Connects PostgreSQL database
-builder.Services.AddDbContext<DatabaseContext>(options =>
-    options
-        .UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
-        .UseSnakeCaseNamingConvention());
+builder.Services.AddDbContext<DatabaseContext>(options => options
+    .UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
+    .UseSnakeCaseNamingConvention());
 builder.Services
     .AddIdentity<User, IdentityRole<long>>()
     .AddEntityFrameworkStores<DatabaseContext>();
@@ -50,17 +49,6 @@ builder.Services
             ValidIssuer = builder.Configuration["Jwt:Issuer"],
             ValidAudience = builder.Configuration["Jwt:Audience"],
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
-        };
-        options.Events = new JwtBearerEvents
-        {
-            OnMessageReceived = context =>
-            {
-                var accessToken = context.Request.Cookies["AccessToken"];
-                var refreshToken = context.Request.Cookies["RefreshToken"];
-                context.Token = accessToken;
-                context.HttpContext.Items.Add("RefreshToken", refreshToken);
-                return Task.CompletedTask;
-            }
         };
     });
 builder.Services.AddAuthorization();

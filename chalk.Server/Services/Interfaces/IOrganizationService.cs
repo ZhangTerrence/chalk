@@ -1,4 +1,6 @@
-using chalk.Server.DTOs.Organization;
+using System.Security.Claims;
+using chalk.Server.DTOs;
+using chalk.Server.DTOs.Responses;
 
 namespace chalk.Server.Services.Interfaces;
 
@@ -16,5 +18,5 @@ public interface IOrganizationService
 
     public Task DeleteOrganizationAsync(long organizationId);
 
-    public Task<UserOrganizationDTO> SendInviteAsync(long senderId, SendInviteDTO sendInviteDTO);
+    public Task SendInviteAsync(SendInviteDTO sendInviteDTO, ClaimsPrincipal authUser);
 }

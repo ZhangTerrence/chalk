@@ -1,4 +1,4 @@
-using chalk.Server.DTOs;
+using chalk.Server.DTOs.Responses;
 using Microsoft.AspNetCore.Diagnostics;
 
 namespace chalk.Server.Middleware;
@@ -20,7 +20,8 @@ public class ExceptionMiddleware : IExceptionHandler
                 break;
         }
 
-        await httpContext.Response.WriteAsJsonAsync(new ApiResponseDTO<object>([exception.Message], null), cancellationToken);
+        await httpContext.Response.WriteAsJsonAsync(new ApiResponseDTO<object>([exception.Message], null),
+            cancellationToken);
         return true;
     }
 }

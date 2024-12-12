@@ -12,6 +12,8 @@ public class ChannelParticipantConfiguration : IEntityTypeConfiguration<ChannelP
 
         builder.HasKey(e => new { e.UserId, e.ChannelId });
 
+        builder.Property(e => e.JoinedDate).IsRequired();
+
         builder
             .HasOne(e => e.User)
             .WithMany(e => e.ChannelParticipants)

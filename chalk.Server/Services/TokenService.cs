@@ -18,11 +18,11 @@ public class TokenService : ITokenService
         _securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));
     }
 
-    public string CreateAccessToken(long userId, string fullName, IEnumerable<string> roles)
+    public string CreateAccessToken(long userId, string displayName, IEnumerable<string> roles)
     {
         var tokenDescriptor = new SecurityTokenDescriptor
         {
-            Subject = CreateClaims(userId, fullName, roles),
+            Subject = CreateClaims(userId, displayName, roles),
             Issuer = _configuration["Jwt:Issuer"],
             Audience = _configuration["Jwt:Audience"],
             Expires = DateTime.UtcNow.AddHours(1).ToUniversalTime(),

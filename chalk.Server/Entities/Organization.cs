@@ -4,10 +4,10 @@ public class Organization
 {
     public long Id { get; set; }
     public required string Name { get; set; }
-    public string? ProfilePicture { get; set; }
+    public string? ProfilePictureUri { get; set; }
     public string? Description { get; set; }
-    public DateTime CreatedDate { get; set; }
-    public DateTime UpdatedDate { get; set; }
+    public required DateTime CreatedDate { get; set; }
+    public required DateTime UpdatedDate { get; set; }
 
     public long OwnerId { get; set; }
 

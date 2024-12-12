@@ -1,4 +1,6 @@
-using chalk.Server.DTOs.OrganizationRole;
+using System.Globalization;
+using chalk.Server.DTOs;
+using chalk.Server.DTOs.Responses;
 using chalk.Server.Entities;
 
 namespace chalk.Server.Extensions;
@@ -17,8 +19,15 @@ public static class OrganizationRoleExtensions
         };
     }
 
-    public static OrganizationRoleResponseDTO ToOrganizationRoleDTO(this OrganizationRole organizationRole)
+    public static OrganizationRoleResponseDTO ToOrganizationRoleResponseDTO(this OrganizationRole organizationRole)
     {
-        return new OrganizationRoleResponseDTO(organizationRole);
+        return new OrganizationRoleResponseDTO(
+            organizationRole.Id,
+            organizationRole.Name,
+            organizationRole.Description,
+            organizationRole.Permissions,
+            organizationRole.CreatedDate.ToString(CultureInfo.CurrentCulture),
+            organizationRole.UpdatedDate.ToString(CultureInfo.CurrentCulture)
+        );
     }
 }

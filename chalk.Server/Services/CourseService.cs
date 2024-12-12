@@ -1,5 +1,6 @@
 using chalk.Server.Data;
-using chalk.Server.DTOs.Course;
+using chalk.Server.DTOs;
+using chalk.Server.DTOs.Responses;
 using chalk.Server.Extensions;
 using chalk.Server.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -17,7 +18,7 @@ public class CourseService : ICourseService
 
     public async Task<IEnumerable<CourseResponseDTO>> GetCoursesAsync()
     {
-        return await _context.Courses.Select(e => e.ToCourseDTO()).ToListAsync();
+        return await _context.Courses.Select(e => e.ToCourseResponseDTO()).ToListAsync();
     }
 
     public async Task<CourseResponseDTO> GetCourseAsync(long courseId)
@@ -28,7 +29,7 @@ public class CourseService : ICourseService
             throw new BadHttpRequestException("Course not found.", StatusCodes.Status404NotFound);
         }
 
-        return course.ToCourseDTO();
+        return course.ToCourseResponseDTO();
     }
 
     public async Task<CourseResponseDTO> CreateCourseAsync(CreateCourseDTO createCourseDto)
@@ -43,7 +44,7 @@ public class CourseService : ICourseService
         await _context.Courses.AddAsync(course);
 
         await _context.SaveChangesAsync();
-        return course.ToCourseDTO();
+        return course.ToCourseResponseDTO();
     }
 
     public async Task<CourseResponseDTO> UpdateCourseAsync(long courseId, UpdateCourseDTO updateCourseDTO)
@@ -81,7 +82,7 @@ public class CourseService : ICourseService
         }
 
         await _context.SaveChangesAsync();
-        return course.ToCourseDTO();
+        return course.ToCourseResponseDTO();
     }
 
     public async Task DeleteCourseAsync(long courseId)

@@ -12,9 +12,7 @@ public class ChannelRolePermissionConfiguration : IEntityTypeConfiguration<Chann
 
         builder.HasKey(e => new { e.ChannelId, e.CourseRoleId });
 
-        builder.Property(e => e.Permissions)
-            .HasDefaultValue(0L)
-            .IsRequired();
+        builder.Property(e => e.Permissions).IsRequired();
 
         builder
             .HasOne(e => e.Channel)

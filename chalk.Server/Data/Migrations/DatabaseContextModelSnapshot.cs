@@ -204,9 +204,7 @@ namespace chalk.Server.Data.Migrations
                         .HasColumnName("course_id");
 
                     b.Property<DateTime>("CreatedDate")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 12, 5, 0, 1, 59, 579, DateTimeKind.Utc).AddTicks(9113))
                         .HasColumnName("created_date");
 
                     b.Property<string>("Description")
@@ -222,22 +220,18 @@ namespace chalk.Server.Data.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("max_grade");
 
-                    b.Property<bool>("Open")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(true)
-                        .HasColumnName("open");
-
-                    b.Property<string>("Title")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(31)
                         .HasColumnType("character varying(31)")
-                        .HasColumnName("title");
+                        .HasColumnName("name");
+
+                    b.Property<bool>("Open")
+                        .HasColumnType("boolean")
+                        .HasColumnName("open");
 
                     b.Property<DateTime>("UpdatedDate")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 12, 5, 0, 1, 59, 579, DateTimeKind.Utc).AddTicks(9358))
                         .HasColumnName("updated_date");
 
                     b.HasKey("Id")
@@ -267,9 +261,7 @@ namespace chalk.Server.Data.Migrations
                         .HasColumnName("course_module_id");
 
                     b.Property<DateTime>("CreatedDate")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 12, 5, 0, 1, 59, 584, DateTimeKind.Utc).AddTicks(27))
                         .HasColumnName("created_date");
 
                     b.Property<string>("Name")
@@ -283,9 +275,7 @@ namespace chalk.Server.Data.Migrations
                         .HasColumnName("submission_id");
 
                     b.Property<DateTime>("UpdatedDate")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 12, 5, 0, 1, 59, 584, DateTimeKind.Utc).AddTicks(418))
                         .HasColumnName("updated_date");
 
                     b.Property<string>("Uri")
@@ -322,9 +312,7 @@ namespace chalk.Server.Data.Migrations
                         .HasColumnName("course_id");
 
                     b.Property<DateTime>("CreatedDate")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 12, 5, 0, 1, 59, 579, DateTimeKind.Utc).AddTicks(3823))
                         .HasColumnName("created_date");
 
                     b.Property<string>("Description")
@@ -333,15 +321,12 @@ namespace chalk.Server.Data.Migrations
                         .HasColumnName("description");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasMaxLength(31)
                         .HasColumnType("character varying(31)")
                         .HasColumnName("name");
 
                     b.Property<DateTime>("UpdatedDate")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 12, 5, 0, 1, 59, 579, DateTimeKind.Utc).AddTicks(4158))
                         .HasColumnName("updated_date");
 
                     b.HasKey("Id")
@@ -394,9 +379,7 @@ namespace chalk.Server.Data.Migrations
                         .HasColumnName("course_role_id");
 
                     b.Property<long>("Permissions")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("bigint")
-                        .HasDefaultValue(0L)
                         .HasColumnName("permissions");
 
                     b.HasKey("ChannelId", "CourseRoleId")
@@ -418,15 +401,12 @@ namespace chalk.Server.Data.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Code")
-                        .IsRequired()
                         .HasMaxLength(31)
                         .HasColumnType("character varying(31)")
                         .HasColumnName("code");
 
                     b.Property<DateTime>("CreatedDate")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 12, 5, 0, 1, 59, 578, DateTimeKind.Utc).AddTicks(8139))
                         .HasColumnName("created_date");
 
                     b.Property<string>("Description")
@@ -445,9 +425,7 @@ namespace chalk.Server.Data.Migrations
                         .HasColumnName("organization_id");
 
                     b.Property<DateTime>("UpdatedDate")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 12, 5, 0, 1, 59, 578, DateTimeKind.Utc).AddTicks(8470))
                         .HasColumnName("updated_date");
 
                     b.HasKey("Id")
@@ -473,9 +451,7 @@ namespace chalk.Server.Data.Migrations
                         .HasColumnName("course_id");
 
                     b.Property<DateTime>("CreatedDate")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 12, 5, 0, 1, 59, 584, DateTimeKind.Utc).AddTicks(2932))
                         .HasColumnName("created_date");
 
                     b.Property<string>("Description")
@@ -490,9 +466,7 @@ namespace chalk.Server.Data.Migrations
                         .HasColumnName("name");
 
                     b.Property<DateTime>("UpdatedDate")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 12, 5, 0, 1, 59, 584, DateTimeKind.Utc).AddTicks(3233))
                         .HasColumnName("updated_date");
 
                     b.HasKey("Id")
@@ -518,9 +492,7 @@ namespace chalk.Server.Data.Migrations
                         .HasColumnName("course_id");
 
                     b.Property<DateTime>("CreatedDate")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 12, 5, 0, 1, 59, 581, DateTimeKind.Utc).AddTicks(4067))
                         .HasColumnName("created_date");
 
                     b.Property<string>("Description")
@@ -535,15 +507,11 @@ namespace chalk.Server.Data.Migrations
                         .HasColumnName("name");
 
                     b.Property<long>("Permissions")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("bigint")
-                        .HasDefaultValue(0L)
                         .HasColumnName("permissions");
 
                     b.Property<DateTime>("UpdatedDate")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 12, 5, 0, 1, 59, 581, DateTimeKind.Utc).AddTicks(4280))
                         .HasColumnName("updated_date");
 
                     b.HasKey("Id")
@@ -569,9 +537,7 @@ namespace chalk.Server.Data.Migrations
                         .HasColumnName("channel_id");
 
                     b.Property<DateTime>("CreatedDate")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 12, 5, 0, 1, 59, 584, DateTimeKind.Utc).AddTicks(4297))
                         .HasColumnName("created_date");
 
                     b.Property<string>("Text")
@@ -581,9 +547,7 @@ namespace chalk.Server.Data.Migrations
                         .HasColumnName("text");
 
                     b.Property<DateTime>("UpdatedDate")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 12, 5, 0, 1, 59, 584, DateTimeKind.Utc).AddTicks(4587))
                         .HasColumnName("updated_date");
 
                     b.Property<long>("UserId")
@@ -609,9 +573,7 @@ namespace chalk.Server.Data.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("CreatedDate")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 12, 5, 0, 1, 59, 578, DateTimeKind.Utc).AddTicks(3733))
                         .HasColumnName("created_date");
 
                     b.Property<string>("Description")
@@ -629,14 +591,12 @@ namespace chalk.Server.Data.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("owner_id");
 
-                    b.Property<string>("ProfilePicture")
+                    b.Property<string>("ProfilePictureUri")
                         .HasColumnType("text")
-                        .HasColumnName("profile_picture");
+                        .HasColumnName("profile_picture_uri");
 
                     b.Property<DateTime>("UpdatedDate")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 12, 5, 0, 1, 59, 578, DateTimeKind.Utc).AddTicks(4034))
                         .HasColumnName("updated_date");
 
                     b.HasKey("Id")
@@ -658,9 +618,7 @@ namespace chalk.Server.Data.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("CreatedDate")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 12, 5, 0, 1, 59, 580, DateTimeKind.Utc).AddTicks(8736))
                         .HasColumnName("created_date");
 
                     b.Property<string>("Description")
@@ -679,15 +637,11 @@ namespace chalk.Server.Data.Migrations
                         .HasColumnName("organization_id");
 
                     b.Property<long>("Permissions")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("bigint")
-                        .HasDefaultValue(0L)
                         .HasColumnName("permissions");
 
                     b.Property<DateTime>("UpdatedDate")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 12, 5, 0, 1, 59, 580, DateTimeKind.Utc).AddTicks(8952))
                         .HasColumnName("updated_date");
 
                     b.HasKey("Id")
@@ -713,13 +667,12 @@ namespace chalk.Server.Data.Migrations
                         .HasColumnName("assignment_id");
 
                     b.Property<DateTime>("CreatedDate")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 12, 5, 0, 1, 59, 580, DateTimeKind.Utc).AddTicks(2429))
                         .HasColumnName("created_date");
 
                     b.Property<string>("Feedback")
-                        .HasColumnType("text")
+                        .HasMaxLength(1023)
+                        .HasColumnType("character varying(1023)")
                         .HasColumnName("feedback");
 
                     b.Property<int?>("Grade")
@@ -727,9 +680,7 @@ namespace chalk.Server.Data.Migrations
                         .HasColumnName("grade");
 
                     b.Property<DateTime>("UpdatedDate")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 12, 5, 0, 1, 59, 580, DateTimeKind.Utc).AddTicks(2825))
                         .HasColumnName("updated_date");
 
                     b.Property<long>("UserId")
@@ -767,9 +718,7 @@ namespace chalk.Server.Data.Migrations
                         .HasColumnName("concurrency_stamp");
 
                     b.Property<DateTime>("CreatedDate")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 12, 5, 0, 1, 59, 577, DateTimeKind.Utc).AddTicks(9492))
                         .HasColumnName("created_date");
 
                     b.Property<string>("Description")
@@ -797,12 +746,6 @@ namespace chalk.Server.Data.Migrations
                         .HasMaxLength(31)
                         .HasColumnType("character varying(31)")
                         .HasColumnName("first_name");
-
-                    b.Property<string>("FullName")
-                        .IsRequired()
-                        .HasMaxLength(63)
-                        .HasColumnType("character varying(63)")
-                        .HasColumnName("full_name");
 
                     b.Property<string>("LastName")
                         .IsRequired()
@@ -840,9 +783,9 @@ namespace chalk.Server.Data.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("phone_number_confirmed");
 
-                    b.Property<string>("ProfilePicture")
+                    b.Property<string>("ProfilePictureUri")
                         .HasColumnType("text")
-                        .HasColumnName("profile_picture");
+                        .HasColumnName("profile_picture_uri");
 
                     b.Property<string>("RefreshToken")
                         .HasColumnType("text")
@@ -861,9 +804,7 @@ namespace chalk.Server.Data.Migrations
                         .HasColumnName("two_factor_enabled");
 
                     b.Property<DateTime>("UpdatedDate")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 12, 5, 0, 1, 59, 577, DateTimeKind.Utc).AddTicks(9841))
                         .HasColumnName("updated_date");
 
                     b.Property<string>("UserName")

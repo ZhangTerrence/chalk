@@ -1,6 +1,7 @@
+using System.Globalization;
 using chalk.Server.Common;
-using chalk.Server.DTOs.Course;
-using chalk.Server.DTOs.User;
+using chalk.Server.DTOs;
+using chalk.Server.DTOs.Responses;
 using chalk.Server.Entities;
 
 namespace chalk.Server.Extensions;
@@ -20,13 +21,35 @@ public static class CourseExtensions
         };
     }
 
-    public static InviteDTO ToInviteDTO(this UserCourse userCourse)
+    public static InviteResponseDTO ToInviteResponseDTO(this UserCourse userCourse)
     {
-        return new InviteDTO(InviteType.Course, null, userCourse.Course);
+        return new InviteResponseDTO(
+            InviteType.Course,
+            null,
+            new InviteResponseDTO.CourseDTO(userCourse.Course.Id, userCourse.Course.Name, userCourse.Course.Code)
+        );
     }
 
-    public static CourseResponseDTO ToCourseDTO(this Course course)
+    public static CourseResponseDTO ToCourseResponseDTO(this Course course)
     {
-        return new CourseResponseDTO(course);
+        return new CourseResponseDTO(
+            course.Id,
+            course.Name,
+            course.Code,
+            course.Description,
+            course.CreatedDate.ToString(CultureInfo.CurrentCulture),
+            course.UpdatedDate.ToString(CultureInfo.CurrentCulture),
+            new CourseResponseDTO.OrganizationDTO(course.Organization.Id, course.Organization.Name),
+            course.UserCourses
+                .Select(e => new CourseResponseDTO.UserDTO(
+                    e.User.Id,
+                    e.User.DisplayName,
+                    e.JoinedDate?.ToString(CultureInfo.CurrentCulture)
+                ))
+                .ToList(),
+            course.CourseRoles
+                .Select(e => new CourseResponseDTO.CourseRoleDTO(e.Id, e.Name, e.Permissions))
+                .ToList()
+        );
     }
 }

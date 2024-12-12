@@ -1,6 +1,8 @@
+using System.Security.Claims;
 using chalk.Server.Common;
 using chalk.Server.Data;
-using chalk.Server.DTOs.User;
+using chalk.Server.DTOs;
+using chalk.Server.DTOs.Responses;
 using chalk.Server.Entities;
 using chalk.Server.Extensions;
 using chalk.Server.Services.Interfaces;
@@ -29,9 +31,10 @@ public class UserService : IUserService
         _tokenService = tokenService;
     }
 
-    public async Task<(UserResponseDTO, string, string)> RegisterUserAsync(RegisterDTO registerDTO)
+    public async Task<AuthResponseDTO> RegisterUserAsync(RegisterDTO registerDTO)
     {
-        if (await _userManager.Users.FirstOrDefaultAsync(e => e.Email == registerDTO.Email) is not null)
+        var existingUser = await _userManager.FindByEmailAsync(registerDTO.Email);
+        if (existingUser is not null)
         {
             throw new BadHttpRequestException("User already exists.", StatusCodes.Status409Conflict);
         }
@@ -44,9 +47,9 @@ public class UserService : IUserService
             throw new BadHttpRequestException("Unable to create user.", StatusCodes.Status500InternalServerError);
         }
 
-        if (!await _roleManager.RoleExistsAsync(nameof(Role.User)))
+        if (!await _roleManager.RoleExistsAsync("User"))
         {
-            var createdRole = await _roleManager.CreateAsync(new IdentityRole<long>(nameof(Role.User)));
+            var createdRole = await _roleManager.CreateAsync(new IdentityRole<long>("User"));
             if (!createdRole.Succeeded)
             {
                 throw new BadHttpRequestException("Unable to create 'User' role.",
@@ -54,14 +57,14 @@ public class UserService : IUserService
             }
         }
 
-        var assignedUser = await _userManager.AddToRoleAsync(user, nameof(Role.User));
+        var assignedUser = await _userManager.AddToRoleAsync(user, "User");
         if (!assignedUser.Succeeded)
         {
             throw new BadHttpRequestException("Unable to assign user to user role.",
                 StatusCodes.Status500InternalServerError);
         }
 
-        var accessToken = _tokenService.CreateAccessToken(user.Id, user.FullName, ["User"]);
+        var accessToken = _tokenService.CreateAccessToken(user.Id, user.DisplayName, ["User"]);
         var refreshToken = _tokenService.CreateRefreshToken();
 
         user.RefreshToken = refreshToken;
@@ -69,15 +72,15 @@ public class UserService : IUserService
         var updatedUser = await _userManager.UpdateAsync(user);
         if (!updatedUser.Succeeded)
         {
-            throw new BadHttpRequestException("Unable to update user.", StatusCodes.Status500InternalServerError);
+            throw new BadHttpRequestException("Unable to set refresh token.", StatusCodes.Status500InternalServerError);
         }
 
-        return (user.ToUserResponseDTO(), accessToken, refreshToken);
+        return new AuthResponseDTO(accessToken, refreshToken);
     }
 
-    public async Task<(UserResponseDTO, string, string)> AuthenticateUserAsync(LoginDTO loginDTO)
+    public async Task<AuthResponseDTO> AuthenticateUserAsync(LoginDTO loginDTO)
     {
-        var user = await _userManager.Users.FirstOrDefaultAsync(e => e.Email == loginDTO.Email);
+        var user = await _userManager.FindByEmailAsync(loginDTO.Email);
         if (user is null)
         {
             throw new BadHttpRequestException("User not found.", StatusCodes.Status404NotFound);
@@ -86,12 +89,12 @@ public class UserService : IUserService
         var authenticated = await _userManager.CheckPasswordAsync(user, loginDTO.Password);
         if (!authenticated)
         {
-            throw new BadHttpRequestException("Invalid email or password.", StatusCodes.Status401Unauthorized);
+            throw new BadHttpRequestException("Invalid credentials.", StatusCodes.Status401Unauthorized);
         }
 
         var roles = await _userManager.GetRolesAsync(user);
 
-        var accessToken = _tokenService.CreateAccessToken(user.Id, user.FullName, roles);
+        var accessToken = _tokenService.CreateAccessToken(user.Id, user.DisplayName, roles);
         var refreshToken = _tokenService.CreateRefreshToken();
 
         user.RefreshToken = refreshToken;
@@ -99,10 +102,10 @@ public class UserService : IUserService
         var updatedUser = await _userManager.UpdateAsync(user);
         if (!updatedUser.Succeeded)
         {
-            throw new BadHttpRequestException("Unable to update user.", StatusCodes.Status500InternalServerError);
+            throw new BadHttpRequestException("Unable to set refresh token.", StatusCodes.Status500InternalServerError);
         }
 
-        return (user.ToUserResponseDTO(), accessToken, refreshToken);
+        return new AuthResponseDTO(accessToken, refreshToken);
     }
 
     public async Task<IEnumerable<UserResponseDTO>> GetUsersAsync()
@@ -130,40 +133,52 @@ public class UserService : IUserService
         return user.ToUserResponseDTO();
     }
 
-    public async Task<IEnumerable<InviteDTO>> GetPendingInvitesAsync(long userId)
+    public async Task<IEnumerable<InviteResponseDTO>> GetPendingInvitesAsync(long userId, ClaimsPrincipal authUser)
     {
-        var user = await _context.Users.FindAsync(userId);
-        if (user is null)
+        var currentUserId = authUser.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (currentUserId is null)
+        {
+            throw new BadHttpRequestException("Unauthorized.", StatusCodes.Status403Forbidden);
+        }
+
+        var currentUser = await _userManager.FindByIdAsync(currentUserId);
+        if (currentUser is null)
         {
             throw new BadHttpRequestException("User not found.", StatusCodes.Status404NotFound);
         }
 
-        var invites = new List<InviteDTO>();
+        var currentUserRoles = await _userManager.GetRolesAsync(currentUser);
+        if (!currentUserRoles.Contains("Admin") && currentUser.Id != userId)
+        {
+            throw new BadHttpRequestException("Unauthorized.", StatusCodes.Status403Forbidden);
+        }
+
+        var invites = new List<InviteResponseDTO>();
         invites.AddRange(_context.UserOrganizations
             .Where(e => e.UserId == userId && e.Status == MemberStatus.Invited)
-            .Select(e => e.ToInviteDTO()));
+            .Select(e => e.ToInviteResponseDTO()));
         invites.AddRange(_context.UserCourses
             .Where(e => e.UserId == userId && e.Status == MemberStatus.Invited)
-            .Select(e => e.ToInviteDTO()));
+            .Select(e => e.ToInviteResponseDTO()));
 
         return invites;
     }
 
-    public async Task RespondInviteAsync(InviteResponseDTO inviteResponseDTO)
+    public async Task RespondToInviteAsync(RespondToInviteDTO respondToInviteDTO)
     {
         var invite = await _context.UserOrganizations
             .Include(e => e.Organization)
             .FirstOrDefaultAsync(e =>
-                e.UserId == inviteResponseDTO.UserId && e.OrganizationId == inviteResponseDTO.OrganizationId);
+                e.UserId == respondToInviteDTO.UserId && e.OrganizationId == respondToInviteDTO.OrganizationId);
         if (invite is null)
         {
             throw new BadHttpRequestException("Invite not found.", StatusCodes.Status404NotFound);
         }
 
-        switch (inviteResponseDTO.InviteType)
+        switch (respondToInviteDTO.InviteType)
         {
             case InviteType.Organization:
-                await ResponseOrganizationInvite(invite, inviteResponseDTO);
+                await ResponseOrganizationInvite(invite, respondToInviteDTO);
                 break;
             case InviteType.Course:
                 break;
@@ -172,21 +187,21 @@ public class UserService : IUserService
         }
     }
 
-    private async Task ResponseOrganizationInvite(UserOrganization invite, InviteResponseDTO inviteResponseDTO)
+    private async Task ResponseOrganizationInvite(UserOrganization invite, RespondToInviteDTO respondToInviteDTO)
     {
         switch (invite.Status)
         {
             case MemberStatus.User:
-                throw new BadHttpRequestException("Already user.", StatusCodes.Status400BadRequest);
+                throw new BadHttpRequestException("User already in organization.", StatusCodes.Status409Conflict);
             case MemberStatus.Banned:
-                throw new BadHttpRequestException("User is banned.", StatusCodes.Status400BadRequest);
+                throw new BadHttpRequestException("User is banned.", StatusCodes.Status403Forbidden);
             case MemberStatus.Invited:
                 break;
             default:
                 throw new BadHttpRequestException("Invalid status.", StatusCodes.Status400BadRequest);
         }
 
-        if (inviteResponseDTO.Accept)
+        if (respondToInviteDTO.Accept)
         {
             invite.Status = MemberStatus.User;
             invite.JoinedDate = DateTime.UtcNow;

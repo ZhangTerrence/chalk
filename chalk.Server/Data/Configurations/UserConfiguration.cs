@@ -8,33 +8,15 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
 {
     public void Configure(EntityTypeBuilder<User> builder)
     {
-        builder.Property(e => e.FirstName)
-            .HasMaxLength(31)
-            .IsRequired();
-        builder.Property(e => e.LastName)
-            .HasMaxLength(31)
-            .IsRequired();
-        builder.Property(e => e.FullName)
-            .HasMaxLength(63)
-            .IsRequired();
-        builder.Property(e => e.DisplayName)
-            .HasMaxLength(31)
-            .IsRequired();
-        builder.Property(e => e.ProfilePicture)
-            .HasDefaultValue(null);
-        builder.Property(e => e.Description)
-            .HasDefaultValue(null)
-            .HasMaxLength(255);
-        builder.Property(e => e.RefreshToken)
-            .HasDefaultValue(null);
-        builder.Property(e => e.RefreshTokenExpiryDate)
-            .HasDefaultValue(null);
-        builder.Property(e => e.CreatedDate)
-            .HasDefaultValue(DateTime.UtcNow)
-            .IsRequired();
-        builder.Property(e => e.UpdatedDate)
-            .HasDefaultValue(DateTime.UtcNow)
-            .IsRequired();
+        builder.Property(e => e.FirstName).HasMaxLength(31).IsRequired();
+        builder.Property(e => e.LastName).HasMaxLength(31).IsRequired();
+        builder.Property(e => e.DisplayName).HasMaxLength(31).IsRequired();
+        builder.Property(e => e.ProfilePictureUri);
+        builder.Property(e => e.Description).HasMaxLength(255);
+        builder.Property(e => e.RefreshToken);
+        builder.Property(e => e.RefreshTokenExpiryDate);
+        builder.Property(e => e.CreatedDate).IsRequired();
+        builder.Property(e => e.UpdatedDate).IsRequired();
 
         builder
             .HasMany(e => e.UserOrganizations)

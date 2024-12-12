@@ -12,17 +12,10 @@ public class MessageConfiguration : IEntityTypeConfiguration<Message>
 
         builder.HasKey(e => e.Id);
 
-        builder.Property(e => e.Id)
-            .ValueGeneratedOnAdd();
-        builder.Property(e => e.Text)
-            .HasMaxLength(1023)
-            .IsRequired();
-        builder.Property(e => e.CreatedDate)
-            .HasDefaultValue(DateTime.UtcNow)
-            .IsRequired();
-        builder.Property(e => e.UpdatedDate)
-            .HasDefaultValue(DateTime.UtcNow)
-            .IsRequired();
+        builder.Property(e => e.Id).ValueGeneratedOnAdd();
+        builder.Property(e => e.Text).HasMaxLength(1023).IsRequired();
+        builder.Property(e => e.CreatedDate).IsRequired();
+        builder.Property(e => e.UpdatedDate).IsRequired();
 
         builder
             .HasOne(e => e.Channel)

@@ -12,22 +12,12 @@ public class OrganizationConfiguration : IEntityTypeConfiguration<Organization>
 
         builder.HasKey(x => x.Id);
 
-        builder.Property(e => e.Id)
-            .ValueGeneratedOnAdd();
-        builder.Property(e => e.Name)
-            .HasMaxLength(31)
-            .IsRequired();
-        builder.Property(e => e.ProfilePicture)
-            .HasDefaultValue(null);
-        builder.Property(e => e.Description)
-            .HasDefaultValue(null)
-            .HasMaxLength(255);
-        builder.Property(e => e.CreatedDate)
-            .HasDefaultValue(DateTime.UtcNow)
-            .IsRequired();
-        builder.Property(e => e.UpdatedDate)
-            .HasDefaultValue(DateTime.UtcNow)
-            .IsRequired();
+        builder.Property(e => e.Id).ValueGeneratedOnAdd();
+        builder.Property(e => e.Name).HasMaxLength(31).IsRequired();
+        builder.Property(e => e.ProfilePictureUri);
+        builder.Property(e => e.Description).HasMaxLength(255);
+        builder.Property(e => e.CreatedDate).IsRequired();
+        builder.Property(e => e.UpdatedDate).IsRequired();
 
         builder
             .HasOne(e => e.Owner)

@@ -1,5 +1,5 @@
 using chalk.Server.DTOs;
-using chalk.Server.DTOs.OrganizationRole;
+using chalk.Server.DTOs.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

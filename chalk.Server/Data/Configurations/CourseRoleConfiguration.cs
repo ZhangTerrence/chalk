@@ -12,23 +12,12 @@ public class CourseRoleConfiguration : IEntityTypeConfiguration<CourseRole>
 
         builder.HasKey(e => e.Id);
 
-        builder.Property(e => e.Id)
-            .ValueGeneratedOnAdd();
-        builder.Property(e => e.Name)
-            .HasMaxLength(31)
-            .IsRequired();
-        builder.Property(e => e.Description)
-            .HasDefaultValue(null)
-            .HasMaxLength(255);
-        builder.Property(e => e.Permissions)
-            .HasDefaultValue(0L)
-            .IsRequired();
-        builder.Property(e => e.CreatedDate)
-            .HasDefaultValue(DateTime.UtcNow)
-            .IsRequired();
-        builder.Property(e => e.UpdatedDate)
-            .HasDefaultValue(DateTime.UtcNow)
-            .IsRequired();
+        builder.Property(e => e.Id).ValueGeneratedOnAdd();
+        builder.Property(e => e.Name).HasMaxLength(31).IsRequired();
+        builder.Property(e => e.Description).HasMaxLength(255);
+        builder.Property(e => e.Permissions).IsRequired();
+        builder.Property(e => e.CreatedDate).IsRequired();
+        builder.Property(e => e.UpdatedDate).IsRequired();
 
         builder
             .HasOne(e => e.Course)

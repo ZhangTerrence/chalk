@@ -1,6 +1,5 @@
-using System.Security.Claims;
 using chalk.Server.DTOs;
-using chalk.Server.DTOs.Organization;
+using chalk.Server.DTOs.Responses;
 using chalk.Server.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -75,8 +74,7 @@ public class OrganizationController : ControllerBase
             return BadRequest(new ApiResponseDTO<object>(ModelState));
         }
 
-        var userId = User.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier)!.Value;
-        var invite = await _organizationService.SendInviteAsync(long.Parse(userId), sendInviteDTO);
-        return Ok(new ApiResponseDTO<UserOrganizationDTO>(null, invite));
+        await _organizationService.SendInviteAsync(sendInviteDTO, User);
+        return NoContent();
     }
 }

@@ -1,6 +1,8 @@
+using System.Security.Claims;
 using chalk.Server.Common;
 using chalk.Server.Data;
-using chalk.Server.DTOs.Organization;
+using chalk.Server.DTOs;
+using chalk.Server.DTOs.Responses;
 using chalk.Server.Entities;
 using chalk.Server.Extensions;
 using chalk.Server.Services.Interfaces;
@@ -25,10 +27,9 @@ public class OrganizationService : IOrganizationService
             .Include(e => e.UserOrganizations).ThenInclude(e => e.User)
             .Include(e => e.OrganizationRoles)
             .Include(e => e.Courses)
-            .Select(e => e.ToOrganizationDTO())
+            .Select(e => e.ToOrganizationResponseDTO())
             .ToListAsync();
     }
-
 
     public async Task<OrganizationResponseDTO> GetOrganizationAsync(long organizationId)
     {
@@ -43,7 +44,7 @@ public class OrganizationService : IOrganizationService
             throw new BadHttpRequestException("Organization not found.", StatusCodes.Status404NotFound);
         }
 
-        return organization.ToOrganizationDTO();
+        return organization.ToOrganizationResponseDTO();
     }
 
     public async Task<OrganizationResponseDTO> CreateOrganizationAsync(CreateOrganizationDTO createOrganizationDTO)
@@ -64,14 +65,14 @@ public class OrganizationService : IOrganizationService
 
         var userRole = new OrganizationRole
         {
-            Name = nameof(Role.User),
+            Name = "User",
             Permissions = OrganizationPermissionsUtilities.BaseUserPermissions(),
             CreatedDate = DateTime.UtcNow,
             UpdatedDate = DateTime.UtcNow,
         };
         var adminRole = new OrganizationRole
         {
-            Name = nameof(Role.Admin),
+            Name = "Admin",
             Permissions = OrganizationPermissionsUtilities.BaseAdminPermissions(),
             CreatedDate = DateTime.UtcNow,
             UpdatedDate = DateTime.UtcNow,
@@ -151,9 +152,21 @@ public class OrganizationService : IOrganizationService
         await _context.SaveChangesAsync();
     }
 
-    public async Task<UserOrganizationDTO> SendInviteAsync(long senderId, SendInviteDTO sendInviteDTO)
+    public async Task SendInviteAsync(SendInviteDTO sendInviteDTO, ClaimsPrincipal authUser)
     {
-        if (senderId == sendInviteDTO.UserId)
+        var currentUserId = authUser.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (currentUserId is null)
+        {
+            throw new BadHttpRequestException("Unauthorized.", StatusCodes.Status403Forbidden);
+        }
+
+        var currentUser = await _context.Users.FindAsync(currentUserId);
+        if (currentUser is null)
+        {
+            throw new BadHttpRequestException("User not found.", StatusCodes.Status404NotFound);
+        }
+
+        if (currentUser.Id == sendInviteDTO.UserId)
         {
             throw new BadHttpRequestException("Can't invite yourself.", StatusCodes.Status400BadRequest);
         }
@@ -189,7 +202,7 @@ public class OrganizationService : IOrganizationService
             .Where(e => e.Status == MemberStatus.User)
             .ToList();
 
-        if (currentMembers.All(e => e.UserId != senderId))
+        if (currentMembers.All(e => e.UserId != currentUser.Id))
         {
             throw new BadHttpRequestException("Unauthorized to invite.", StatusCodes.Status403Forbidden);
         }
@@ -208,7 +221,5 @@ public class OrganizationService : IOrganizationService
         organization.UserOrganizations.Add(userOrganization);
 
         await _context.SaveChangesAsync();
-
-        return userOrganization.ToUserOrganizationDTO();
     }
 }

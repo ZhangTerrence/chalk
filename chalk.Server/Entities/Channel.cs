@@ -3,7 +3,7 @@ namespace chalk.Server.Entities;
 public class Channel
 {
     public long Id { get; set; }
-    public required string Name { get; set; }
+    public string? Name { get; set; }
     public string? Description { get; set; }
     public required DateTime CreatedDate { get; set; }
     public required DateTime UpdatedDate { get; set; }

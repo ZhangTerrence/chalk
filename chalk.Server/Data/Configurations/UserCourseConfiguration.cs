@@ -13,10 +13,9 @@ public class UserCourseConfiguration : IEntityTypeConfiguration<UserCourse>
 
         builder.HasKey(e => new { e.UserId, e.CourseId });
 
-        builder.Property(e => e.Status)
-            .IsRequired();
-        builder.Property(e => e.JoinedDate)
-            .HasDefaultValue(null);
+        builder.Property(e => e.Status).IsRequired();
+        builder.Property(e => e.JoinedDate);
+
         builder
             .HasOne(e => e.User)
             .WithMany(e => e.UserCourses)

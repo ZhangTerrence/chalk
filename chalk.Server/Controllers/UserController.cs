@@ -1,6 +1,5 @@
-using System.Security.Claims;
 using chalk.Server.DTOs;
-using chalk.Server.DTOs.User;
+using chalk.Server.DTOs.Responses;
 using chalk.Server.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -27,26 +26,9 @@ public class UserController : ControllerBase
             return BadRequest(new ApiResponseDTO<object>(ModelState));
         }
 
-        var (createdUser, accessToken, refreshToken) = await _userService.RegisterUserAsync(registerDTO);
-
-        HttpContext.Response.Cookies.Append("AccessToken", accessToken, new CookieOptions
-        {
-            Expires = DateTime.Now.AddHours(1).ToUniversalTime(),
-            Secure = true,
-            SameSite = SameSiteMode.Strict,
-            HttpOnly = true,
-            IsEssential = true
-        });
-        HttpContext.Response.Cookies.Append("RefreshToken", refreshToken, new CookieOptions
-        {
-            Expires = DateTime.Now.AddDays(1).ToUniversalTime(),
-            Secure = true,
-            SameSite = SameSiteMode.Strict,
-            HttpOnly = true,
-            IsEssential = true
-        });
-
-        return Created(nameof(Register), new ApiResponseDTO<UserResponseDTO>(null, createdUser));
+        Console.WriteLine("Hello");
+        var authResponseDTO = await _userService.RegisterUserAsync(registerDTO);
+        return Created(nameof(Register), new ApiResponseDTO<AuthResponseDTO>(null, authResponseDTO));
     }
 
     [HttpPost("login")]
@@ -58,26 +40,8 @@ public class UserController : ControllerBase
             return BadRequest(new ApiResponseDTO<object>(ModelState));
         }
 
-        var (user, accessToken, refreshToken) = await _userService.AuthenticateUserAsync(loginDTO);
-
-        HttpContext.Response.Cookies.Append("AccessToken", accessToken, new CookieOptions
-        {
-            Expires = DateTime.Now.AddHours(1).ToUniversalTime(),
-            Secure = true,
-            SameSite = SameSiteMode.Strict,
-            HttpOnly = true,
-            IsEssential = true
-        });
-        HttpContext.Response.Cookies.Append("RefreshToken", refreshToken, new CookieOptions
-        {
-            Expires = DateTime.Now.AddDays(1).ToUniversalTime(),
-            Secure = true,
-            SameSite = SameSiteMode.Strict,
-            HttpOnly = true,
-            IsEssential = true
-        });
-
-        return Ok(new ApiResponseDTO<UserResponseDTO>(null, user));
+        var authResponseDTO = await _userService.AuthenticateUserAsync(loginDTO);
+        return Ok(new ApiResponseDTO<AuthResponseDTO>(null, authResponseDTO));
     }
 
     [HttpDelete("logout")]
@@ -104,25 +68,24 @@ public class UserController : ControllerBase
         return Ok(new ApiResponseDTO<UserResponseDTO>(null, user));
     }
 
-    [HttpGet("invite")]
+    [HttpGet("invite/{userId:long}")]
     [Authorize(Roles = "User,Admin")]
-    public async Task<IActionResult> GetInvites()
+    public async Task<IActionResult> GetInvites([FromRoute] long userId)
     {
-        var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)!.Value;
-        var invites = await _userService.GetPendingInvitesAsync(long.Parse(userId));
-        return Ok(new ApiResponseDTO<IEnumerable<InviteDTO>>(null, invites));
+        var invites = await _userService.GetPendingInvitesAsync(userId, User);
+        return Ok(new ApiResponseDTO<IEnumerable<InviteResponseDTO>>(null, invites));
     }
 
     [HttpPost("invite")]
     [Authorize(Roles = "User,Admin")]
-    public async Task<IActionResult> RespondInvite([FromBody] InviteResponseDTO inviteResponseDTO)
+    public async Task<IActionResult> RespondInvite([FromBody] RespondToInviteDTO respondToInviteDTO)
     {
-        if (ModelState.IsValid)
+        if (!ModelState.IsValid)
         {
             return BadRequest(new ApiResponseDTO<object>(ModelState));
         }
 
-        await _userService.RespondInviteAsync(inviteResponseDTO);
+        await _userService.RespondToInviteAsync(respondToInviteDTO);
         return NoContent();
     }
 }

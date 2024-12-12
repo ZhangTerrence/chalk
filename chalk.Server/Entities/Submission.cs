@@ -6,8 +6,8 @@ public class Submission
 
     public int? Grade { get; set; }
     public string? Feedback { get; set; }
-    public DateTime CreatedDate { get; set; }
-    public DateTime UpdatedDate { get; set; }
+    public required DateTime CreatedDate { get; set; }
+    public required DateTime UpdatedDate { get; set; }
 
     public long UserId { get; set; }
     public long AssignmentId { get; set; }

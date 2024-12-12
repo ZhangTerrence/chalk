@@ -1,4 +1,5 @@
-using chalk.Server.DTOs.Course;
+using chalk.Server.DTOs;
+using chalk.Server.DTOs.Responses;
 
 namespace chalk.Server.Services.Interfaces;
 

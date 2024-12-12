@@ -1,5 +1,6 @@
 using System.Globalization;
-using chalk.Server.DTOs.User;
+using chalk.Server.DTOs;
+using chalk.Server.DTOs.Responses;
 using chalk.Server.Entities;
 
 namespace chalk.Server.Extensions;
@@ -13,7 +14,6 @@ public static class UserExtensions
             Email = registerDTO.Email,
             FirstName = registerDTO.FirstName,
             LastName = registerDTO.LastName,
-            FullName = $"{registerDTO.FirstName} {registerDTO.LastName}",
             DisplayName = registerDTO.DisplayName,
             UserName = registerDTO.Email,
             CreatedDate = DateTime.UtcNow,
@@ -26,9 +26,10 @@ public static class UserExtensions
         return new UserResponseDTO(
             user.Id,
             user.Email,
-            user.FullName,
+            user.FirstName,
+            user.LastName,
             user.DisplayName,
-            user.ProfilePicture,
+            user.ProfilePictureUri,
             user.CreatedDate.ToString(CultureInfo.CurrentCulture),
             user.UpdatedDate.ToString(CultureInfo.CurrentCulture),
             user.UserOrganizations
