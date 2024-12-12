@@ -8,6 +8,7 @@ namespace chalk.Server.Controllers;
 
 [ApiController]
 [Route("/api/user")]
+[Authorize(Roles = "User,Admin")]
 public class UserController : ControllerBase
 {
     private readonly IUserService _userService;
@@ -17,43 +18,7 @@ public class UserController : ControllerBase
         _userService = userService;
     }
 
-    [HttpPost("register")]
-    [AllowAnonymous]
-    public async Task<IActionResult> Register([FromBody] RegisterDTO registerDTO)
-    {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(new ApiResponseDTO<object>(ModelState));
-        }
-
-        Console.WriteLine("Hello");
-        var authResponseDTO = await _userService.RegisterUserAsync(registerDTO);
-        return Created(nameof(Register), new ApiResponseDTO<AuthResponseDTO>(null, authResponseDTO));
-    }
-
-    [HttpPost("login")]
-    [AllowAnonymous]
-    public async Task<IActionResult> Login([FromBody] LoginDTO loginDTO)
-    {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(new ApiResponseDTO<object>(ModelState));
-        }
-
-        var authResponseDTO = await _userService.AuthenticateUserAsync(loginDTO);
-        return Ok(new ApiResponseDTO<AuthResponseDTO>(null, authResponseDTO));
-    }
-
-    [HttpDelete("logout")]
-    [Authorize(Roles = "User,Admin")]
-    public IActionResult Logout()
-    {
-        HttpContext.Response.Cookies.Delete("AccessToken");
-        return NoContent();
-    }
-
     [HttpGet]
-    [Authorize(Roles = "User,Admin")]
     public async Task<IActionResult> GetUsers()
     {
         var users = await _userService.GetUsersAsync();
@@ -61,7 +26,6 @@ public class UserController : ControllerBase
     }
 
     [HttpGet("{userId:long}")]
-    [Authorize(Roles = "User,Admin")]
     public async Task<IActionResult> GetUser([FromRoute] long userId)
     {
         var user = await _userService.GetUserAsync(userId);
@@ -69,7 +33,6 @@ public class UserController : ControllerBase
     }
 
     [HttpGet("invite/{userId:long}")]
-    [Authorize(Roles = "User,Admin")]
     public async Task<IActionResult> GetInvites([FromRoute] long userId)
     {
         var invites = await _userService.GetPendingInvitesAsync(userId, User);
@@ -77,7 +40,6 @@ public class UserController : ControllerBase
     }
 
     [HttpPost("invite")]
-    [Authorize(Roles = "User,Admin")]
     public async Task<IActionResult> RespondInvite([FromBody] RespondToInviteDTO respondToInviteDTO)
     {
         if (!ModelState.IsValid)

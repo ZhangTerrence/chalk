@@ -7,8 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace chalk.Server.Controllers;
 
 [ApiController]
-[Authorize(Roles = "User,Admin")]
 [Route("/api/course")]
+[Authorize(Roles = "User,Admin")]
 public class CourseController : ControllerBase
 {
     private readonly ICourseService _courseService;
