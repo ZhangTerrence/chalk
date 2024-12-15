@@ -50,15 +50,10 @@ public class AuthController : ControllerBase
         return NoContent();
     }
 
-    [HttpPost("refresh")]
+    [HttpPatch("refresh")]
     [Authorize]
     public async Task<IActionResult> RefreshTokens()
     {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(new ApiResponseDTO<object>(ModelState));
-        }
-
         Request.HttpContext.Items.TryGetValue("RefreshToken", out var refreshToken);
         await _authService.RefreshTokensAsync(User, refreshToken as string);
         return NoContent();

@@ -1,9 +1,10 @@
 using System.Data.Common;
+using System.Text;
 using chalk.Server.Data;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 using Respawn;
 using Testcontainers.PostgreSql;
 
@@ -18,6 +19,10 @@ public class IntegrationTestFactory : WebApplicationFactory<Program>, IAsyncLife
         .WithPassword("postgres")
         .Build();
 
+    public const string Issuer = "SUT";
+    public const string Audience = "IntegrationTests";
+    public const string Key = "________________________________";
+
     public DatabaseContext DatabaseContext = null!;
     private DbConnection _databaseConnection = null!;
     private string ConnectionString => _databaseContainer.GetConnectionString();
@@ -28,9 +33,9 @@ public class IntegrationTestFactory : WebApplicationFactory<Program>, IAsyncLife
     {
         builder.UseEnvironment("Development");
 
-        Environment.SetEnvironmentVariable("Jwt:Issuer", "*");
-        Environment.SetEnvironmentVariable("Jwt:Audience", "*");
-        Environment.SetEnvironmentVariable("Jwt:Key", "________________________________");
+        Environment.SetEnvironmentVariable("Jwt:Issuer", Issuer);
+        Environment.SetEnvironmentVariable("Jwt:Audience", Audience);
+        Environment.SetEnvironmentVariable("Jwt:Key", Key);
 
         builder.ConfigureServices(services =>
         {
