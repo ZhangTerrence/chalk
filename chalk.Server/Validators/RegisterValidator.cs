@@ -1,3 +1,4 @@
+using chalk.Server.Common.Errors;
 using chalk.Server.DTOs.Requests;
 using FluentValidation;
 
@@ -8,30 +9,29 @@ public class RegisterValidator : AbstractValidator<RegisterRequest>
     public RegisterValidator()
     {
         RuleFor(e => e.FirstName)
-            .NotNull()
-            .WithMessage("FirstName property is required.")
+            .NotEmpty()
+            .WithMessage(Errors.Validation.IsRequired("FirstName"))
             .Length(1, 31)
-            .WithMessage("FirstName property must have between 1 and 31 characters.");
+            .WithMessage(Errors.Validation.IsBetween("FirstName", 1, 31));
         RuleFor(e => e.LastName)
-            .NotNull()
-            .WithMessage("LastName property is required.")
+            .NotEmpty()
+            .WithMessage(Errors.Validation.IsRequired("LastName"))
             .Length(1, 31)
-            .WithMessage("LastName property must have between 1 and 31 characters.");
+            .WithMessage(Errors.Validation.IsBetween("LastName", 1, 31));
         RuleFor(e => e.DisplayName)
-            .NotNull()
-            .WithMessage("DisplayName property is required.")
+            .NotEmpty()
+            .WithMessage(Errors.Validation.IsRequired("DisplayName"))
             .Length(3, 31)
-            .WithMessage("DisplayName property must have between 3 and 31 characters.");
+            .WithMessage(Errors.Validation.IsBetween("DisplayName", 3, 31));
         RuleFor(e => e.Email)
             .NotEmpty()
-            .WithMessage("Email property is required.")
+            .WithMessage(Errors.Validation.IsRequired("Email"))
             .EmailAddress()
-            .WithMessage("Email property is invalid.");
+            .WithMessage(Errors.Validation.IsInvalid("Email"));
         RuleFor(e => e.Password)
-            .NotNull()
-            .WithMessage("Password property is required.")
-            .Matches("^(?:(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[-._@+]).*){8,}$")
-            .WithMessage(
-                "Password property must have at least 8 characters with least one number, one lowercase letter, one upper case letter, one special character.");
+            .NotEmpty()
+            .WithMessage(Errors.Validation.IsRequired("Password"))
+            .Matches("^(?:(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[-._@+]).*).{8,}$")
+            .WithMessage(Errors.Validation.IsInvalidPassword);
     }
 }

@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using NSubstitute;
 
-namespace chalk.UnitTests.Tests.Services;
+namespace chalk.UnitTests.Services;
 
 public class AuthServiceUnitTests
 {

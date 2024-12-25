@@ -2,9 +2,9 @@ using chalk.Server.DTOs.Requests;
 using chalk.Server.Validators;
 using FluentValidation.TestHelper;
 
-namespace chalk.UnitTests.Tests;
+namespace chalk.UnitTests.Requests;
 
-public class LoginUnitTests
+public class LoginRequestTests
 {
     private readonly LoginValidator _validator = new();
 

@@ -13,7 +13,7 @@ public record UserResponse(
     string? Email,
     [property: JsonRequired]
     [property: JsonPropertyName("firstName")]
-    string FirstName,
+    string? FirstName,
     [property: JsonRequired]
     [property: JsonPropertyName("lastName")]
     string LastName,
