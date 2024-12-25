@@ -1,3 +1,4 @@
+using System.Net;
 using System.Net.Http.Json;
 using chalk.Server.DTOs;
 using chalk.Server.DTOs.Responses;
@@ -12,7 +13,7 @@ public class AuthIntegrationTests(IntegrationTestFactory factory, ITestOutputHel
     private readonly IntegrationTestFactory _factory = factory;
 
     [Fact]
-    public async Task Register()
+    public async Task Register_ShouldOk()
     {
         // Arrange
         var registerDTO = new RegisterDTO("Test", "User", "Test User 1", "tuser1@gmail.com", "@Password123");
@@ -45,7 +46,7 @@ public class AuthIntegrationTests(IntegrationTestFactory factory, ITestOutputHel
     }
 
     [Fact]
-    public async Task Login()
+    public async Task Login_ShouldOk()
     {
         // Arrange
         var registerDTO = new RegisterDTO("Test", "User", "Test User 2", "tuser2@gmail.com", "@Password123");
@@ -73,7 +74,26 @@ public class AuthIntegrationTests(IntegrationTestFactory factory, ITestOutputHel
     }
 
     [Fact]
-    public async Task Logout()
+    public async Task Login_InvalidCredentials_ShouldUnauthorized()
+    {
+        // Arrange
+        var registerDTO = new RegisterDTO("Test", "User", "Test User 2", "tuser2@gmail.com", "@Password123");
+        await HttpClient.PostAsJsonAsync("/api/auth/register", registerDTO);
+
+        var loginDTO = new LoginDTO("tuser2@gmail.com", "@InvalidPassword123");
+
+        // Act
+        var response = await HttpClient.PostAsJsonAsync("/api/auth/login", loginDTO);
+
+        // Assert
+        response.Should().HaveStatusCode(HttpStatusCode.Unauthorized);
+
+        var cookies = GetResponseCookies(response).Where(e => !e.Expired).ToList();
+        cookies.Should().HaveCount(2);
+    }
+
+    [Fact]
+    public async Task Logout_ShouldOk()
     {
         // Arrange
         new CookiesBuilder()
@@ -95,7 +115,7 @@ public class AuthIntegrationTests(IntegrationTestFactory factory, ITestOutputHel
     }
 
     [Fact]
-    public async Task RefreshTokens()
+    public async Task RefreshTokens_ShouldOk()
     {
         // Arrange
         var registerDTO = new RegisterDTO("Test", "User", "Test User 3", "tuser3@gmail.com", "@Password123");
