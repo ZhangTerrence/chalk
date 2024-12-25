@@ -1,4 +1,4 @@
-using chalk.Server.DTOs;
+using chalk.Server.DTOs.Requests;
 using chalk.Server.DTOs.Responses;
 using chalk.Server.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -18,33 +18,34 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("register")]
-    public async Task<IActionResult> Register([FromBody] RegisterDTO registerDTO)
+    public async Task<IActionResult> Register([FromBody] RegisterRequest request)
     {
         if (!ModelState.IsValid)
         {
-            return BadRequest(new ApiResponseDTO<object>(ModelState));
+            return BadRequest(new ApiResponse<object>(ModelState));
         }
 
-        var user = await _authService.RegisterUserAsync(registerDTO);
-        return Created(nameof(Register), new ApiResponseDTO<UserResponseDTO>(null, user));
+        var response = await _authService.RegisterUserAsync(request);
+        return Created(nameof(Register), new ApiResponse<AuthResponse>(null, response));
     }
 
     [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] LoginDTO loginDTO)
+    public async Task<IActionResult> Login([FromBody] LoginRequest request)
     {
         if (!ModelState.IsValid)
         {
-            return BadRequest(new ApiResponseDTO<object>(ModelState));
+            return BadRequest(new ApiResponse<object>(ModelState));
         }
 
-        var user = await _authService.AuthenticateUserAsync(loginDTO);
-        return Ok(new ApiResponseDTO<UserResponseDTO>(null, user));
+        var response = await _authService.AuthenticateUserAsync(request);
+        return Ok(new ApiResponse<AuthResponse>(null, response));
     }
 
     [HttpDelete("logout")]
     [Authorize]
-    public IActionResult Logout()
+    public async Task<IActionResult> Logout()
     {
+        await _authService.LogoutUserAsync(User);
         HttpContext.Response.Cookies.Delete("AccessToken");
         HttpContext.Response.Cookies.Delete("RefreshToken");
         return NoContent();

@@ -24,22 +24,6 @@ public class IntegrationTest(IntegrationTestFactory factory, ITestOutputHelper l
         BaseAddress = BaseUri,
     });
 
-    protected static CookieCollection GetResponseCookies(HttpResponseMessage response)
-    {
-        var cookieContainer = new CookieContainer();
-        if (!response.Headers.TryGetValues("Set-Cookie", out var cookies))
-        {
-            return new CookieCollection();
-        }
-
-        foreach (var cookie in cookies)
-        {
-            cookieContainer.SetCookies(BaseUri, cookie);
-        }
-
-        return cookieContainer.GetAllCookies();
-    }
-
     protected sealed class CookiesBuilder
     {
         private AccessTokenBuilder? _accessTokenBuilder;

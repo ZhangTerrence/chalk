@@ -1,4 +1,4 @@
-using chalk.Server.DTOs;
+using chalk.Server.DTOs.Requests;
 using chalk.Server.Validators;
 using FluentValidation.TestHelper;
 
@@ -12,7 +12,7 @@ public class RegisterUnitTests
     public async Task Invalid_FirstName()
     {
         // Arrange 
-        var registerDTO = new RegisterDTO("", "User", "Test User", "tuser1@gmail.com", "@Password123");
+        var registerDTO = new RegisterRequest("", "User", "Test User", "tuser1@gmail.com", "@Password123");
 
         // Act
         var result = await _validator.TestValidateAsync(registerDTO);
@@ -25,7 +25,7 @@ public class RegisterUnitTests
     public async Task Invalid_LastName()
     {
         // Arrange 
-        var registerDTO = new RegisterDTO("Test", "", "Test User", "tuser1@gmail.com", "@Password123");
+        var registerDTO = new RegisterRequest("Test", "", "Test User", "tuser1@gmail.com", "@Password123");
 
         // Act
         var result = await _validator.TestValidateAsync(registerDTO);
@@ -38,7 +38,7 @@ public class RegisterUnitTests
     public async Task Invalid_DisplayName()
     {
         // Arrange 
-        var registerDTO = new RegisterDTO("Test", "User", "", "tuser1@gmail.com", "@Password123");
+        var registerDTO = new RegisterRequest("Test", "User", "", "tuser1@gmail.com", "@Password123");
 
         // Act
         var result = await _validator.TestValidateAsync(registerDTO);
@@ -51,7 +51,7 @@ public class RegisterUnitTests
     public async Task Invalid_Email()
     {
         // Arrange 
-        var registerDTO = new RegisterDTO("Test", "User", "Test User", "invalid", "@Password123");
+        var registerDTO = new RegisterRequest("Test", "User", "Test User", "invalid", "@Password123");
 
         // Act
         var result = await _validator.TestValidateAsync(registerDTO);
@@ -64,7 +64,7 @@ public class RegisterUnitTests
     public async Task Invalid_Password()
     {
         // Arrange 
-        var registerDTO = new RegisterDTO("Test", "User", "Test User", "tuser1@gmail.com", "Password123");
+        var registerDTO = new RegisterRequest("Test", "User", "Test User", "tuser1@gmail.com", "Password123");
 
         // Act
         var result = await _validator.TestValidateAsync(registerDTO);
@@ -77,7 +77,7 @@ public class RegisterUnitTests
     public async Task Valid()
     {
         // Arrange 
-        var registerDTO = new RegisterDTO("Test", "User", "Test User", "tuser1@gmail.com", "@Password123");
+        var registerDTO = new RegisterRequest("Test", "User", "Test User", "tuser1@gmail.com", "@Password123");
 
         // Act
         var result = await _validator.TestValidateAsync(registerDTO);

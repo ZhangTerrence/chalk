@@ -1,10 +1,10 @@
 using System.Security.Claims;
 using chalk.Server.Common;
 using chalk.Server.Data;
-using chalk.Server.DTOs;
+using chalk.Server.DTOs.Requests;
 using chalk.Server.DTOs.Responses;
 using chalk.Server.Entities;
-using chalk.Server.Extensions;
+using chalk.Server.Mappings;
 using chalk.Server.Services.Interfaces;
 using chalk.Server.Utilities;
 using Microsoft.EntityFrameworkCore;
@@ -20,18 +20,18 @@ public class OrganizationService : IOrganizationService
         _context = context;
     }
 
-    public async Task<IEnumerable<OrganizationResponseDTO>> GetOrganizationsAsync()
+    public async Task<IEnumerable<OrganizationResponse>> GetOrganizationsAsync()
     {
         return await _context.Organizations
             .Include(e => e.Owner)
             .Include(e => e.UserOrganizations).ThenInclude(e => e.User)
             .Include(e => e.OrganizationRoles)
             .Include(e => e.Courses)
-            .Select(e => e.ToOrganizationResponseDTO())
+            .Select(e => e.ToResponse())
             .ToListAsync();
     }
 
-    public async Task<OrganizationResponseDTO> GetOrganizationAsync(long organizationId)
+    public async Task<OrganizationResponse> GetOrganizationAsync(long organizationId)
     {
         var organization = await _context.Organizations
             .Include(e => e.Owner)
@@ -44,24 +44,24 @@ public class OrganizationService : IOrganizationService
             throw new BadHttpRequestException("Organization not found.", StatusCodes.Status404NotFound);
         }
 
-        return organization.ToOrganizationResponseDTO();
+        return organization.ToResponse();
     }
 
-    public async Task<OrganizationResponseDTO> CreateOrganizationAsync(CreateOrganizationDTO createOrganizationDTO)
+    public async Task<OrganizationResponse> CreateOrganizationAsync(CreateOrganizationRequest createOrganizationRequest)
     {
-        var user = await _context.Users.FindAsync(createOrganizationDTO.OwnerId);
+        var user = await _context.Users.FindAsync(createOrganizationRequest.OwnerId);
         if (user is null)
         {
             throw new BadHttpRequestException("User not found.", StatusCodes.Status404NotFound);
         }
 
-        var organizationExists = await _context.Organizations.AnyAsync(e => e.Name == createOrganizationDTO.Name);
+        var organizationExists = await _context.Organizations.AnyAsync(e => e.Name == createOrganizationRequest.Name);
         if (organizationExists)
         {
             throw new BadHttpRequestException("Organization name taken.", StatusCodes.Status400BadRequest);
         }
 
-        var organization = createOrganizationDTO.ToOrganization(user);
+        var organization = createOrganizationRequest.ToEntity(user);
 
         var userRole = new OrganizationRole
         {
@@ -96,9 +96,9 @@ public class OrganizationService : IOrganizationService
         return await GetOrganizationAsync(createdOrganization.Entity.Id);
     }
 
-    public async Task<OrganizationResponseDTO> UpdateOrganizationAsync(
+    public async Task<OrganizationResponse> UpdateOrganizationAsync(
         long organizationId,
-        UpdateOrganizationDTO updateOrganizationDTO)
+        UpdateOrganizationRequest updateOrganizationRequest)
     {
         var organization = await _context.Organizations.FindAsync(organizationId);
         if (organization is null)
@@ -106,25 +106,26 @@ public class OrganizationService : IOrganizationService
             throw new BadHttpRequestException("Organization not found.", StatusCodes.Status404NotFound);
         }
 
-        if (updateOrganizationDTO.Name is not null)
+        if (updateOrganizationRequest.Name is not null)
         {
-            var organizationExists = await _context.Organizations.AnyAsync(e => e.Name == updateOrganizationDTO.Name);
+            var organizationExists =
+                await _context.Organizations.AnyAsync(e => e.Name == updateOrganizationRequest.Name);
             if (organizationExists)
             {
                 throw new BadHttpRequestException("Organization name already taken.", StatusCodes.Status409Conflict);
             }
 
-            organization.Name = updateOrganizationDTO.Name;
+            organization.Name = updateOrganizationRequest.Name;
         }
 
-        if (updateOrganizationDTO.Description is not null)
+        if (updateOrganizationRequest.Description is not null)
         {
-            organization.Description = updateOrganizationDTO.Description;
+            organization.Description = updateOrganizationRequest.Description;
         }
 
-        if (updateOrganizationDTO.OwnerId is not null)
+        if (updateOrganizationRequest.OwnerId is not null)
         {
-            var user = await _context.Users.FindAsync(updateOrganizationDTO.OwnerId);
+            var user = await _context.Users.FindAsync(updateOrganizationRequest.OwnerId);
             if (user is null)
             {
                 throw new BadHttpRequestException("User not found.", StatusCodes.Status404NotFound);
@@ -152,7 +153,7 @@ public class OrganizationService : IOrganizationService
         await _context.SaveChangesAsync();
     }
 
-    public async Task SendInviteAsync(SendInviteDTO sendInviteDTO, ClaimsPrincipal authUser)
+    public async Task SendInviteAsync(SendInviteRequest sendInviteRequest, ClaimsPrincipal authUser)
     {
         var currentUserId = authUser.FindFirstValue(ClaimTypes.NameIdentifier);
         if (currentUserId is null)
@@ -166,12 +167,12 @@ public class OrganizationService : IOrganizationService
             throw new BadHttpRequestException("User not found.", StatusCodes.Status404NotFound);
         }
 
-        if (currentUser.Id == sendInviteDTO.UserId)
+        if (currentUser.Id == sendInviteRequest.UserId)
         {
             throw new BadHttpRequestException("Can't invite yourself.", StatusCodes.Status400BadRequest);
         }
 
-        var user = await _context.Users.FindAsync(sendInviteDTO.UserId);
+        var user = await _context.Users.FindAsync(sendInviteRequest.UserId);
         if (user is null)
         {
             throw new BadHttpRequestException("User not found.", StatusCodes.Status404NotFound);
@@ -179,20 +180,20 @@ public class OrganizationService : IOrganizationService
 
         var organization = await _context.Organizations
             .Include(e => e.UserOrganizations)
-            .FirstOrDefaultAsync(e => e.Id == sendInviteDTO.OrganizationId);
+            .FirstOrDefaultAsync(e => e.Id == sendInviteRequest.OrganizationId);
         if (organization is null)
         {
             throw new BadHttpRequestException("Organization not found.", StatusCodes.Status404NotFound);
         }
 
         var invite = organization.UserOrganizations
-            .FirstOrDefault(e => e.Status == MemberStatus.Invited && e.UserId == sendInviteDTO.UserId);
+            .FirstOrDefault(e => e.Status == MemberStatus.Invited && e.UserId == sendInviteRequest.UserId);
         if (invite is not null)
         {
             throw new BadHttpRequestException("Invite already sent.", StatusCodes.Status409Conflict);
         }
 
-        var organizationRole = await _context.OrganizationRoles.FindAsync(sendInviteDTO.OrganizationRoleId);
+        var organizationRole = await _context.OrganizationRoles.FindAsync(sendInviteRequest.OrganizationRoleId);
         if (organizationRole is null)
         {
             throw new BadHttpRequestException("Organization role not found.", StatusCodes.Status404NotFound);
@@ -207,12 +208,12 @@ public class OrganizationService : IOrganizationService
             throw new BadHttpRequestException("Unauthorized to invite.", StatusCodes.Status403Forbidden);
         }
 
-        if (currentMembers.Any(e => e.UserId == sendInviteDTO.UserId))
+        if (currentMembers.Any(e => e.UserId == sendInviteRequest.UserId))
         {
             throw new BadHttpRequestException("User is already a member.", StatusCodes.Status400BadRequest);
         }
 
-        var userOrganization = OrganizationExtensions.ToUserOrganization(
+        var userOrganization = OrganizationMappings.ToEntity(
             MemberStatus.Invited,
             organization,
             user,

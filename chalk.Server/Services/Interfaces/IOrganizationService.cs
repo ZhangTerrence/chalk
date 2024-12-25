@@ -1,22 +1,22 @@
 using System.Security.Claims;
-using chalk.Server.DTOs;
+using chalk.Server.DTOs.Requests;
 using chalk.Server.DTOs.Responses;
 
 namespace chalk.Server.Services.Interfaces;
 
 public interface IOrganizationService
 {
-    public Task<IEnumerable<OrganizationResponseDTO>> GetOrganizationsAsync();
+    public Task<IEnumerable<OrganizationResponse>> GetOrganizationsAsync();
 
-    public Task<OrganizationResponseDTO> GetOrganizationAsync(long organizationId);
+    public Task<OrganizationResponse> GetOrganizationAsync(long organizationId);
 
-    public Task<OrganizationResponseDTO> CreateOrganizationAsync(CreateOrganizationDTO createOrganizationDTO);
+    public Task<OrganizationResponse> CreateOrganizationAsync(CreateOrganizationRequest createOrganizationRequest);
 
-    public Task<OrganizationResponseDTO> UpdateOrganizationAsync(
+    public Task<OrganizationResponse> UpdateOrganizationAsync(
         long organizationId,
-        UpdateOrganizationDTO updateOrganizationDTO);
+        UpdateOrganizationRequest updateOrganizationRequest);
 
     public Task DeleteOrganizationAsync(long organizationId);
 
-    public Task SendInviteAsync(SendInviteDTO sendInviteDTO, ClaimsPrincipal authUser);
+    public Task SendInviteAsync(SendInviteRequest sendInviteRequest, ClaimsPrincipal authUser);
 }

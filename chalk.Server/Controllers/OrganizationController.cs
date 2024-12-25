@@ -1,4 +1,4 @@
-using chalk.Server.DTOs;
+using chalk.Server.DTOs.Requests;
 using chalk.Server.DTOs.Responses;
 using chalk.Server.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -22,41 +22,41 @@ public class OrganizationController : ControllerBase
     public async Task<IActionResult> GetOrganizations()
     {
         var organizations = await _organizationService.GetOrganizationsAsync();
-        return Ok(new ApiResponseDTO<IEnumerable<OrganizationResponseDTO>>(null, organizations));
+        return Ok(new ApiResponse<IEnumerable<OrganizationResponse>>(null, organizations));
     }
 
     [HttpGet("{organizationId:long}")]
     public async Task<IActionResult> GetOrganization([FromRoute] long organizationId)
     {
         var organization = await _organizationService.GetOrganizationAsync(organizationId);
-        return Ok(new ApiResponseDTO<OrganizationResponseDTO>(null, organization));
+        return Ok(new ApiResponse<OrganizationResponse>(null, organization));
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateOrganization([FromBody] CreateOrganizationDTO createOrganizationDTO)
+    public async Task<IActionResult> CreateOrganization([FromBody] CreateOrganizationRequest createOrganizationRequest)
     {
         if (!ModelState.IsValid)
         {
-            return BadRequest(new ApiResponseDTO<object>(ModelState));
+            return BadRequest(new ApiResponse<object>(ModelState));
         }
 
-        var createdOrganization = await _organizationService.CreateOrganizationAsync(createOrganizationDTO);
-        return Ok(new ApiResponseDTO<OrganizationResponseDTO>(null, createdOrganization));
+        var createdOrganization = await _organizationService.CreateOrganizationAsync(createOrganizationRequest);
+        return Ok(new ApiResponse<OrganizationResponse>(null, createdOrganization));
     }
 
     [HttpPatch("{organizationId:long}")]
     public async Task<IActionResult> UpdateOrganization(
         [FromRoute] long organizationId,
-        [FromBody] UpdateOrganizationDTO updateOrganizationDTO)
+        [FromBody] UpdateOrganizationRequest updateOrganizationRequest)
     {
         if (!ModelState.IsValid)
         {
-            return BadRequest(new ApiResponseDTO<object>(ModelState));
+            return BadRequest(new ApiResponse<object>(ModelState));
         }
 
         var updatedOrganization =
-            await _organizationService.UpdateOrganizationAsync(organizationId, updateOrganizationDTO);
-        return Ok(new ApiResponseDTO<OrganizationResponseDTO>(null, updatedOrganization));
+            await _organizationService.UpdateOrganizationAsync(organizationId, updateOrganizationRequest);
+        return Ok(new ApiResponse<OrganizationResponse>(null, updatedOrganization));
     }
 
     [HttpDelete("{organizationId:long}")]
@@ -67,14 +67,14 @@ public class OrganizationController : ControllerBase
     }
 
     [HttpPost("invite")]
-    public async Task<IActionResult> SendInvite([FromBody] SendInviteDTO sendInviteDTO)
+    public async Task<IActionResult> SendInvite([FromBody] SendInviteRequest sendInviteRequest)
     {
         if (!ModelState.IsValid)
         {
-            return BadRequest(new ApiResponseDTO<object>(ModelState));
+            return BadRequest(new ApiResponse<object>(ModelState));
         }
 
-        await _organizationService.SendInviteAsync(sendInviteDTO, User);
+        await _organizationService.SendInviteAsync(sendInviteRequest, User);
         return NoContent();
     }
 }

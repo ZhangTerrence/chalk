@@ -1,4 +1,4 @@
-using chalk.Server.DTOs;
+using chalk.Server.DTOs.Requests;
 using chalk.Server.Validators;
 using FluentValidation.TestHelper;
 
@@ -12,7 +12,7 @@ public class LoginUnitTests
     public async Task Invalid_Email()
     {
         // Arrange 
-        var loginDTO = new LoginDTO("invalid", "@Password123");
+        var loginDTO = new LoginRequest("invalid", "@Password123");
 
         // Act
         var result = await _validator.TestValidateAsync(loginDTO);
@@ -25,7 +25,7 @@ public class LoginUnitTests
     public async Task Invalid_Password()
     {
         // Arrange 
-        var loginDTO = new LoginDTO("tuser1@gmail.com", "Password123");
+        var loginDTO = new LoginRequest("tuser1@gmail.com", "Password123");
 
         // Act
         var result = await _validator.TestValidateAsync(loginDTO);
@@ -38,7 +38,7 @@ public class LoginUnitTests
     public async Task Valid()
     {
         // Arrange 
-        var loginDTO = new LoginDTO("tuser1@gmail.com", "@Password123");
+        var loginDTO = new LoginRequest("tuser1@gmail.com", "@Password123");
 
         // Act
         var result = await _validator.TestValidateAsync(loginDTO);

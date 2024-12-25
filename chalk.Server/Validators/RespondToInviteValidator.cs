@@ -1,9 +1,9 @@
-using chalk.Server.DTOs;
+using chalk.Server.DTOs.Requests;
 using FluentValidation;
 
 namespace chalk.Server.Validators;
 
-public class RespondToInviteValidator : AbstractValidator<RespondToInviteDTO>
+public class RespondToInviteValidator : AbstractValidator<RespondToInviteRequest>
 {
     public RespondToInviteValidator()
     {

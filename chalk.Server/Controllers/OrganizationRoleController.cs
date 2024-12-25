@@ -1,4 +1,4 @@
-using chalk.Server.DTOs;
+using chalk.Server.DTOs.Requests;
 using chalk.Server.DTOs.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,11 +15,11 @@ public class OrganizationRoleController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateRole([FromBody] CreateOrganizationRoleDTO createOrganizationRoleDTO)
+    public async Task<IActionResult> CreateRole([FromBody] CreateOrganizationRoleRequest createOrganizationRoleRequest)
     {
         if (!ModelState.IsValid)
         {
-            return BadRequest(new ApiResponseDTO<object>(ModelState));
+            return BadRequest(new ApiResponse<object>(ModelState));
         }
 
         return Ok();

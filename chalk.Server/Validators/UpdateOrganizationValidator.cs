@@ -1,9 +1,9 @@
-using chalk.Server.DTOs;
+using chalk.Server.DTOs.Requests;
 using FluentValidation;
 
 namespace chalk.Server.Validators;
 
-public class UpdateOrganizationValidator : AbstractValidator<UpdateOrganizationDTO>
+public class UpdateOrganizationValidator : AbstractValidator<UpdateOrganizationRequest>
 {
     public UpdateOrganizationValidator()
     {

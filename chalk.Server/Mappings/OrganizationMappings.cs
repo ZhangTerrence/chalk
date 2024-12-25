@@ -1,26 +1,27 @@
 using System.Globalization;
 using chalk.Server.Common;
 using chalk.Server.DTOs;
+using chalk.Server.DTOs.Requests;
 using chalk.Server.DTOs.Responses;
 using chalk.Server.Entities;
 
-namespace chalk.Server.Extensions;
+namespace chalk.Server.Mappings;
 
-public static class OrganizationExtensions
+public static class OrganizationMappings
 {
-    public static Organization ToOrganization(this CreateOrganizationDTO createOrganizationDTO, User owner)
+    public static Organization ToEntity(this CreateOrganizationRequest createOrganizationRequest, User owner)
     {
         return new Organization
         {
-            Name = createOrganizationDTO.Name,
-            Description = createOrganizationDTO.Description,
+            Name = createOrganizationRequest.Name,
+            Description = createOrganizationRequest.Description,
             CreatedDate = DateTime.UtcNow,
             UpdatedDate = DateTime.UtcNow,
             Owner = owner
         };
     }
 
-    public static UserOrganization ToUserOrganization(
+    public static UserOrganization ToEntity(
         MemberStatus status,
         Organization organization,
         User user,
@@ -36,41 +37,41 @@ public static class OrganizationExtensions
         };
     }
 
-    public static InviteResponseDTO ToInviteResponseDTO(this UserOrganization userOrganization)
+    public static InviteResponse ToResponse(this UserOrganization userOrganization)
     {
-        return new InviteResponseDTO(
+        return new InviteResponse(
             InviteType.Organization,
-            new InviteResponseDTO.OrganizationDTO(userOrganization.Organization.Id, userOrganization.Organization.Name),
+            new OrganizationDTO(userOrganization.Organization.Id, userOrganization.Organization.Name),
             null
         );
     }
 
-    public static OrganizationResponseDTO ToOrganizationResponseDTO(this Organization organization)
+    public static OrganizationResponse ToResponse(this Organization organization)
     {
-        return new OrganizationResponseDTO(
+        return new OrganizationResponse(
             organization.Id,
             organization.Name,
             organization.ProfilePictureUri,
             organization.Description,
             organization.CreatedDate.ToString(CultureInfo.CurrentCulture),
             organization.UpdatedDate.ToString(CultureInfo.CurrentCulture),
-            new OrganizationResponseDTO.UserDTO(
+            new UserDTO(
                 organization.Owner.Id,
                 $"{organization.Owner.FirstName} {organization.Owner.LastName}",
                 organization.CreatedDate.ToString(CultureInfo.CurrentCulture)
             ),
             organization.UserOrganizations
-                .Select(e => new OrganizationResponseDTO.UserDTO(
+                .Select(e => new UserDTO(
                     e.User.Id,
                     e.User.DisplayName,
                     e.JoinedDate?.ToString(CultureInfo.CurrentCulture)
                 ))
                 .ToList(),
             organization.OrganizationRoles
-                .Select(e => new OrganizationResponseDTO.OrganizationRoleDTO(e.Id, e.Name, e.Permissions))
+                .Select(e => new OrganizationRoleDTO(e.Id, e.Name, e.Permissions))
                 .ToList(),
             organization.Courses
-                .Select(e => new OrganizationResponseDTO.CourseDTO(e.Id, e.Name, e.Code))
+                .Select(e => new CourseDTO(e.Id, e.Name, e.Code))
                 .ToList()
         );
     }

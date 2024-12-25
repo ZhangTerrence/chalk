@@ -1,4 +1,5 @@
 using chalk.Server.DTOs;
+using chalk.Server.DTOs.Requests;
 using chalk.Server.DTOs.Responses;
 using chalk.Server.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -22,40 +23,40 @@ public class CourseController : ControllerBase
     public async Task<IActionResult> GetCourses()
     {
         var courses = await _courseService.GetCoursesAsync();
-        return Ok(new ApiResponseDTO<IEnumerable<CourseResponseDTO>>(null, courses));
+        return Ok(new ApiResponse<IEnumerable<CourseResponse>>(null, courses));
     }
 
     [HttpGet("{courseId:long}")]
     public async Task<IActionResult> GetCourse([FromRoute] long courseId)
     {
         var course = await _courseService.GetCourseAsync(courseId);
-        return Ok(new ApiResponseDTO<CourseResponseDTO>(null, course));
+        return Ok(new ApiResponse<CourseResponse>(null, course));
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateCourse([FromBody] CreateCourseDTO createCourseDTO)
+    public async Task<IActionResult> CreateCourse([FromBody] CreateCourseRequest createCourseRequest)
     {
         if (!ModelState.IsValid)
         {
-            return BadRequest(new ApiResponseDTO<object>(ModelState));
+            return BadRequest(new ApiResponse<object>(ModelState));
         }
 
-        var createdCourse = await _courseService.CreateCourseAsync(createCourseDTO);
-        return Ok(new ApiResponseDTO<CourseResponseDTO>(null, createdCourse));
+        var createdCourse = await _courseService.CreateCourseAsync(createCourseRequest);
+        return Ok(new ApiResponse<CourseResponse>(null, createdCourse));
     }
 
     [HttpPatch("{courseId:long}")]
     public async Task<IActionResult> UpdateCourse(
         [FromRoute] long courseId,
-        [FromBody] UpdateCourseDTO updateCourseDTO)
+        [FromBody] UpdateCourseRequest updateCourseRequest)
     {
         if (!ModelState.IsValid)
         {
-            return BadRequest(new ApiResponseDTO<object>(ModelState));
+            return BadRequest(new ApiResponse<object>(ModelState));
         }
 
-        var updatedCourse = await _courseService.UpdateCourseAsync(courseId, updateCourseDTO);
-        return Ok(new ApiResponseDTO<CourseResponseDTO>(null, updatedCourse));
+        var updatedCourse = await _courseService.UpdateCourseAsync(courseId, updateCourseRequest);
+        return Ok(new ApiResponse<CourseResponse>(null, updatedCourse));
     }
 
     [HttpDelete("{courseId:long}")]

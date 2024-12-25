@@ -20,7 +20,7 @@ public class ExceptionMiddleware : IExceptionHandler
                 break;
         }
 
-        await httpContext.Response.WriteAsJsonAsync(new ApiResponseDTO<object>([exception.Message], null),
+        await httpContext.Response.WriteAsJsonAsync(new ApiResponse<object>([exception.Message], null),
             cancellationToken);
         return true;
     }

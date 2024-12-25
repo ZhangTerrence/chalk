@@ -1,6 +1,6 @@
-using chalk.Server.DTOs;
+using chalk.Server.DTOs.Requests;
 using chalk.Server.Entities;
-using chalk.Server.Extensions;
+using chalk.Server.Mappings;
 using chalk.Server.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -50,9 +50,9 @@ public class AuthServiceUnitTests
     public async Task RegisterUserAsync_UserExists_ShouldFail()
     {
         // Arrange
-        var registerDTO = new RegisterDTO("Test", "User", "Test User", "tuser1@gmail.com", "@Password123");
+        var registerDTO = new RegisterRequest("Test", "User", "Test User", "tuser1@gmail.com", "@Password123");
 
-        _userManager.FindByEmailAsync(Arg.Any<string>()).Returns(registerDTO.ToUser());
+        _userManager.FindByEmailAsync(Arg.Any<string>()).Returns(registerDTO.ToEntity());
 
         // Act
         var act = async () => { await _authService.RegisterUserAsync(registerDTO); };
@@ -67,7 +67,7 @@ public class AuthServiceUnitTests
     public async Task AuthenticateUserAsync_UserDoesNotExists_ShouldFail()
     {
         // Arrange
-        var loginDTO = new LoginDTO("tuser1@gmail.com", "@Password123");
+        var loginDTO = new LoginRequest("tuser1@gmail.com", "@Password123");
 
         _userManager.FindByEmailAsync(Arg.Any<string>()).Returns((User?)null);
 

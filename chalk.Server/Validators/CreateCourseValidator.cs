@@ -1,9 +1,9 @@
-using chalk.Server.DTOs;
+using chalk.Server.DTOs.Requests;
 using FluentValidation;
 
 namespace chalk.Server.Validators;
 
-public class CreateCourseValidator : AbstractValidator<CreateCourseDTO>
+public class CreateCourseValidator : AbstractValidator<CreateCourseRequest>
 {
     public CreateCourseValidator()
     {

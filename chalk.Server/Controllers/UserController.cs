@@ -1,4 +1,4 @@
-using chalk.Server.DTOs;
+using chalk.Server.DTOs.Requests;
 using chalk.Server.DTOs.Responses;
 using chalk.Server.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -22,32 +22,32 @@ public class UserController : ControllerBase
     public async Task<IActionResult> GetUsers()
     {
         var users = await _userService.GetUsersAsync();
-        return Ok(new ApiResponseDTO<IEnumerable<UserResponseDTO>>(null, users));
+        return Ok(new ApiResponse<IEnumerable<UserResponse>>(null, users));
     }
 
     [HttpGet("{userId:long}")]
     public async Task<IActionResult> GetUser([FromRoute] long userId)
     {
         var user = await _userService.GetUserAsync(userId);
-        return Ok(new ApiResponseDTO<UserResponseDTO>(null, user));
+        return Ok(new ApiResponse<UserResponse>(null, user));
     }
 
     [HttpGet("invite/{userId:long}")]
     public async Task<IActionResult> GetInvites([FromRoute] long userId)
     {
         var invites = await _userService.GetPendingInvitesAsync(userId, User);
-        return Ok(new ApiResponseDTO<IEnumerable<InviteResponseDTO>>(null, invites));
+        return Ok(new ApiResponse<IEnumerable<InviteResponse>>(null, invites));
     }
 
     [HttpPost("invite")]
-    public async Task<IActionResult> RespondInvite([FromBody] RespondToInviteDTO respondToInviteDTO)
+    public async Task<IActionResult> RespondInvite([FromBody] RespondToInviteRequest respondToInviteRequest)
     {
         if (!ModelState.IsValid)
         {
-            return BadRequest(new ApiResponseDTO<object>(ModelState));
+            return BadRequest(new ApiResponse<object>(ModelState));
         }
 
-        await _userService.RespondToInviteAsync(respondToInviteDTO);
+        await _userService.RespondToInviteAsync(respondToInviteRequest);
         return NoContent();
     }
 }

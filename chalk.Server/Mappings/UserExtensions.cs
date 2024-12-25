@@ -1,29 +1,30 @@
 using System.Globalization;
 using chalk.Server.DTOs;
+using chalk.Server.DTOs.Requests;
 using chalk.Server.DTOs.Responses;
 using chalk.Server.Entities;
 
-namespace chalk.Server.Extensions;
+namespace chalk.Server.Mappings;
 
 public static class UserExtensions
 {
-    public static User ToUser(this RegisterDTO registerDTO)
+    public static User ToEntity(this RegisterRequest registerRequest)
     {
         return new User
         {
-            Email = registerDTO.Email,
-            FirstName = registerDTO.FirstName,
-            LastName = registerDTO.LastName,
-            DisplayName = registerDTO.DisplayName,
-            UserName = registerDTO.Email,
+            Email = registerRequest.Email,
+            FirstName = registerRequest.FirstName,
+            LastName = registerRequest.LastName,
+            DisplayName = registerRequest.DisplayName,
+            UserName = registerRequest.Email,
             CreatedDate = DateTime.UtcNow,
             UpdatedDate = DateTime.UtcNow
         };
     }
 
-    public static UserResponseDTO ToUserResponseDTO(this User user)
+    public static UserResponse ToResponse(this User user)
     {
-        return new UserResponseDTO(
+        return new UserResponse(
             user.Id,
             user.Email,
             user.FirstName,
@@ -33,13 +34,13 @@ public static class UserExtensions
             user.CreatedDate.ToString(CultureInfo.CurrentCulture),
             user.UpdatedDate.ToString(CultureInfo.CurrentCulture),
             user.UserOrganizations
-                .Select(e => new UserResponseDTO.OrganizationDTO(e.Organization.Id, e.Organization.Name))
+                .Select(e => new OrganizationDTO(e.Organization.Id, e.Organization.Name))
                 .ToList(),
             user.UserCourses
-                .Select(e => new UserResponseDTO.CourseDTO(e.Course.Id, e.Course.Name, e.Course.Code))
+                .Select(e => new CourseDTO(e.Course.Id, e.Course.Name, e.Course.Code))
                 .ToList(),
             user.ChannelParticipants
-                .Select(e => new UserResponseDTO.ChannelDTO(e.Channel.Id, e.Channel.Name))
+                .Select(e => new ChannelDTO(e.Channel.Id, e.Channel.Name))
                 .ToList()
         );
     }

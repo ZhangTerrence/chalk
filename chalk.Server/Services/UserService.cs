@@ -1,10 +1,10 @@
 using System.Security.Claims;
 using chalk.Server.Common;
 using chalk.Server.Data;
-using chalk.Server.DTOs;
+using chalk.Server.DTOs.Requests;
 using chalk.Server.DTOs.Responses;
 using chalk.Server.Entities;
-using chalk.Server.Extensions;
+using chalk.Server.Mappings;
 using chalk.Server.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,17 +19,17 @@ public class UserService : IUserService
         _context = context;
     }
 
-    public async Task<IEnumerable<UserResponseDTO>> GetUsersAsync()
+    public async Task<IEnumerable<UserResponse>> GetUsersAsync()
     {
         return await _context.Users
             .Include(e => e.UserOrganizations).ThenInclude(e => e.Organization)
             .Include(e => e.UserCourses).ThenInclude(e => e.Course)
             .Include(e => e.ChannelParticipants).ThenInclude(e => e.Channel)
-            .Select(e => e.ToUserResponseDTO())
+            .Select(e => e.ToResponse())
             .ToListAsync();
     }
 
-    public async Task<UserResponseDTO> GetUserAsync(long userId)
+    public async Task<UserResponse> GetUserAsync(long userId)
     {
         var user = await _context.Users
             .Include(e => e.UserOrganizations).ThenInclude(e => e.Organization)
@@ -41,10 +41,10 @@ public class UserService : IUserService
             throw new BadHttpRequestException("User not found.", StatusCodes.Status404NotFound);
         }
 
-        return user.ToUserResponseDTO();
+        return user.ToResponse();
     }
 
-    public async Task<IEnumerable<InviteResponseDTO>> GetPendingInvitesAsync(long userId, ClaimsPrincipal authUser)
+    public async Task<IEnumerable<InviteResponse>> GetPendingInvitesAsync(long userId, ClaimsPrincipal authUser)
     {
         var currentUserId = authUser.FindFirstValue(ClaimTypes.NameIdentifier);
         if (currentUserId is null)
@@ -68,32 +68,32 @@ public class UserService : IUserService
             throw new BadHttpRequestException("Unauthorized.", StatusCodes.Status403Forbidden);
         }
 
-        var invites = new List<InviteResponseDTO>();
+        var invites = new List<InviteResponse>();
         invites.AddRange(_context.UserOrganizations
             .Where(e => e.UserId == userId && e.Status == MemberStatus.Invited)
-            .Select(e => e.ToInviteResponseDTO()));
+            .Select(e => e.ToResponse()));
         invites.AddRange(_context.UserCourses
             .Where(e => e.UserId == userId && e.Status == MemberStatus.Invited)
-            .Select(e => e.ToInviteResponseDTO()));
+            .Select(e => e.ToResponse()));
 
         return invites;
     }
 
-    public async Task RespondToInviteAsync(RespondToInviteDTO respondToInviteDTO)
+    public async Task RespondToInviteAsync(RespondToInviteRequest respondToInviteRequest)
     {
         var invite = await _context.UserOrganizations
             .Include(e => e.Organization)
             .FirstOrDefaultAsync(e =>
-                e.UserId == respondToInviteDTO.UserId && e.OrganizationId == respondToInviteDTO.OrganizationId);
+                e.UserId == respondToInviteRequest.UserId && e.OrganizationId == respondToInviteRequest.OrganizationId);
         if (invite is null)
         {
             throw new BadHttpRequestException("Invite not found.", StatusCodes.Status404NotFound);
         }
 
-        switch (respondToInviteDTO.InviteType)
+        switch (respondToInviteRequest.InviteType)
         {
             case InviteType.Organization:
-                await ResponseOrganizationInvite(invite, respondToInviteDTO);
+                await ResponseOrganizationInvite(invite, respondToInviteRequest);
                 break;
             case InviteType.Course:
                 break;
@@ -102,7 +102,8 @@ public class UserService : IUserService
         }
     }
 
-    private async Task ResponseOrganizationInvite(UserOrganization invite, RespondToInviteDTO respondToInviteDTO)
+    private async Task ResponseOrganizationInvite(UserOrganization invite,
+        RespondToInviteRequest respondToInviteRequest)
     {
         switch (invite.Status)
         {
@@ -116,7 +117,7 @@ public class UserService : IUserService
                 throw new BadHttpRequestException("Invalid status.", StatusCodes.Status400BadRequest);
         }
 
-        if (respondToInviteDTO.Accept)
+        if (respondToInviteRequest.Accept)
         {
             invite.Status = MemberStatus.User;
             invite.JoinedDate = DateTime.UtcNow;

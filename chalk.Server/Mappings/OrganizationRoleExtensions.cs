@@ -1,27 +1,27 @@
 using System.Globalization;
-using chalk.Server.DTOs;
+using chalk.Server.DTOs.Requests;
 using chalk.Server.DTOs.Responses;
 using chalk.Server.Entities;
 
-namespace chalk.Server.Extensions;
+namespace chalk.Server.Mappings;
 
 public static class OrganizationRoleExtensions
 {
-    public static OrganizationRole ToOrganizationRole(this CreateOrganizationRoleDTO createOrganizationRoleDTO)
+    public static OrganizationRole ToEntity(this CreateOrganizationRoleRequest createOrganizationRoleRequest)
     {
         return new OrganizationRole
         {
-            Name = createOrganizationRoleDTO.Name,
-            Description = createOrganizationRoleDTO.Description,
-            Permissions = createOrganizationRoleDTO.Permissions,
+            Name = createOrganizationRoleRequest.Name,
+            Description = createOrganizationRoleRequest.Description,
+            Permissions = createOrganizationRoleRequest.Permissions,
             CreatedDate = DateTime.UtcNow,
             UpdatedDate = DateTime.UtcNow,
         };
     }
 
-    public static OrganizationRoleResponseDTO ToOrganizationRoleResponseDTO(this OrganizationRole organizationRole)
+    public static OrganizationRoleResponse ToResponse(this OrganizationRole organizationRole)
     {
-        return new OrganizationRoleResponseDTO(
+        return new OrganizationRoleResponse(
             organizationRole.Id,
             organizationRole.Name,
             organizationRole.Description,
