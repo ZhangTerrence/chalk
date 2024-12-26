@@ -14,7 +14,7 @@ public class RegisterRequestTests
     [Theory]
     [InlineData(null)]
     [InlineData("")]
-    [InlineData("ab ")]
+    [InlineData("   ")]
     public async Task Validate_FirstNameIsNullEmptyOrWhitespace_ShouldHaveError(string? firstName)
     {
         // Arrange 
@@ -175,5 +175,18 @@ public class RegisterRequestTests
         // Assert
         result.ShouldHaveValidationErrorFor(x => x.Password)
             .WithErrorMessage(Errors.Validation.IsInvalidPassword);
+    }
+
+    [Fact]
+    public async Task Validate_ValidRequest_ShouldNotHaveError()
+    {
+        // Arrange 
+        var registerRequest = new RegisterRequest("Test", "User", "Test User", "tuser@gmail.com", "@Password123");
+
+        // Act
+        var result = await _validator.TestValidateAsync(registerRequest);
+
+        // Assert
+        result.ShouldNotHaveAnyValidationErrors();
     }
 }

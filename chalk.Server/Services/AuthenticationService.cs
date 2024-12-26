@@ -2,7 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using chalk.Server.Common;
+using chalk.Server.Common.Errors;
 using chalk.Server.DTOs.Requests;
 using chalk.Server.DTOs.Responses;
 using chalk.Server.Entities;
@@ -15,6 +15,12 @@ namespace chalk.Server.Services;
 
 public class AuthenticationService : IAuthenticationService
 {
+    private enum TokenType
+    {
+        AccessToken,
+        RefreshToken
+    }
+
     private static readonly DateTimeOffset AccessTokenExpiryDate = DateTimeOffset.UtcNow.AddHours(1);
     private static readonly DateTimeOffset RefreshTokenExpiryDate = DateTimeOffset.UtcNow.AddDays(1);
 
@@ -43,7 +49,7 @@ public class AuthenticationService : IAuthenticationService
         var existingUser = await _userManager.FindByEmailAsync(registerRequest.Email!);
         if (existingUser is not null)
         {
-            throw new BadHttpRequestException("User already exists.", StatusCodes.Status409Conflict);
+            throw new BadHttpRequestException(Errors.AlreadyExists("User"), StatusCodes.Status409Conflict);
         }
 
         var user = registerRequest.ToEntity();
@@ -51,7 +57,7 @@ public class AuthenticationService : IAuthenticationService
         var createdUser = await _userManager.CreateAsync(user, registerRequest.Password!);
         if (!createdUser.Succeeded)
         {
-            throw new BadHttpRequestException("Unable to create user.", StatusCodes.Status500InternalServerError);
+            throw new BadHttpRequestException(Errors.UnableToCreate("User"), StatusCodes.Status500InternalServerError);
         }
 
         if (!await _roleManager.RoleExistsAsync("User"))
@@ -59,16 +65,20 @@ public class AuthenticationService : IAuthenticationService
             var createdRole = await _roleManager.CreateAsync(new IdentityRole<long>("User"));
             if (!createdRole.Succeeded)
             {
-                throw new BadHttpRequestException("Unable to create user role.",
-                    StatusCodes.Status500InternalServerError);
+                throw new BadHttpRequestException(
+                    Errors.UnableToCreate("User Role"),
+                    StatusCodes.Status500InternalServerError
+                );
             }
         }
 
         var assignedUser = await _userManager.AddToRoleAsync(user, "User");
         if (!assignedUser.Succeeded)
         {
-            throw new BadHttpRequestException("Unable to assign user to user role.",
-                StatusCodes.Status500InternalServerError);
+            throw new BadHttpRequestException(
+                Errors.User.UnableToAssignToRole("User"),
+                StatusCodes.Status500InternalServerError
+            );
         }
 
         var accessToken = CreateAccessToken(user.Id, user.DisplayName, ["User"]);
@@ -79,7 +89,10 @@ public class AuthenticationService : IAuthenticationService
         var updatedUser = await _userManager.UpdateAsync(user);
         if (!updatedUser.Succeeded)
         {
-            throw new BadHttpRequestException("Unable to set refresh token.", StatusCodes.Status500InternalServerError);
+            throw new BadHttpRequestException(
+                Errors.Authentication.UnableToSetRefreshToken,
+                StatusCodes.Status500InternalServerError
+            );
         }
 
         AddCookie(TokenType.AccessToken, accessToken);
@@ -90,16 +103,19 @@ public class AuthenticationService : IAuthenticationService
 
     public async Task<AuthResponse> LoginUserAsync(LoginRequest loginRequest)
     {
-        var user = await _userManager.FindByEmailAsync(loginRequest.Email);
+        var user = await _userManager.FindByEmailAsync(loginRequest.Email!);
         if (user is null)
         {
-            throw new BadHttpRequestException("User not found.", StatusCodes.Status404NotFound);
+            throw new BadHttpRequestException(Errors.NotFound("User"), StatusCodes.Status404NotFound);
         }
 
-        var authenticated = await _userManager.CheckPasswordAsync(user, loginRequest.Password);
+        var authenticated = await _userManager.CheckPasswordAsync(user, loginRequest.Password!);
         if (!authenticated)
         {
-            throw new BadHttpRequestException("Invalid credentials.", StatusCodes.Status401Unauthorized);
+            throw new BadHttpRequestException(
+                Errors.Authentication.InvalidCredentials,
+                StatusCodes.Status401Unauthorized
+            );
         }
 
         var roles = await _userManager.GetRolesAsync(user);
@@ -112,7 +128,10 @@ public class AuthenticationService : IAuthenticationService
         var updatedUser = await _userManager.UpdateAsync(user);
         if (!updatedUser.Succeeded)
         {
-            throw new BadHttpRequestException("Unable to set refresh token.", StatusCodes.Status500InternalServerError);
+            throw new BadHttpRequestException(
+                Errors.Authentication.UnableToSetRefreshToken,
+                StatusCodes.Status500InternalServerError
+            );
         }
 
         AddCookie(TokenType.AccessToken, accessToken);
@@ -126,18 +145,22 @@ public class AuthenticationService : IAuthenticationService
         var currentUserId = identity.FindFirstValue(ClaimTypes.NameIdentifier);
         if (currentUserId is null)
         {
-            throw new BadHttpRequestException("Unauthorized.", StatusCodes.Status401Unauthorized);
+            throw new BadHttpRequestException(Errors.Authentication.Unauthorized, StatusCodes.Status401Unauthorized);
         }
 
         var currentUser = await _userManager.FindByIdAsync(currentUserId);
         if (currentUser is null)
         {
-            throw new BadHttpRequestException("User not found.", StatusCodes.Status404NotFound);
+            throw new BadHttpRequestException(Errors.NotFound("User"), StatusCodes.Status404NotFound);
         }
 
         currentUser.RefreshToken = null;
         currentUser.RefreshTokenExpiryDate = null;
-        await _userManager.UpdateAsync(currentUser);
+        var updatedUser = await _userManager.UpdateAsync(currentUser);
+        if (!updatedUser.Succeeded)
+        {
+            throw new BadHttpRequestException(Errors.UnableToUpdate("User"), StatusCodes.Status500InternalServerError);
+        }
     }
 
     public async Task RefreshTokensAsync(ClaimsPrincipal identity, string? refreshToken)
@@ -145,23 +168,29 @@ public class AuthenticationService : IAuthenticationService
         var currentUserId = identity.FindFirstValue(ClaimTypes.NameIdentifier);
         if (currentUserId is null || refreshToken is null)
         {
-            throw new BadHttpRequestException("Unauthorized.", StatusCodes.Status401Unauthorized);
+            throw new BadHttpRequestException(Errors.Authentication.Unauthorized, StatusCodes.Status401Unauthorized);
         }
 
         var currentUser = await _userManager.FindByIdAsync(currentUserId);
         if (currentUser is null)
         {
-            throw new BadHttpRequestException("User not found.", StatusCodes.Status404NotFound);
-        }
-
-        if (currentUser.RefreshTokenExpiryDate < DateTime.UtcNow)
-        {
-            throw new BadHttpRequestException("Refresh token is expired.", StatusCodes.Status401Unauthorized);
+            throw new BadHttpRequestException(Errors.NotFound("User"), StatusCodes.Status404NotFound);
         }
 
         if (currentUser.RefreshToken != refreshToken)
         {
-            throw new BadHttpRequestException("Refresh token is invalid.", StatusCodes.Status401Unauthorized);
+            throw new BadHttpRequestException(
+                Errors.Authentication.RefreshTokenInvalid,
+                StatusCodes.Status401Unauthorized
+            );
+        }
+
+        if (currentUser.RefreshTokenExpiryDate < DateTime.UtcNow)
+        {
+            throw new BadHttpRequestException(
+                Errors.Authentication.RefreshTokenExpired,
+                StatusCodes.Status401Unauthorized
+            );
         }
 
         var roles = await _userManager.GetRolesAsync(currentUser);
@@ -174,7 +203,10 @@ public class AuthenticationService : IAuthenticationService
         var updatedUser = await _userManager.UpdateAsync(currentUser);
         if (!updatedUser.Succeeded)
         {
-            throw new BadHttpRequestException("Unable to set refresh token.", StatusCodes.Status500InternalServerError);
+            throw new BadHttpRequestException(
+                Errors.Authentication.UnableToSetRefreshToken,
+                StatusCodes.Status500InternalServerError
+            );
         }
 
         AddCookie(TokenType.AccessToken, newAccessToken);

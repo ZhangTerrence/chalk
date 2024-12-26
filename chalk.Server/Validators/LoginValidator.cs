@@ -16,7 +16,7 @@ public class LoginValidator : AbstractValidator<LoginRequest>
         RuleFor(e => e.Password)
             .NotEmpty()
             .WithMessage("Password property is required.")
-            .Matches("^(?:(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[-._@+]).*){8,}$")
+            .Matches("^(?:(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[-._@+]).*).{8,}$")
             .WithMessage(Errors.Validation.IsInvalidPassword);
     }
 }
