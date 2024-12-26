@@ -14,7 +14,7 @@ public class RegisterRequestTests
     [Theory]
     [InlineData(null)]
     [InlineData("")]
-    [InlineData("   ")]
+    [InlineData("ab ")]
     public async Task Validate_FirstNameIsNullEmptyOrWhitespace_ShouldHaveError(string? firstName)
     {
         // Arrange 

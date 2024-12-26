@@ -4,11 +4,11 @@ using chalk.Server.DTOs.Responses;
 
 namespace chalk.Server.Services.Interfaces;
 
-public interface IAuthService
+public interface IAuthenticationService
 {
     public Task<AuthResponse> RegisterUserAsync(RegisterRequest registerRequest);
 
-    public Task<AuthResponse> AuthenticateUserAsync(LoginRequest loginRequest);
+    public Task<AuthResponse> LoginUserAsync(LoginRequest loginRequest);
 
     public Task LogoutUserAsync(ClaimsPrincipal identity);
 

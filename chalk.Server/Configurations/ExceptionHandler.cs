@@ -1,14 +1,15 @@
 using chalk.Server.DTOs.Responses;
 using Microsoft.AspNetCore.Diagnostics;
 
-namespace chalk.Server.Middleware;
+namespace chalk.Server.Configurations;
 
-public class ExceptionMiddleware : IExceptionHandler
+public class ExceptionHandler : IExceptionHandler
 {
     public async ValueTask<bool> TryHandleAsync(
         HttpContext httpContext,
         Exception exception,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken
+    )
     {
         switch (exception)
         {
@@ -20,8 +21,10 @@ public class ExceptionMiddleware : IExceptionHandler
                 break;
         }
 
-        await httpContext.Response.WriteAsJsonAsync(new ApiResponse<object>([exception.Message], null),
-            cancellationToken);
+        await httpContext.Response.WriteAsJsonAsync(
+            new ApiResponse<object>([exception.Message], null),
+            cancellationToken
+        );
         return true;
     }
 }

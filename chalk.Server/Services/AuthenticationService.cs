@@ -2,6 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using chalk.Server.Common;
 using chalk.Server.DTOs.Requests;
 using chalk.Server.DTOs.Responses;
 using chalk.Server.Entities;
@@ -12,14 +13,8 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace chalk.Server.Services;
 
-public class AuthService : IAuthService
+public class AuthenticationService : IAuthenticationService
 {
-    private enum TokenType
-    {
-        AccessToken,
-        RefreshToken
-    }
-
     private static readonly DateTimeOffset AccessTokenExpiryDate = DateTimeOffset.UtcNow.AddHours(1);
     private static readonly DateTimeOffset RefreshTokenExpiryDate = DateTimeOffset.UtcNow.AddDays(1);
 
@@ -29,7 +24,7 @@ public class AuthService : IAuthService
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly SymmetricSecurityKey _securityKey;
 
-    public AuthService(
+    public AuthenticationService(
         IConfiguration configuration,
         UserManager<User> userManager,
         RoleManager<IdentityRole<long>> roleManager,
@@ -45,7 +40,7 @@ public class AuthService : IAuthService
 
     public async Task<AuthResponse> RegisterUserAsync(RegisterRequest registerRequest)
     {
-        var existingUser = await _userManager.FindByEmailAsync(registerRequest.Email);
+        var existingUser = await _userManager.FindByEmailAsync(registerRequest.Email!);
         if (existingUser is not null)
         {
             throw new BadHttpRequestException("User already exists.", StatusCodes.Status409Conflict);
@@ -53,7 +48,7 @@ public class AuthService : IAuthService
 
         var user = registerRequest.ToEntity();
 
-        var createdUser = await _userManager.CreateAsync(user, registerRequest.Password);
+        var createdUser = await _userManager.CreateAsync(user, registerRequest.Password!);
         if (!createdUser.Succeeded)
         {
             throw new BadHttpRequestException("Unable to create user.", StatusCodes.Status500InternalServerError);
@@ -93,7 +88,7 @@ public class AuthService : IAuthService
         return new AuthResponse(user.ToResponse(), accessToken, refreshToken);
     }
 
-    public async Task<AuthResponse> AuthenticateUserAsync(LoginRequest loginRequest)
+    public async Task<AuthResponse> LoginUserAsync(LoginRequest loginRequest)
     {
         var user = await _userManager.FindByEmailAsync(loginRequest.Email);
         if (user is null)

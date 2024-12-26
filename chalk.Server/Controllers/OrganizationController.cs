@@ -1,6 +1,7 @@
 using chalk.Server.DTOs.Requests;
 using chalk.Server.DTOs.Responses;
 using chalk.Server.Services.Interfaces;
+using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,11 +12,26 @@ namespace chalk.Server.Controllers;
 [Authorize]
 public class OrganizationController : ControllerBase
 {
+    // Services
     private readonly IOrganizationService _organizationService;
 
-    public OrganizationController(IOrganizationService organizationService)
+    // Validators
+    private readonly IValidator<CreateOrganizationRequest> _createOrganizationValidator;
+    private readonly IValidator<UpdateOrganizationRequest> _updateOrganizationValidator;
+    private readonly IValidator<SendInviteRequest> _sendInviteValidator;
+
+    public OrganizationController(
+        IOrganizationService organizationService,
+        IValidator<CreateOrganizationRequest> createOrganizationValidator,
+        IValidator<UpdateOrganizationRequest> updateOrganizationValidator,
+        IValidator<SendInviteRequest> sendInviteValidator
+    )
     {
         _organizationService = organizationService;
+
+        _createOrganizationValidator = createOrganizationValidator;
+        _updateOrganizationValidator = updateOrganizationValidator;
+        _sendInviteValidator = sendInviteValidator;
     }
 
     [HttpGet]
@@ -25,53 +41,56 @@ public class OrganizationController : ControllerBase
         return Ok(new ApiResponse<IEnumerable<OrganizationResponse>>(null, organizations));
     }
 
-    [HttpGet("{organizationId:long}")]
-    public async Task<IActionResult> GetOrganization([FromRoute] long organizationId)
+    [HttpGet("{id:long}")]
+    public async Task<IActionResult> GetOrganization([FromRoute] long id)
     {
-        var organization = await _organizationService.GetOrganizationAsync(organizationId);
+        var organization = await _organizationService.GetOrganizationAsync(id);
         return Ok(new ApiResponse<OrganizationResponse>(null, organization));
     }
 
     [HttpPost]
     public async Task<IActionResult> CreateOrganization([FromBody] CreateOrganizationRequest createOrganizationRequest)
     {
-        if (!ModelState.IsValid)
+        var result = await _createOrganizationValidator.ValidateAsync(createOrganizationRequest);
+        if (!result.IsValid)
         {
-            return BadRequest(new ApiResponse<object>(ModelState));
+            return BadRequest(new ApiResponse<object>(result.Errors.Select(e => e.ErrorMessage), null));
         }
 
         var createdOrganization = await _organizationService.CreateOrganizationAsync(createOrganizationRequest);
         return Ok(new ApiResponse<OrganizationResponse>(null, createdOrganization));
     }
 
-    [HttpPatch("{organizationId:long}")]
+    [HttpPatch("{id:long}")]
     public async Task<IActionResult> UpdateOrganization(
-        [FromRoute] long organizationId,
-        [FromBody] UpdateOrganizationRequest updateOrganizationRequest)
+        [FromRoute] long id,
+        [FromBody] UpdateOrganizationRequest updateOrganizationRequest
+    )
     {
-        if (!ModelState.IsValid)
+        var result = await _updateOrganizationValidator.ValidateAsync(updateOrganizationRequest);
+        if (!result.IsValid)
         {
-            return BadRequest(new ApiResponse<object>(ModelState));
+            return BadRequest(new ApiResponse<object>(result.Errors.Select(e => e.ErrorMessage), null));
         }
 
-        var updatedOrganization =
-            await _organizationService.UpdateOrganizationAsync(organizationId, updateOrganizationRequest);
+        var updatedOrganization = await _organizationService.UpdateOrganizationAsync(id, updateOrganizationRequest);
         return Ok(new ApiResponse<OrganizationResponse>(null, updatedOrganization));
     }
 
-    [HttpDelete("{organizationId:long}")]
-    public async Task<IActionResult> DeleteOrganization([FromRoute] long organizationId)
+    [HttpDelete("{id:long}")]
+    public async Task<IActionResult> DeleteOrganization([FromRoute] long id)
     {
-        await _organizationService.DeleteOrganizationAsync(organizationId);
+        await _organizationService.DeleteOrganizationAsync(id);
         return NoContent();
     }
 
     [HttpPost("invite")]
     public async Task<IActionResult> SendInvite([FromBody] SendInviteRequest sendInviteRequest)
     {
-        if (!ModelState.IsValid)
+        var result = await _sendInviteValidator.ValidateAsync(sendInviteRequest);
+        if (!result.IsValid)
         {
-            return BadRequest(new ApiResponse<object>(ModelState));
+            return BadRequest(new ApiResponse<object>(result.Errors.Select(e => e.ErrorMessage), null));
         }
 
         await _organizationService.SendInviteAsync(sendInviteRequest, User);

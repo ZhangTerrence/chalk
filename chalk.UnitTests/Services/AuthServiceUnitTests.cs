@@ -16,7 +16,7 @@ public class AuthServiceUnitTests
     private readonly RoleManager<IdentityRole<long>> _roleManager;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
-    private readonly AuthService _authService;
+    private readonly AuthenticationService _authenticationService;
 
     public AuthServiceUnitTests()
     {
@@ -43,7 +43,8 @@ public class AuthServiceUnitTests
         );
         _httpContextAccessor = Substitute.For<IHttpContextAccessor>();
 
-        _authService = new AuthService(_configuration, _userManager, _roleManager, _httpContextAccessor);
+        _authenticationService =
+            new AuthenticationService(_configuration, _userManager, _roleManager, _httpContextAccessor);
     }
 
     [Fact]
@@ -55,7 +56,7 @@ public class AuthServiceUnitTests
         _userManager.FindByEmailAsync(Arg.Any<string>()).Returns(registerDTO.ToEntity());
 
         // Act
-        var act = async () => { await _authService.RegisterUserAsync(registerDTO); };
+        var act = async () => { await _authenticationService.RegisterUserAsync(registerDTO); };
 
         // Assert
         await act.Should().ThrowAsync<BadHttpRequestException>()
@@ -72,7 +73,7 @@ public class AuthServiceUnitTests
         _userManager.FindByEmailAsync(Arg.Any<string>()).Returns((User?)null);
 
         // Act
-        var act = async () => { await _authService.AuthenticateUserAsync(loginDTO); };
+        var act = async () => { await _authenticationService.LoginUserAsync(loginDTO); };
 
         // Assert
         await act.Should().ThrowAsync<BadHttpRequestException>()

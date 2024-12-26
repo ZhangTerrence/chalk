@@ -1,11 +1,10 @@
 using System.Text;
+using chalk.Server.Configurations;
 using chalk.Server.Data;
 using chalk.Server.Entities;
-using chalk.Server.Middleware;
 using chalk.Server.Services;
 using chalk.Server.Services.Interfaces;
 using FluentValidation;
-using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -74,12 +73,11 @@ builder.Services.AddRouting(options =>
     options.LowercaseQueryStrings = true;
 });
 
-// Adds fluent validation
-builder.Services.AddFluentValidationAutoValidation();
+// Adds FluentValidation
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
 // Adds scoped services
-builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IOrganizationService, OrganizationService>();
 builder.Services.AddScoped<IOrganizationRoleService, OrganizationRoleService>();
@@ -89,7 +87,7 @@ builder.Services.AddScoped<ICourseService, CourseService>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddExceptionHandler<ExceptionMiddleware>();
+builder.Services.AddExceptionHandler<ExceptionHandler>();
 builder.Services.AddProblemDetails();
 
 var app = builder.Build();
