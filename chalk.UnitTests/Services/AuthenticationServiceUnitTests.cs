@@ -93,7 +93,7 @@ public class AuthenticationServiceUnitTests
         // Assert
         await act.Should().ThrowAsync<BadHttpRequestException>()
             .Where(e => e.StatusCode == StatusCodes.Status401Unauthorized)
-            .WithMessage(Errors.Authentication.Unauthorized);
+            .WithMessage(Errors.Unauthorized);
     }
 
     [Fact]
@@ -109,7 +109,7 @@ public class AuthenticationServiceUnitTests
         // Assert
         await act.Should().ThrowAsync<BadHttpRequestException>()
             .Where(e => e.StatusCode == StatusCodes.Status401Unauthorized)
-            .WithMessage(Errors.Authentication.Unauthorized);
+            .WithMessage(Errors.Unauthorized);
     }
 
     [Fact]

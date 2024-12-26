@@ -1,3 +1,4 @@
+using chalk.Server.Common.Errors;
 using chalk.Server.DTOs.Requests;
 using FluentValidation;
 
@@ -8,18 +9,18 @@ public class RespondToInviteValidator : AbstractValidator<RespondToInviteRequest
     public RespondToInviteValidator()
     {
         RuleFor(e => e.InviteType)
-            .NotNull()
-            .WithMessage("InviteType property is required.")
+            .NotEmpty()
+            .WithMessage(Errors.Validation.IsRequired("InviteType"))
             .IsInEnum()
-            .WithMessage("InviteType property is invalid.");
+            .WithMessage(Errors.Validation.IsInvalid("InviteType"));
         RuleFor(e => e.UserId)
             .NotEmpty()
-            .WithMessage("UserId property is required.");
+            .WithMessage(Errors.Validation.IsRequired("UserId"));
         RuleFor(e => e.OrganizationId)
             .NotEmpty()
-            .WithMessage("OrganizationId property is required.");
+            .WithMessage(Errors.Validation.IsRequired("OrganizationId"));
         RuleFor(e => e.Accept)
-            .NotNull()
-            .WithMessage("Accept property is required.");
+            .NotEmpty()
+            .WithMessage(Errors.Validation.IsRequired("Accept"));
     }
 }

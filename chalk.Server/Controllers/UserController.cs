@@ -42,7 +42,7 @@ public class UserController : ControllerBase
     [HttpGet("invite/{id:long}")]
     public async Task<IActionResult> GetInvites([FromRoute] long id)
     {
-        var invites = await _userService.GetPendingInvitesAsync(id, User);
+        var invites = await _userService.GetPendingInvitesAsync(User, id);
         return Ok(new ApiResponse<IEnumerable<InviteResponse>>(null, invites));
     }
 

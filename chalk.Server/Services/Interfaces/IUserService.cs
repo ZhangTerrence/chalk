@@ -10,7 +10,7 @@ public interface IUserService
 
     public Task<UserResponse> GetUserAsync(long userId);
 
-    public Task<IEnumerable<InviteResponse>> GetPendingInvitesAsync(long userId, ClaimsPrincipal authUser);
+    public Task<IEnumerable<InviteResponse>> GetPendingInvitesAsync(ClaimsPrincipal identity, long userId);
 
     public Task RespondToInviteAsync(RespondToInviteRequest respondToInviteRequest);
 }

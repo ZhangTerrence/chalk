@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using chalk.Server.Common;
+using chalk.Server.Common.Errors;
 using chalk.Server.Data;
 using chalk.Server.DTOs.Requests;
 using chalk.Server.DTOs.Responses;
@@ -38,24 +39,24 @@ public class UserService : IUserService
             .FirstOrDefaultAsync(e => e.Id == userId);
         if (user is null)
         {
-            throw new BadHttpRequestException("User not found.", StatusCodes.Status404NotFound);
+            throw new BadHttpRequestException(Errors.NotFound("User"), StatusCodes.Status404NotFound);
         }
 
         return user.ToResponse();
     }
 
-    public async Task<IEnumerable<InviteResponse>> GetPendingInvitesAsync(long userId, ClaimsPrincipal authUser)
+    public async Task<IEnumerable<InviteResponse>> GetPendingInvitesAsync(ClaimsPrincipal identity, long userId)
     {
-        var currentUserId = authUser.FindFirstValue(ClaimTypes.NameIdentifier);
+        var currentUserId = identity.FindFirstValue(ClaimTypes.NameIdentifier);
         if (currentUserId is null)
         {
-            throw new BadHttpRequestException("Unauthorized.", StatusCodes.Status401Unauthorized);
+            throw new BadHttpRequestException(Errors.Unauthorized, StatusCodes.Status401Unauthorized);
         }
 
         var currentUser = await _context.Users.FindAsync(long.Parse(currentUserId));
         if (currentUser is null)
         {
-            throw new BadHttpRequestException("User not found.", StatusCodes.Status404NotFound);
+            throw new BadHttpRequestException(Errors.NotFound("User"), StatusCodes.Status404NotFound);
         }
 
         var currentUserRoles = await Task.WhenAll(
@@ -65,7 +66,7 @@ public class UserService : IUserService
                 .ToList());
         if (!currentUserRoles.Contains("Admin") && currentUser.Id != userId)
         {
-            throw new BadHttpRequestException("Unauthorized.", StatusCodes.Status403Forbidden);
+            throw new BadHttpRequestException(Errors.Forbidden, StatusCodes.Status403Forbidden);
         }
 
         var invites = new List<InviteResponse>();
@@ -87,7 +88,7 @@ public class UserService : IUserService
                 e.UserId == respondToInviteRequest.UserId && e.OrganizationId == respondToInviteRequest.OrganizationId);
         if (invite is null)
         {
-            throw new BadHttpRequestException("Invite not found.", StatusCodes.Status404NotFound);
+            throw new BadHttpRequestException(Errors.NotFound("Invite"), StatusCodes.Status404NotFound);
         }
 
         switch (respondToInviteRequest.InviteType)
@@ -98,23 +99,25 @@ public class UserService : IUserService
             case InviteType.Course:
                 break;
             default:
-                throw new BadHttpRequestException("Invalid invite type.", StatusCodes.Status400BadRequest);
+                throw new BadHttpRequestException(Errors.Invalid("Invite Type"), StatusCodes.Status400BadRequest);
         }
     }
 
-    private async Task ResponseOrganizationInvite(UserOrganization invite,
-        RespondToInviteRequest respondToInviteRequest)
+    private async Task ResponseOrganizationInvite(
+        UserOrganization invite,
+        RespondToInviteRequest respondToInviteRequest
+    )
     {
         switch (invite.Status)
         {
             case MemberStatus.User:
-                throw new BadHttpRequestException("User already in organization.", StatusCodes.Status409Conflict);
+                throw new BadHttpRequestException(Errors.Organization.AlreadyUser, StatusCodes.Status409Conflict);
             case MemberStatus.Banned:
-                throw new BadHttpRequestException("User is banned.", StatusCodes.Status403Forbidden);
+                throw new BadHttpRequestException(Errors.Organization.UserIsBanned, StatusCodes.Status403Forbidden);
             case MemberStatus.Invited:
                 break;
             default:
-                throw new BadHttpRequestException("Invalid status.", StatusCodes.Status400BadRequest);
+                throw new BadHttpRequestException(Errors.Invalid("Status"), StatusCodes.Status400BadRequest);
         }
 
         if (respondToInviteRequest.Accept)

@@ -4,8 +4,6 @@ public static partial class Errors
 {
     public static class Authentication
     {
-        public const string Unauthorized = "Unauthorized.";
-
         public const string InvalidCredentials = "Invalid credentials.";
 
         public const string UnableToSetRefreshToken = "Unable to set refresh token.";

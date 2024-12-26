@@ -145,7 +145,7 @@ public class AuthenticationService : IAuthenticationService
         var currentUserId = identity.FindFirstValue(ClaimTypes.NameIdentifier);
         if (currentUserId is null)
         {
-            throw new BadHttpRequestException(Errors.Authentication.Unauthorized, StatusCodes.Status401Unauthorized);
+            throw new BadHttpRequestException(Errors.Unauthorized, StatusCodes.Status401Unauthorized);
         }
 
         var currentUser = await _userManager.FindByIdAsync(currentUserId);
@@ -168,7 +168,7 @@ public class AuthenticationService : IAuthenticationService
         var currentUserId = identity.FindFirstValue(ClaimTypes.NameIdentifier);
         if (currentUserId is null || refreshToken is null)
         {
-            throw new BadHttpRequestException(Errors.Authentication.Unauthorized, StatusCodes.Status401Unauthorized);
+            throw new BadHttpRequestException(Errors.Unauthorized, StatusCodes.Status401Unauthorized);
         }
 
         var currentUser = await _userManager.FindByIdAsync(currentUserId);
