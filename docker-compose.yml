@@ -2,8 +2,8 @@
   chalk.server:
     image: chalk.server
     build:
-      context: .
-      dockerfile: chalk.Server/Dockerfile
+      context: chalk.Server
+      dockerfile: Dockerfile
     environment:
       - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
       - ConnectionStrings__DefaultConnection=${CONNECTION_STRING}
@@ -26,6 +26,17 @@
     restart: "always"
     volumes:
       - chalk_psql:/var/lib/postgresql/data
+  
+  chalk.web:
+    image: chalk.web
+    build:
+      context: chalk.Web
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - chalk.server
+      - chalk.database
 
 volumes:
   chalk_psql:
