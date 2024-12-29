@@ -8,6 +8,9 @@
     "^react$",
     "<THIRD_PARTY_MODULES>",
     "^@/components/(.*)$",
+    "^@/lib/utils/(.*)$",
+    "^@/components/ui/(.*)$",
+    "^@/lib/(.*)$",
     "^@/hooks/(.*)$",
     "^[./]"
   ],
