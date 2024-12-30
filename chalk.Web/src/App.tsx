@@ -1,15 +1,16 @@
-import { Header } from "@/components/Header.tsx";
+import Landing from "@/pages/Landing.tsx";
+import Login from "@/pages/Login.tsx";
+import Register from "@/pages/Register.tsx";
+import { BrowserRouter, Route, Routes } from "react-router";
 
 export default function App() {
   return (
-    <div className="h-screen w-screen flex items-center justify-center">
-      <Header />
-      <div className="flex flex-col gap-y-2 items-center">
-        <h1 className="text-4xl">
-          <strong>Chalk</strong>
-        </h1>
-        <p>A learning management system.</p>
-      </div>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Landing />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
