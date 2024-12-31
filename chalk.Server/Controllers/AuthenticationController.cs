@@ -40,7 +40,7 @@ public class AuthenticationController : ControllerBase
         }
 
         var response = await _authenticationService.RegisterUserAsync(request);
-        return Created(nameof(Register), new ApiResponse<AuthResponse>(null, response));
+        return Created(nameof(Register), new ApiResponse<AuthenticationResponse>(null, response));
     }
 
     [HttpPost("login")]
@@ -53,7 +53,7 @@ public class AuthenticationController : ControllerBase
         }
 
         var response = await _authenticationService.LoginUserAsync(request);
-        return Ok(new ApiResponse<AuthResponse>(null, response));
+        return Ok(new ApiResponse<AuthenticationResponse>(null, response));
     }
 
     [HttpDelete("logout")]

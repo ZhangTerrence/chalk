@@ -44,7 +44,7 @@ public class AuthenticationService : IAuthenticationService
         _securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));
     }
 
-    public async Task<AuthResponse> RegisterUserAsync(RegisterRequest registerRequest)
+    public async Task<AuthenticationResponse> RegisterUserAsync(RegisterRequest registerRequest)
     {
         var existingUser = await _userManager.FindByEmailAsync(registerRequest.Email!);
         if (existingUser is not null)
@@ -98,10 +98,10 @@ public class AuthenticationService : IAuthenticationService
         AddCookie(TokenType.AccessToken, accessToken);
         AddCookie(TokenType.RefreshToken, refreshToken);
 
-        return new AuthResponse(user.ToResponse(), accessToken, refreshToken);
+        return new AuthenticationResponse(user.ToResponse(), accessToken, refreshToken);
     }
 
-    public async Task<AuthResponse> LoginUserAsync(LoginRequest loginRequest)
+    public async Task<AuthenticationResponse> LoginUserAsync(LoginRequest loginRequest)
     {
         var user = await _userManager.FindByEmailAsync(loginRequest.Email!);
         if (user is null)
@@ -137,7 +137,7 @@ public class AuthenticationService : IAuthenticationService
         AddCookie(TokenType.AccessToken, accessToken);
         AddCookie(TokenType.RefreshToken, refreshToken);
 
-        return new AuthResponse(user.ToResponse(), accessToken, refreshToken);
+        return new AuthenticationResponse(user.ToResponse(), accessToken, refreshToken);
     }
 
     public async Task LogoutUserAsync(ClaimsPrincipal identity)

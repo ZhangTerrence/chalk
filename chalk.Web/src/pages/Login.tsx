@@ -12,6 +12,10 @@ import { LoginSchema, type LoginSchemaType } from "@/lib/validators/login.ts";
 export default function Login() {
   const form = useForm<LoginSchemaType>({
     resolver: zodResolver(LoginSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
   });
 
   const onSubmit = async (data: LoginSchemaType) => {
@@ -47,7 +51,7 @@ export default function Login() {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input {...field} type={"password"} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -57,11 +61,11 @@ export default function Login() {
           </form>
         </Form>
         <p className="self-center">
-          Don't have an account?{" "}
+          Don't have an account? Register{" "}
           <NavLink className="hover:underline" to="/register">
-            Register
-          </NavLink>{" "}
-          today!
+            here
+          </NavLink>
+          .
         </p>
       </div>
     </div>

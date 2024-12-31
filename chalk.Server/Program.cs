@@ -20,6 +20,21 @@ builder.Services
     .AddIdentity<User, IdentityRole<long>>()
     .AddEntityFrameworkStores<DatabaseContext>();
 
+// Adds CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(
+        name: "CorsPolicy",
+        policy =>
+        {
+            policy
+                .AllowAnyOrigin()
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        }
+    );
+});
+
 // Adds authentication and authorization
 builder.Services
     .Configure<IdentityOptions>(options =>
@@ -100,6 +115,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors("CorsPolicy");
 
 app.UseAuthentication();
 app.UseAuthorization();

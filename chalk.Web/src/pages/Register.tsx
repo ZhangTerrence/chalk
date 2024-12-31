@@ -1,3 +1,4 @@
+import { useRegisterMutation } from "@/redux/services/authentication.ts";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { NavLink } from "react-router-dom";
@@ -10,13 +11,18 @@ import { Input } from "@/components/ui/input.tsx";
 import { RegisterSchema, type RegisterSchemaType } from "@/lib/validators/register.ts";
 
 export default function Register() {
+  const [register] = useRegisterMutation();
+
   const form = useForm<RegisterSchemaType>({
     resolver: zodResolver(RegisterSchema),
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      displayName: "",
+      email: "",
+      password: "",
+    },
   });
-
-  const onSubmit = async (data: RegisterSchemaType) => {
-    console.log(data);
-  };
 
   return (
     <div className="min-h-screen w-screen flex items-center justify-center">
@@ -26,7 +32,7 @@ export default function Register() {
           <strong>Register</strong>
         </h1>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-y-4 min-w-80">
+          <form onSubmit={form.handleSubmit(register)} className="flex flex-col gap-y-4 min-w-80">
             <div className="flex gap-x-4">
               <FormField
                 control={form.control}
@@ -88,7 +94,7 @@ export default function Register() {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input {...field} type={"password"} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -98,11 +104,11 @@ export default function Register() {
           </form>
         </Form>
         <p className="self-center">
-          Already have an account?{" "}
+          Already have an account? Login{" "}
           <NavLink className="hover:underline" to="/login">
-            Login
-          </NavLink>{" "}
-          here.
+            here
+          </NavLink>
+          .
         </p>
       </div>
     </div>

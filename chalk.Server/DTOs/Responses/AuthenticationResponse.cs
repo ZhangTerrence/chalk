@@ -4,7 +4,7 @@ namespace chalk.Server.DTOs.Responses;
 
 [Serializable]
 [method: JsonConstructor]
-public record AuthResponse(
+public record AuthenticationResponse(
     [property: JsonRequired]
     [property: JsonPropertyName("user")]
     UserResponse User,

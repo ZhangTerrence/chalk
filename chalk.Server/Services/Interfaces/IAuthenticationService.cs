@@ -6,9 +6,9 @@ namespace chalk.Server.Services.Interfaces;
 
 public interface IAuthenticationService
 {
-    public Task<AuthResponse> RegisterUserAsync(RegisterRequest registerRequest);
+    public Task<AuthenticationResponse> RegisterUserAsync(RegisterRequest registerRequest);
 
-    public Task<AuthResponse> LoginUserAsync(LoginRequest loginRequest);
+    public Task<AuthenticationResponse> LoginUserAsync(LoginRequest loginRequest);
 
     public Task LogoutUserAsync(ClaimsPrincipal identity);
 

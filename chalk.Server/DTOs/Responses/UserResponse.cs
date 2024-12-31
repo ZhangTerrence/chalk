@@ -7,13 +7,13 @@ namespace chalk.Server.DTOs.Responses;
 public record UserResponse(
     [property: JsonRequired]
     [property: JsonPropertyName("id")]
-    long Id,
+    long UserId,
     [property: JsonRequired]
     [property: JsonPropertyName("email")]
-    string? Email,
+    string Email,
     [property: JsonRequired]
     [property: JsonPropertyName("firstName")]
-    string? FirstName,
+    string FirstName,
     [property: JsonRequired]
     [property: JsonPropertyName("lastName")]
     string LastName,
