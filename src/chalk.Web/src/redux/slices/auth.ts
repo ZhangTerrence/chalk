@@ -35,7 +35,7 @@ export const authSlice = createSlice({
       state.accessToken = payload.data.accessToken;
       state.refreshToken = payload.data.refreshToken;
     });
-  }
+  },
 });
 
 export default authSlice.reducer;

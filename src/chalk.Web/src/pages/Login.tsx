@@ -45,7 +45,7 @@ export default function Login() {
   return (
     <div className="min-h-screen w-screen flex items-center justify-center">
       <Header />
-      <div className="flex flex-col gap-y-4">
+      <div className="flex flex-col gap-y-4 w-1/3">
         <h1 className="text-2xl underline">
           <strong>Login</strong>
         </h1>

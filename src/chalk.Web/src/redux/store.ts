@@ -12,7 +12,6 @@ const queryErrorLogger: Middleware = (_: MiddlewareAPI) => (next) => (action) =>
   if (isRejectedWithValue(action)) {
     // @ts-ignore
     if ("endpointName" in action.meta.arg && action.meta.arg.endpointName === "refresh") {
-      console.log(action.payload);
       return next(action);
     }
 

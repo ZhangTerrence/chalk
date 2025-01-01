@@ -7,9 +7,8 @@
   "importOrder": [
     "^react$",
     "<THIRD_PARTY_MODULES>",
-    "^@/components/(.*)$",
-    "^@/lib/utils/(.*)$",
     "^@/components/ui/(.*)$",
+    "^@/components/(.*)$",
     "^@/lib/(.*)$",
     "^@/hooks/(.*)$",
     "^[./]"

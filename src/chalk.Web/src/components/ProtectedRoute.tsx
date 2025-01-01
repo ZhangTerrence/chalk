@@ -1,7 +1,9 @@
-import { useAuth } from "@/hooks/useAuth.tsx";
-import { Navigate, useNavigate } from "react-router-dom";
 import * as React from "react";
+
 import { useRefreshMutation } from "@/redux/services/auth.ts";
+import { Navigate, useNavigate } from "react-router-dom";
+
+import { useAuth } from "@/hooks/useAuth.tsx";
 
 export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const user = useAuth().user;
@@ -15,7 +17,7 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
       navigate("/login");
     }
   };
-
+  
   React.useEffect(() => {
     if (!user) {
       tryRefresh().then();

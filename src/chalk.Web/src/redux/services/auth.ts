@@ -8,29 +8,29 @@ export const authApi = baseApi.injectEndpoints({
       query: (body) => ({
         url: "/auth/register",
         method: "POST",
-        body: body
-      })
+        body: body,
+      }),
     }),
     login: builder.mutation<ApiResponse<AuthenticationResponse>, LoginRequest>({
       query: (body) => ({
         url: "/auth/login",
         method: "POST",
-        body: body
-      })
+        body: body,
+      }),
     }),
     logout: builder.mutation<null, null>({
       query: () => ({
         url: "/auth/logout",
-        method: "DELETE"
-      })
+        method: "DELETE",
+      }),
     }),
     refresh: builder.mutation<ApiResponse<AuthenticationResponse>, null>({
       query: () => ({
         url: "/auth/refresh",
-        method: "PATCH"
-      })
-    })
-  })
+        method: "PATCH",
+      }),
+    }),
+  }),
 });
 
 export const { useRegisterMutation, useLoginMutation, useLogoutMutation, useRefreshMutation } = authApi;
