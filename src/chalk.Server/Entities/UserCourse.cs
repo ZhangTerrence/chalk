@@ -1,10 +1,10 @@
-using chalk.Server.Common;
+using chalk.Server.Shared;
 
 namespace chalk.Server.Entities;
 
 public class UserCourse
 {
-    public MemberStatus Status { get; set; }
+    public Status Status { get; set; }
     public DateTime? JoinedDate { get; set; }
 
     public long UserId { get; set; }

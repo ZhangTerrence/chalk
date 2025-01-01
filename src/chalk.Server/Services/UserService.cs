@@ -1,12 +1,12 @@
 using System.Security.Claims;
-using chalk.Server.Common;
-using chalk.Server.Common.Errors;
+using chalk.Server.Configurations;
 using chalk.Server.Data;
 using chalk.Server.DTOs.Requests;
 using chalk.Server.DTOs.Responses;
 using chalk.Server.Entities;
 using chalk.Server.Mappings;
 using chalk.Server.Services.Interfaces;
+using chalk.Server.Shared;
 using Microsoft.EntityFrameworkCore;
 
 namespace chalk.Server.Services;
@@ -39,7 +39,7 @@ public class UserService : IUserService
             .FirstOrDefaultAsync(e => e.Id == userId);
         if (user is null)
         {
-            throw new BadHttpRequestException(Errors.NotFound("User"), StatusCodes.Status404NotFound);
+            throw new ServiceException("User not found.", StatusCodes.Status404NotFound);
         }
 
         return user.ToResponse();
@@ -47,34 +47,28 @@ public class UserService : IUserService
 
     public async Task<IEnumerable<InviteResponse>> GetPendingInvitesAsync(ClaimsPrincipal identity, long userId)
     {
-        var currentUserId = identity.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (currentUserId is null)
+        var user = await _context.Users.FindAsync(identity);
+        if (user is null)
         {
-            throw new BadHttpRequestException(Errors.Unauthorized, StatusCodes.Status401Unauthorized);
+            throw new ServiceException("User not found.", StatusCodes.Status404NotFound);
         }
 
-        var currentUser = await _context.Users.FindAsync(long.Parse(currentUserId));
-        if (currentUser is null)
-        {
-            throw new BadHttpRequestException(Errors.NotFound("User"), StatusCodes.Status404NotFound);
-        }
-
-        var currentUserRoles = await Task.WhenAll(
+        var userRoles = await Task.WhenAll(
             _context.UserRoles
-                .Where(e => e.UserId == currentUser.Id).AsEnumerable()
+                .Where(e => e.UserId == user.Id).AsEnumerable()
                 .Select(async e => (await _context.Roles.FindAsync(e.RoleId))?.Name)
                 .ToList());
-        if (!currentUserRoles.Contains("Admin") && currentUser.Id != userId)
+        if (!userRoles.Contains("Admin") && user.Id != userId)
         {
-            throw new BadHttpRequestException(Errors.Forbidden, StatusCodes.Status403Forbidden);
+            throw new ServiceException("Unauthorized to read invites.", StatusCodes.Status403Forbidden);
         }
 
         var invites = new List<InviteResponse>();
         invites.AddRange(_context.UserOrganizations
-            .Where(e => e.UserId == userId && e.Status == MemberStatus.Invited)
+            .Where(e => e.UserId == userId && e.Status == Status.Invited)
             .Select(e => e.ToResponse()));
         invites.AddRange(_context.UserCourses
-            .Where(e => e.UserId == userId && e.Status == MemberStatus.Invited)
+            .Where(e => e.UserId == userId && e.Status == Status.Invited)
             .Select(e => e.ToResponse()));
 
         return invites;
@@ -88,41 +82,41 @@ public class UserService : IUserService
                 e.UserId == respondToInviteRequest.UserId && e.OrganizationId == respondToInviteRequest.OrganizationId);
         if (invite is null)
         {
-            throw new BadHttpRequestException(Errors.NotFound("Invite"), StatusCodes.Status404NotFound);
+            throw new ServiceException("Invite not found.", StatusCodes.Status404NotFound);
         }
 
-        switch (respondToInviteRequest.InviteType)
+        switch (respondToInviteRequest.Invite)
         {
-            case InviteType.Organization:
-                await ResponseOrganizationInvite(invite, respondToInviteRequest);
+            case Invite.Organization:
+                await OrganizationInviteResponse(invite, respondToInviteRequest);
                 break;
-            case InviteType.Course:
+            case Invite.Course:
                 break;
             default:
-                throw new BadHttpRequestException(Errors.Invalid("Invite Type"), StatusCodes.Status400BadRequest);
+                throw new ServiceException("Unrecognized invite type.", StatusCodes.Status400BadRequest);
         }
     }
 
-    private async Task ResponseOrganizationInvite(
+    private async Task OrganizationInviteResponse(
         UserOrganization invite,
         RespondToInviteRequest respondToInviteRequest
     )
     {
         switch (invite.Status)
         {
-            case MemberStatus.User:
-                throw new BadHttpRequestException(Errors.Organization.AlreadyUser, StatusCodes.Status409Conflict);
-            case MemberStatus.Banned:
-                throw new BadHttpRequestException(Errors.Organization.UserIsBanned, StatusCodes.Status403Forbidden);
-            case MemberStatus.Invited:
+            case Status.User:
+                throw new ServiceException("User has already joined.", StatusCodes.Status409Conflict);
+            case Status.Banned:
+                throw new ServiceException("User is banned.", StatusCodes.Status403Forbidden);
+            case Status.Invited:
                 break;
             default:
-                throw new BadHttpRequestException(Errors.Invalid("Status"), StatusCodes.Status400BadRequest);
+                throw new ServiceException("Unrecognized invite status.", StatusCodes.Status400BadRequest);
         }
 
         if (respondToInviteRequest.Accept)
         {
-            invite.Status = MemberStatus.User;
+            invite.Status = Status.User;
             invite.JoinedDate = DateTime.UtcNow;
         }
         else

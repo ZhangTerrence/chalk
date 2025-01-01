@@ -1,5 +1,5 @@
 using System.Text.Json.Serialization;
-using chalk.Server.Common;
+using chalk.Server.Shared;
 
 namespace chalk.Server.DTOs.Responses;
 
@@ -8,7 +8,7 @@ namespace chalk.Server.DTOs.Responses;
 public record InviteResponse(
     [property: JsonRequired]
     [property: JsonPropertyName("inviteType")]
-    InviteType InviteType,
+    Invite Invite,
     [property: JsonRequired]
     [property: JsonPropertyName("organization")]
     OrganizationDTO? Organization,

@@ -1,5 +1,6 @@
 using chalk.Server.DTOs.Requests;
 using chalk.Server.DTOs.Responses;
+using chalk.Server.Utilities;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -25,7 +26,7 @@ public class OrganizationRoleController : ControllerBase
         var result = await _createOrganizationRoleValidator.ValidateAsync(createOrganizationRoleRequest);
         if (!result.IsValid)
         {
-            return BadRequest(new ApiResponse<object>(result.Errors.Select(e => e.ErrorMessage), null));
+            return BadRequest(new ApiResponse<object>(result.GetErrorMessages()));
         }
 
         return Ok();

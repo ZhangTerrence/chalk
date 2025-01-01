@@ -1,10 +1,10 @@
-using chalk.Server.Common;
+using chalk.Server.Shared;
 
 namespace chalk.Server.Entities;
 
 public class UserOrganization
 {
-    public required MemberStatus Status { get; set; }
+    public required Status Status { get; set; }
     public DateTime? JoinedDate { get; set; }
 
     public long UserId { get; set; }

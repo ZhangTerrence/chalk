@@ -1,12 +1,12 @@
 using System.Security.Claims;
-using chalk.Server.Common;
+using chalk.Server.Configurations;
 using chalk.Server.Data;
 using chalk.Server.DTOs.Requests;
 using chalk.Server.DTOs.Responses;
 using chalk.Server.Entities;
 using chalk.Server.Mappings;
 using chalk.Server.Services.Interfaces;
-using chalk.Server.Utilities;
+using chalk.Server.Shared;
 using Microsoft.EntityFrameworkCore;
 
 namespace chalk.Server.Services;
@@ -41,7 +41,7 @@ public class OrganizationService : IOrganizationService
             .FirstOrDefaultAsync(e => e.Id == organizationId);
         if (organization is null)
         {
-            throw new BadHttpRequestException("Organization not found.", StatusCodes.Status404NotFound);
+            throw new ServiceException("Organization not found.", StatusCodes.Status404NotFound);
         }
 
         return organization.ToResponse();
@@ -52,13 +52,12 @@ public class OrganizationService : IOrganizationService
         var user = await _context.Users.FindAsync(createOrganizationRequest.OwnerId);
         if (user is null)
         {
-            throw new BadHttpRequestException("User not found.", StatusCodes.Status404NotFound);
+            throw new ServiceException("User not found.", StatusCodes.Status404NotFound);
         }
 
-        var organizationExists = await _context.Organizations.AnyAsync(e => e.Name == createOrganizationRequest.Name);
-        if (organizationExists)
+        if (await _context.Organizations.AnyAsync(e => e.Name == createOrganizationRequest.Name))
         {
-            throw new BadHttpRequestException("Organization name taken.", StatusCodes.Status400BadRequest);
+            throw new ServiceException("Organization already exists.", StatusCodes.Status409Conflict);
         }
 
         var organization = createOrganizationRequest.ToEntity(user);
@@ -66,21 +65,21 @@ public class OrganizationService : IOrganizationService
         var userRole = new OrganizationRole
         {
             Name = "User",
-            Permissions = OrganizationPermissionsUtilities.BaseUserPermissions(),
+            Permissions = 0,
             CreatedDate = DateTime.UtcNow,
             UpdatedDate = DateTime.UtcNow,
         };
         var adminRole = new OrganizationRole
         {
             Name = "Admin",
-            Permissions = OrganizationPermissionsUtilities.BaseAdminPermissions(),
+            Permissions = 0,
             CreatedDate = DateTime.UtcNow,
             UpdatedDate = DateTime.UtcNow,
         };
 
         organization.UserOrganizations.Add(new UserOrganization
         {
-            Status = MemberStatus.User,
+            Status = Status.User,
             JoinedDate = DateTime.UtcNow,
             User = user,
             Organization = organization,
@@ -98,21 +97,20 @@ public class OrganizationService : IOrganizationService
 
     public async Task<OrganizationResponse> UpdateOrganizationAsync(
         long organizationId,
-        UpdateOrganizationRequest updateOrganizationRequest)
+        UpdateOrganizationRequest updateOrganizationRequest
+    )
     {
         var organization = await _context.Organizations.FindAsync(organizationId);
         if (organization is null)
         {
-            throw new BadHttpRequestException("Organization not found.", StatusCodes.Status404NotFound);
+            throw new ServiceException("Organization not found.", StatusCodes.Status404NotFound);
         }
 
         if (updateOrganizationRequest.Name is not null)
         {
-            var organizationExists =
-                await _context.Organizations.AnyAsync(e => e.Name == updateOrganizationRequest.Name);
-            if (organizationExists)
+            if (await _context.Organizations.AnyAsync(e => e.Name == updateOrganizationRequest.Name))
             {
-                throw new BadHttpRequestException("Organization name already taken.", StatusCodes.Status409Conflict);
+                throw new ServiceException("Organization already exists.", StatusCodes.Status409Conflict);
             }
 
             organization.Name = updateOrganizationRequest.Name;
@@ -128,7 +126,7 @@ public class OrganizationService : IOrganizationService
             var user = await _context.Users.FindAsync(updateOrganizationRequest.OwnerId);
             if (user is null)
             {
-                throw new BadHttpRequestException("User not found.", StatusCodes.Status404NotFound);
+                throw new ServiceException("User not found.", StatusCodes.Status404NotFound);
             }
 
             organization.Owner = user;
@@ -145,7 +143,7 @@ public class OrganizationService : IOrganizationService
         var organization = await _context.Organizations.FindAsync(organizationId);
         if (organization is null)
         {
-            throw new BadHttpRequestException("Organization not found.", StatusCodes.Status404NotFound);
+            throw new ServiceException("Organization not found.", StatusCodes.Status404NotFound);
         }
 
         _context.Organizations.Remove(organization);
@@ -153,29 +151,29 @@ public class OrganizationService : IOrganizationService
         await _context.SaveChangesAsync();
     }
 
-    public async Task SendInviteAsync(SendInviteRequest sendInviteRequest, ClaimsPrincipal authUser)
+    public async Task SendInviteAsync(ClaimsPrincipal identity, SendInviteRequest sendInviteRequest)
     {
-        var currentUserId = authUser.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (currentUserId is null)
+        var senderId = identity.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (senderId is null)
         {
-            throw new BadHttpRequestException("Unauthorized.", StatusCodes.Status403Forbidden);
+            throw new ServiceException("Not logged in.", StatusCodes.Status401Unauthorized);
         }
 
-        var currentUser = await _context.Users.FindAsync(currentUserId);
-        if (currentUser is null)
+        var sender = await _context.Users.FindAsync(senderId);
+        if (sender is null)
         {
-            throw new BadHttpRequestException("User not found.", StatusCodes.Status404NotFound);
+            throw new ServiceException("User not found.", StatusCodes.Status404NotFound);
         }
 
-        if (currentUser.Id == sendInviteRequest.UserId)
+        if (sender.Id == sendInviteRequest.UserId)
         {
-            throw new BadHttpRequestException("Can't invite yourself.", StatusCodes.Status400BadRequest);
+            throw new ServiceException("Sender cannot be receiver.", StatusCodes.Status400BadRequest);
         }
 
-        var user = await _context.Users.FindAsync(sendInviteRequest.UserId);
-        if (user is null)
+        var receiver = await _context.Users.FindAsync(sendInviteRequest.UserId);
+        if (receiver is null)
         {
-            throw new BadHttpRequestException("User not found.", StatusCodes.Status404NotFound);
+            throw new ServiceException("User not found.", StatusCodes.Status404NotFound);
         }
 
         var organization = await _context.Organizations
@@ -183,40 +181,40 @@ public class OrganizationService : IOrganizationService
             .FirstOrDefaultAsync(e => e.Id == sendInviteRequest.OrganizationId);
         if (organization is null)
         {
-            throw new BadHttpRequestException("Organization not found.", StatusCodes.Status404NotFound);
+            throw new ServiceException("Organization not found.", StatusCodes.Status404NotFound);
         }
 
         var invite = organization.UserOrganizations
-            .FirstOrDefault(e => e.Status == MemberStatus.Invited && e.UserId == sendInviteRequest.UserId);
+            .FirstOrDefault(e => e.Status == Status.Invited && e.UserId == sendInviteRequest.UserId);
         if (invite is not null)
         {
-            throw new BadHttpRequestException("Invite already sent.", StatusCodes.Status409Conflict);
+            throw new ServiceException("Invite already sent.", StatusCodes.Status409Conflict);
         }
 
         var organizationRole = await _context.OrganizationRoles.FindAsync(sendInviteRequest.OrganizationRoleId);
         if (organizationRole is null)
         {
-            throw new BadHttpRequestException("Organization role not found.", StatusCodes.Status404NotFound);
+            throw new ServiceException("Organization role not found.", StatusCodes.Status404NotFound);
         }
 
         var currentMembers = organization.UserOrganizations
-            .Where(e => e.Status == MemberStatus.User)
+            .Where(e => e.Status == Status.User)
             .ToList();
 
-        if (currentMembers.All(e => e.UserId != currentUser.Id))
+        if (currentMembers.All(e => e.UserId != sender.Id))
         {
-            throw new BadHttpRequestException("Unauthorized to invite.", StatusCodes.Status403Forbidden);
+            throw new ServiceException("Unauthorized to send invites.", StatusCodes.Status403Forbidden);
         }
 
         if (currentMembers.Any(e => e.UserId == sendInviteRequest.UserId))
         {
-            throw new BadHttpRequestException("User is already a member.", StatusCodes.Status400BadRequest);
+            throw new ServiceException("User has already joined.", StatusCodes.Status400BadRequest);
         }
 
         var userOrganization = OrganizationMappings.ToEntity(
-            MemberStatus.Invited,
+            Status.Invited,
             organization,
-            user,
+            receiver,
             organizationRole);
 
         organization.UserOrganizations.Add(userOrganization);

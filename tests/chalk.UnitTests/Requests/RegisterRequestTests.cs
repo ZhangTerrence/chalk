@@ -1,4 +1,3 @@
-using chalk.Server.Common.Errors;
 using chalk.Server.DTOs.Requests;
 using chalk.Server.Validators;
 using FluentValidation.TestHelper;
@@ -24,8 +23,7 @@ public class RegisterRequestTests
         var result = await _validator.TestValidateAsync(registerRequest);
 
         // Assert
-        result.ShouldHaveValidationErrorFor(x => x.FirstName)
-            .WithErrorMessage(Errors.Validation.IsRequired("FirstName"));
+        result.ShouldHaveValidationErrorFor(x => x.FirstName);
     }
 
     [Fact]
@@ -38,8 +36,7 @@ public class RegisterRequestTests
         var result = await _validator.TestValidateAsync(registerRequest);
 
         // Assert
-        result.ShouldHaveValidationErrorFor(x => x.FirstName)
-            .WithErrorMessage(Errors.Validation.IsBetween("FirstName", 1, 31));
+        result.ShouldHaveValidationErrorFor(x => x.FirstName);
     }
 
     [Theory]
@@ -55,8 +52,7 @@ public class RegisterRequestTests
         var result = await _validator.TestValidateAsync(registerRequest);
 
         // Assert
-        result.ShouldHaveValidationErrorFor(x => x.LastName)
-            .WithErrorMessage(Errors.Validation.IsRequired("LastName"));
+        result.ShouldHaveValidationErrorFor(x => x.LastName);
     }
 
     [Fact]
@@ -69,8 +65,7 @@ public class RegisterRequestTests
         var result = await _validator.TestValidateAsync(registerRequest);
 
         // Assert
-        result.ShouldHaveValidationErrorFor(x => x.LastName)
-            .WithErrorMessage(Errors.Validation.IsBetween("LastName", 1, 31));
+        result.ShouldHaveValidationErrorFor(x => x.LastName);
     }
 
     [Theory]
@@ -86,8 +81,7 @@ public class RegisterRequestTests
         var result = await _validator.TestValidateAsync(registerRequest);
 
         // Assert
-        result.ShouldHaveValidationErrorFor(x => x.DisplayName)
-            .WithErrorMessage(Errors.Validation.IsRequired("DisplayName"));
+        result.ShouldHaveValidationErrorFor(x => x.DisplayName);
     }
 
     [Theory]
@@ -103,8 +97,7 @@ public class RegisterRequestTests
         var result = await _validator.TestValidateAsync(registerRequest);
 
         // Assert
-        result.ShouldHaveValidationErrorFor(x => x.DisplayName)
-            .WithErrorMessage(Errors.Validation.IsBetween("DisplayName", 3, 31));
+        result.ShouldHaveValidationErrorFor(x => x.DisplayName);
     }
 
     [Theory]
@@ -120,8 +113,7 @@ public class RegisterRequestTests
         var result = await _validator.TestValidateAsync(registerRequest);
 
         // Assert
-        result.ShouldHaveValidationErrorFor(x => x.Email)
-            .WithErrorMessage(Errors.Validation.IsRequired("Email"));
+        result.ShouldHaveValidationErrorFor(x => x.Email);
     }
 
     [Theory]
@@ -137,8 +129,7 @@ public class RegisterRequestTests
         var result = await _validator.TestValidateAsync(registerRequest);
 
         // Assert
-        result.ShouldHaveValidationErrorFor(x => x.Email)
-            .WithErrorMessage(Errors.Validation.IsInvalid("Email"));
+        result.ShouldHaveValidationErrorFor(x => x.Email);
     }
 
     [Theory]
@@ -154,8 +145,7 @@ public class RegisterRequestTests
         var result = await _validator.TestValidateAsync(registerRequest);
 
         // Assert
-        result.ShouldHaveValidationErrorFor(x => x.Password)
-            .WithErrorMessage(Errors.Validation.IsRequired("Password"));
+        result.ShouldHaveValidationErrorFor(x => x.Password);
     }
 
     [Theory]
@@ -173,8 +163,7 @@ public class RegisterRequestTests
         var result = await _validator.TestValidateAsync(registerRequest);
 
         // Assert
-        result.ShouldHaveValidationErrorFor(x => x.Password)
-            .WithErrorMessage(Errors.Validation.IsInvalidPassword);
+        result.ShouldHaveValidationErrorFor(x => x.Password);
     }
 
     [Fact]

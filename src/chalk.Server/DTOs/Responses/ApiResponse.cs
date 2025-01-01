@@ -7,7 +7,12 @@ namespace chalk.Server.DTOs.Responses;
 public record ApiResponse<T>(
     [property: JsonRequired]
     [property: JsonPropertyName("errors")]
-    IEnumerable<string>? Errors,
+    IEnumerable<ErrorDTO>? Errors,
     [property: JsonRequired]
     [property: JsonPropertyName("data")]
-    T? Data);
+    T? Data)
+{
+    public ApiResponse(IEnumerable<string> errors) : this(errors.Select(e => new ErrorDTO(e)), default)
+    {
+    }
+}

@@ -14,9 +14,10 @@ public interface IOrganizationService
 
     public Task<OrganizationResponse> UpdateOrganizationAsync(
         long organizationId,
-        UpdateOrganizationRequest updateOrganizationRequest);
+        UpdateOrganizationRequest updateOrganizationRequest
+    );
 
     public Task DeleteOrganizationAsync(long organizationId);
 
-    public Task SendInviteAsync(SendInviteRequest sendInviteRequest, ClaimsPrincipal authUser);
+    public Task SendInviteAsync(ClaimsPrincipal identity, SendInviteRequest sendInviteRequest);
 }

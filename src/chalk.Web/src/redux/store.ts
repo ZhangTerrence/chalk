@@ -21,7 +21,8 @@ const queryErrorLogger: Middleware = (_: MiddlewareAPI) => (next) => (action) =>
     for (const error of errors) {
       toast({
         variant: "destructive",
-        description: error
+        title: "Oops! Something went wrong.",
+        description: error.description
       });
     }
   }

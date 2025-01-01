@@ -1,6 +1,7 @@
 using chalk.Server.DTOs.Requests;
 using chalk.Server.DTOs.Responses;
 using chalk.Server.Services.Interfaces;
+using chalk.Server.Utilities;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -51,7 +52,7 @@ public class CourseController : ControllerBase
         var result = await _createCourseValidator.ValidateAsync(createCourseRequest);
         if (!result.IsValid)
         {
-            return BadRequest(new ApiResponse<object>(result.Errors.Select(e => e.ErrorMessage), null));
+            return BadRequest(new ApiResponse<object>(result.GetErrorMessages()));
         }
 
         var createdCourse = await _courseService.CreateCourseAsync(createCourseRequest);
@@ -67,7 +68,7 @@ public class CourseController : ControllerBase
         var result = await _updateCourseValidator.ValidateAsync(updateCourseRequest);
         if (!result.IsValid)
         {
-            return BadRequest(new ApiResponse<object>(result.Errors.Select(e => e.ErrorMessage), null));
+            return BadRequest(new ApiResponse<object>(result.GetErrorMessages()));
         }
 
         var updatedCourse = await _courseService.UpdateCourseAsync(id, updateCourseRequest);

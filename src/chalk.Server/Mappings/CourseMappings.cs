@@ -1,9 +1,9 @@
 using System.Globalization;
-using chalk.Server.Common;
 using chalk.Server.DTOs;
 using chalk.Server.DTOs.Requests;
 using chalk.Server.DTOs.Responses;
 using chalk.Server.Entities;
+using chalk.Server.Shared;
 
 namespace chalk.Server.Mappings;
 
@@ -25,7 +25,7 @@ public static class CourseMappings
     public static InviteResponse ToResponse(this UserCourse userCourse)
     {
         return new InviteResponse(
-            InviteType.Course,
+            Invite.Course,
             null,
             new CourseDTO(userCourse.Course.Id, userCourse.Course.Name, userCourse.Course.Code)
         );

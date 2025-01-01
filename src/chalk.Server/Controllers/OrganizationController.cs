@@ -1,6 +1,7 @@
 using chalk.Server.DTOs.Requests;
 using chalk.Server.DTOs.Responses;
 using chalk.Server.Services.Interfaces;
+using chalk.Server.Utilities;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -54,7 +55,7 @@ public class OrganizationController : ControllerBase
         var result = await _createOrganizationValidator.ValidateAsync(createOrganizationRequest);
         if (!result.IsValid)
         {
-            return BadRequest(new ApiResponse<object>(result.Errors.Select(e => e.ErrorMessage), null));
+            return BadRequest(new ApiResponse<object>(result.GetErrorMessages()));
         }
 
         var createdOrganization = await _organizationService.CreateOrganizationAsync(createOrganizationRequest);
@@ -70,7 +71,7 @@ public class OrganizationController : ControllerBase
         var result = await _updateOrganizationValidator.ValidateAsync(updateOrganizationRequest);
         if (!result.IsValid)
         {
-            return BadRequest(new ApiResponse<object>(result.Errors.Select(e => e.ErrorMessage), null));
+            return BadRequest(new ApiResponse<object>(result.GetErrorMessages()));
         }
 
         var updatedOrganization = await _organizationService.UpdateOrganizationAsync(id, updateOrganizationRequest);
@@ -90,10 +91,10 @@ public class OrganizationController : ControllerBase
         var result = await _sendInviteValidator.ValidateAsync(sendInviteRequest);
         if (!result.IsValid)
         {
-            return BadRequest(new ApiResponse<object>(result.Errors.Select(e => e.ErrorMessage), null));
+            return BadRequest(new ApiResponse<object>(result.GetErrorMessages()));
         }
 
-        await _organizationService.SendInviteAsync(sendInviteRequest, User);
+        await _organizationService.SendInviteAsync(User, sendInviteRequest);
         return NoContent();
     }
 }

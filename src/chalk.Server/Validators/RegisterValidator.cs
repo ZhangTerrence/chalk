@@ -1,4 +1,3 @@
-using chalk.Server.Common.Errors;
 using chalk.Server.DTOs.Requests;
 using FluentValidation;
 
@@ -10,28 +9,29 @@ public class RegisterValidator : AbstractValidator<RegisterRequest>
     {
         RuleFor(e => e.FirstName)
             .NotEmpty()
-            .WithMessage(Errors.Validation.IsRequired("FirstName"))
+            .WithMessage("First name is required.")
             .Length(1, 31)
-            .WithMessage(Errors.Validation.IsBetween("FirstName", 1, 31));
+            .WithMessage("First name must have between 1 and 31 characters.");
         RuleFor(e => e.LastName)
             .NotEmpty()
-            .WithMessage(Errors.Validation.IsRequired("LastName"))
+            .WithMessage("Last name is required.")
             .Length(1, 31)
-            .WithMessage(Errors.Validation.IsBetween("LastName", 1, 31));
+            .WithMessage("Last name must have between 1 and 31 characters.");
         RuleFor(e => e.DisplayName)
             .NotEmpty()
-            .WithMessage(Errors.Validation.IsRequired("DisplayName"))
+            .WithMessage("Display name is required.")
             .Length(3, 31)
-            .WithMessage(Errors.Validation.IsBetween("DisplayName", 3, 31));
+            .WithMessage("Display name must have between 3 and 31 characters.");
         RuleFor(e => e.Email)
             .NotEmpty()
-            .WithMessage(Errors.Validation.IsRequired("Email"))
+            .WithMessage("Email is required.")
             .EmailAddress()
-            .WithMessage(Errors.Validation.IsInvalid("Email"));
+            .WithMessage("Email is invalid.");
         RuleFor(e => e.Password)
             .NotEmpty()
-            .WithMessage(Errors.Validation.IsRequired("Password"))
+            .WithMessage("Password is required.")
             .Matches("^(?:(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[-._@+]).*).{8,}$")
-            .WithMessage(Errors.Validation.IsInvalidPassword);
+            .WithMessage(
+                "Password must have at least 8 characters with least one number, one lowercase letter, one upper case letter, one special character.");
     }
 }

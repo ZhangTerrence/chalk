@@ -1,36 +1,50 @@
 import { z } from "zod";
 
-import { IsBetween, IsInvalid, IsInvalidPassword, IsRequired } from "@/lib/errors.ts";
-
 export const RegisterSchema = z.object({
   firstName: z
-    .string({ message: IsRequired("FirstName") })
+    .string({
+      message: "First name is required."
+    })
     .min(1, {
-      message: IsBetween("FirstName", 1, 31),
+      message: "First name must have between 1 and 31 characters."
     })
     .max(31, {
-      message: IsBetween("FirstName", 1, 31),
+      message: "First name must have between 1 and 31 characters."
     }),
   lastName: z
-    .string({ message: IsRequired("LastName") })
+    .string({
+      message: "Last name is required."
+    })
     .min(1, {
-      message: IsBetween("LastName", 1, 31),
+      message: "Last name must have between 1 and 31 characters."
     })
     .max(31, {
-      message: IsBetween("LastName", 1, 31),
+      message: "Last name must have between 1 and 31 characters."
     }),
   displayName: z
-    .string({ message: IsRequired("DisplayName") })
+    .string({
+      message: "Display name is required."
+    })
     .min(3, {
-      message: IsBetween("DisplayName", 3, 31),
+      message: "Display name must have between 1 and 31 characters."
     })
     .max(31, {
-      message: IsBetween("DisplayName", 3, 31),
+      message: "Display name must have between 1 and 31 characters."
     }),
-  email: z.string({ message: IsRequired("Email") }).email({ message: IsInvalid("Email") }),
+  email: z
+    .string({
+      message: "Email is required."
+    })
+    .email({
+      message: "Email is invalid."
+    }),
   password: z
-    .string({ message: IsRequired("Email") })
-    .regex(/^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[-._@+]).*.{8,}$/, { message: IsInvalidPassword }),
+    .string({
+      message: "Password is required."
+    })
+    .regex(/^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[-._@+]).*.{8,}$/, {
+      message: "Password must have at least 8 characters with least one number, one lowercase letter, one upper case letter, one special character."
+    })
 });
 
 export type RegisterSchemaType = z.infer<typeof RegisterSchema>;

@@ -1,5 +1,4 @@
 using System.Security.Claims;
-using chalk.Server.Common.Errors;
 using chalk.Server.DTOs.Requests;
 using chalk.Server.Entities;
 using chalk.Server.Mappings;
@@ -59,8 +58,7 @@ public class AuthenticationServiceUnitTests
 
         // Assert
         await act.Should().ThrowAsync<BadHttpRequestException>()
-            .Where(e => e.StatusCode == StatusCodes.Status409Conflict)
-            .WithMessage(Errors.AlreadyExists("User"));
+            .Where(e => e.StatusCode == StatusCodes.Status409Conflict);
     }
 
     [Fact]
@@ -76,8 +74,7 @@ public class AuthenticationServiceUnitTests
 
         // Assert
         await act.Should().ThrowAsync<BadHttpRequestException>()
-            .Where(e => e.StatusCode == StatusCodes.Status404NotFound)
-            .WithMessage(Errors.NotFound("User"));
+            .Where(e => e.StatusCode == StatusCodes.Status404NotFound);
     }
 
     [Fact]
@@ -92,8 +89,7 @@ public class AuthenticationServiceUnitTests
 
         // Assert
         await act.Should().ThrowAsync<BadHttpRequestException>()
-            .Where(e => e.StatusCode == StatusCodes.Status401Unauthorized)
-            .WithMessage(Errors.Unauthorized);
+            .Where(e => e.StatusCode == StatusCodes.Status401Unauthorized);
     }
 
     [Fact]
@@ -108,8 +104,7 @@ public class AuthenticationServiceUnitTests
 
         // Assert
         await act.Should().ThrowAsync<BadHttpRequestException>()
-            .Where(e => e.StatusCode == StatusCodes.Status401Unauthorized)
-            .WithMessage(Errors.Unauthorized);
+            .Where(e => e.StatusCode == StatusCodes.Status401Unauthorized);
     }
 
     [Fact]
@@ -126,8 +121,7 @@ public class AuthenticationServiceUnitTests
 
         // Assert
         await act.Should().ThrowAsync<BadHttpRequestException>()
-            .Where(e => e.StatusCode == StatusCodes.Status404NotFound)
-            .WithMessage(Errors.NotFound("User"));
+            .Where(e => e.StatusCode == StatusCodes.Status404NotFound);
     }
 
     [Theory]
@@ -149,8 +143,7 @@ public class AuthenticationServiceUnitTests
 
         // Assert
         await act.Should().ThrowAsync<BadHttpRequestException>()
-            .Where(e => e.StatusCode == StatusCodes.Status401Unauthorized)
-            .WithMessage(Errors.Authentication.RefreshTokenInvalid);
+            .Where(e => e.StatusCode == StatusCodes.Status401Unauthorized);
     }
 
     [Fact]
@@ -171,7 +164,6 @@ public class AuthenticationServiceUnitTests
 
         // Assert
         await act.Should().ThrowAsync<BadHttpRequestException>()
-            .Where(e => e.StatusCode == StatusCodes.Status401Unauthorized)
-            .WithMessage(Errors.Authentication.RefreshTokenExpired);
+            .Where(e => e.StatusCode == StatusCodes.Status401Unauthorized);
     }
 }

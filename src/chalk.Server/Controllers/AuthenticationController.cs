@@ -1,6 +1,7 @@
 using chalk.Server.DTOs.Requests;
 using chalk.Server.DTOs.Responses;
 using chalk.Server.Services.Interfaces;
+using chalk.Server.Utilities;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -36,7 +37,7 @@ public class AuthenticationController : ControllerBase
         var result = await _registerValidator.ValidateAsync(request);
         if (!result.IsValid)
         {
-            return BadRequest(new ApiResponse<object>(result.Errors.Select(e => e.ErrorMessage), null));
+            return BadRequest(new ApiResponse<object>(result.GetErrorMessages()));
         }
 
         var response = await _authenticationService.RegisterUserAsync(request);
@@ -49,7 +50,7 @@ public class AuthenticationController : ControllerBase
         var result = await _loginValidator.ValidateAsync(request);
         if (!result.IsValid)
         {
-            return BadRequest(new ApiResponse<object>(result.Errors.Select(e => e.ErrorMessage), null));
+            return BadRequest(new ApiResponse<object>(result.GetErrorMessages()));
         }
 
         var response = await _authenticationService.LoginUserAsync(request);

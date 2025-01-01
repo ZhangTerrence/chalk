@@ -1,5 +1,5 @@
-using chalk.Server.Common;
+using chalk.Server.Shared;
 
 namespace chalk.Server.DTOs.Requests;
 
-public record RespondToInviteRequest(InviteType InviteType, long UserId, long OrganizationId, bool Accept);
+public record RespondToInviteRequest(Invite Invite, long UserId, long OrganizationId, bool Accept);

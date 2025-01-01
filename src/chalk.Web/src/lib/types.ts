@@ -28,7 +28,9 @@ export type ChannelDTO = {
 };
 
 export type ApiResponse<T> = {
-  errors: string[];
+  errors: {
+    description: string;
+  }[];
   data: T;
 };
 

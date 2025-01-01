@@ -1,3 +1,4 @@
+using chalk.Server.DTOs;
 using chalk.Server.DTOs.Responses;
 using Microsoft.AspNetCore.Diagnostics;
 
@@ -13,18 +14,20 @@ public class ExceptionHandler : IExceptionHandler
     {
         switch (exception)
         {
-            case BadHttpRequestException e:
+            case ServiceException e:
                 httpContext.Response.StatusCode = e.StatusCode;
-                break;
+                await httpContext.Response.WriteAsJsonAsync(
+                    new ApiResponse<object>([new ErrorDTO(e.Description)], null),
+                    cancellationToken
+                );
+                return true;
             default:
                 httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
-                break;
+                await httpContext.Response.WriteAsJsonAsync(
+                    new ApiResponse<object>([new ErrorDTO(exception.Message)], null),
+                    cancellationToken
+                );
+                return true;
         }
-
-        await httpContext.Response.WriteAsJsonAsync(
-            new ApiResponse<object>([exception.Message], null),
-            cancellationToken
-        );
-        return true;
     }
 }

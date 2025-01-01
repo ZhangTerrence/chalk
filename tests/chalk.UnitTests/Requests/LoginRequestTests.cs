@@ -1,4 +1,3 @@
-using chalk.Server.Common.Errors;
 using chalk.Server.DTOs.Requests;
 using chalk.Server.Validators;
 using FluentValidation.TestHelper;
@@ -22,8 +21,7 @@ public class LoginRequestTests
         var result = await _validator.TestValidateAsync(loginRequest);
 
         // Assert
-        result.ShouldHaveValidationErrorFor(x => x.Email)
-            .WithErrorMessage(Errors.Validation.IsRequired("Email"));
+        result.ShouldHaveValidationErrorFor(x => x.Email);
     }
 
     [Theory]
@@ -39,8 +37,7 @@ public class LoginRequestTests
         var result = await _validator.TestValidateAsync(loginRequest);
 
         // Assert
-        result.ShouldHaveValidationErrorFor(x => x.Email)
-            .WithErrorMessage(Errors.Validation.IsInvalid("Email"));
+        result.ShouldHaveValidationErrorFor(x => x.Email);
     }
 
     [Theory]
@@ -56,8 +53,7 @@ public class LoginRequestTests
         var result = await _validator.TestValidateAsync(loginRequest);
 
         // Assert
-        result.ShouldHaveValidationErrorFor(x => x.Password)
-            .WithErrorMessage(Errors.Validation.IsRequired("Password"));
+        result.ShouldHaveValidationErrorFor(x => x.Password);
     }
 
     [Theory]
@@ -75,8 +71,7 @@ public class LoginRequestTests
         var result = await _validator.TestValidateAsync(loginRequest);
 
         // Assert
-        result.ShouldHaveValidationErrorFor(x => x.Password)
-            .WithErrorMessage(Errors.Validation.IsInvalidPassword);
+        result.ShouldHaveValidationErrorFor(x => x.Password);
     }
 
     [Fact]

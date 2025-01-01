@@ -1,4 +1,3 @@
-using chalk.Server.Common.Errors;
 using chalk.Server.DTOs.Requests;
 using FluentValidation;
 
@@ -10,13 +9,14 @@ public class LoginValidator : AbstractValidator<LoginRequest>
     {
         RuleFor(e => e.Email)
             .NotEmpty()
-            .WithMessage(Errors.Validation.IsRequired("Email"))
+            .WithMessage("Email is required.")
             .EmailAddress()
-            .WithMessage(Errors.Validation.IsInvalid("Email"));
+            .WithMessage("Email is invalid.");
         RuleFor(e => e.Password)
             .NotEmpty()
-            .WithMessage("Password property is required.")
+            .WithMessage("Password is required.")
             .Matches("^(?:(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[-._@+]).*).{8,}$")
-            .WithMessage(Errors.Validation.IsInvalidPassword);
+            .WithMessage(
+                "Password must have at least 8 characters with least one number, one lowercase letter, one upper case letter, one special character.");
     }
 }

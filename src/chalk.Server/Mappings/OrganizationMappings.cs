@@ -1,9 +1,9 @@
 using System.Globalization;
-using chalk.Server.Common;
 using chalk.Server.DTOs;
 using chalk.Server.DTOs.Requests;
 using chalk.Server.DTOs.Responses;
 using chalk.Server.Entities;
+using chalk.Server.Shared;
 
 namespace chalk.Server.Mappings;
 
@@ -22,7 +22,7 @@ public static class OrganizationMappings
     }
 
     public static UserOrganization ToEntity(
-        MemberStatus status,
+        Status status,
         Organization organization,
         User user,
         OrganizationRole organizationRole
@@ -40,7 +40,7 @@ public static class OrganizationMappings
     public static InviteResponse ToResponse(this UserOrganization userOrganization)
     {
         return new InviteResponse(
-            InviteType.Organization,
+            Invite.Organization,
             new OrganizationDTO(userOrganization.Organization.Id, userOrganization.Organization.Name),
             null
         );
