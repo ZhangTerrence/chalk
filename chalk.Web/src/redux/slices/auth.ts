@@ -25,6 +25,11 @@ export const authSlice = createSlice({
       state.accessToken = payload.data.accessToken;
       state.refreshToken = payload.data.refreshToken;
     });
+    builder.addMatcher(authApi.endpoints.logout.matchFulfilled, (state) => {
+      state.user = null;
+      state.accessToken = null;
+      state.refreshToken = null;
+    });
   },
 });
 

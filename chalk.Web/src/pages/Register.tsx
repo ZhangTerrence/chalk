@@ -2,7 +2,6 @@ import { useEffect } from "react";
 
 import { useRegisterMutation } from "@/redux/services/auth.ts";
 import { zodResolver } from "@hookform/resolvers/zod";
-import type { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import { useForm } from "react-hook-form";
 import { NavLink, useNavigate } from "react-router-dom";
 
@@ -11,11 +10,9 @@ import { Button } from "@/components/ui/button.tsx";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form.tsx";
 import { Input } from "@/components/ui/input.tsx";
 
-import type { ApiResponse, AuthenticationResponse } from "@/lib/types.ts";
 import { RegisterSchema, type RegisterSchemaType } from "@/lib/validators/register.ts";
 
 import { useAuth } from "@/hooks/useAuth.tsx";
-import { useToast } from "@/hooks/useToast.tsx";
 
 export default function Register() {
   const user = useAuth().user;
@@ -39,26 +36,12 @@ export default function Register() {
   });
 
   const [register, { isLoading }] = useRegisterMutation();
-  const { toast } = useToast();
 
   const onSubmit = async (data: RegisterSchemaType) => {
     try {
       await register(data).unwrap();
     } catch (error) {
       console.log(error);
-      if ("data" in (error as any)) {
-        const errors = ((error as FetchBaseQueryError).data as ApiResponse<AuthenticationResponse>).errors;
-
-        if (errors) {
-          errors.forEach((error) => {
-            toast({
-              variant: "destructive",
-              title: "Login failed.",
-              description: error,
-            });
-          });
-        }
-      }
     }
   };
 

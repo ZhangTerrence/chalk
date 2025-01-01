@@ -2,7 +2,6 @@ import { useEffect } from "react";
 
 import { useLoginMutation } from "@/redux/services/auth.ts";
 import { zodResolver } from "@hookform/resolvers/zod";
-import type { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import { useForm } from "react-hook-form";
 import { NavLink, useNavigate } from "react-router-dom";
 
@@ -11,11 +10,9 @@ import { Button } from "@/components/ui/button.tsx";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form.tsx";
 import { Input } from "@/components/ui/input.tsx";
 
-import type { ApiResponse, AuthenticationResponse } from "@/lib/types.ts";
 import { LoginSchema, type LoginSchemaType } from "@/lib/validators/login.ts";
 
 import { useAuth } from "@/hooks/useAuth.tsx";
-import { useToast } from "@/hooks/useToast.tsx";
 
 export default function Login() {
   const user = useAuth().user;
@@ -36,26 +33,12 @@ export default function Login() {
   });
 
   const [login, { isLoading }] = useLoginMutation();
-  const { toast } = useToast();
 
   const onSubmit = async (data: LoginSchemaType) => {
     try {
       await login(data).unwrap();
     } catch (error) {
       console.log(error);
-      if ("data" in (error as any)) {
-        const errors = ((error as FetchBaseQueryError).data as ApiResponse<AuthenticationResponse>).errors;
-
-        if (errors) {
-          errors.forEach((error) => {
-            toast({
-              variant: "destructive",
-              title: "Login failed.",
-              description: error,
-            });
-          });
-        }
-      }
     }
   };
 
