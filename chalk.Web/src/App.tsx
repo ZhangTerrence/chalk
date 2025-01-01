@@ -6,6 +6,8 @@ import { store } from "@/redux/store.ts";
 import { Provider } from "react-redux";
 import { BrowserRouter, Route, Routes } from "react-router";
 
+import { Toaster } from "@/components/ui/toaster.tsx";
+
 export default function App() {
   return (
     <Provider store={store}>
@@ -17,6 +19,7 @@ export default function App() {
           <Route path="/dashboard" element={<Dashboard />} />
         </Routes>
       </BrowserRouter>
+      <Toaster />
     </Provider>
   );
 }

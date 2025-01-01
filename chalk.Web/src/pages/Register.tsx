@@ -1,17 +1,31 @@
+import { useEffect } from "react";
+
 import { useRegisterMutation } from "@/redux/services/auth.ts";
 import { zodResolver } from "@hookform/resolvers/zod";
+import type { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import { useForm } from "react-hook-form";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
 import { Header } from "@/components/Header.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form.tsx";
 import { Input } from "@/components/ui/input.tsx";
 
+import type { ApiResponse, AuthenticationResponse } from "@/lib/types.ts";
 import { RegisterSchema, type RegisterSchemaType } from "@/lib/validators/register.ts";
 
+import { useAuth } from "@/hooks/useAuth.tsx";
+import { useToast } from "@/hooks/useToast.tsx";
+
 export default function Register() {
-  const [register] = useRegisterMutation();
+  const user = useAuth().user;
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user) {
+      navigate("/dashboard");
+    }
+  }, [user]);
 
   const form = useForm<RegisterSchemaType>({
     resolver: zodResolver(RegisterSchema),
@@ -24,6 +38,34 @@ export default function Register() {
     },
   });
 
+  const [register, { isLoading }] = useRegisterMutation();
+  const { toast } = useToast();
+
+  const onSubmit = async (data: RegisterSchemaType) => {
+    try {
+      await register(data).unwrap();
+    } catch (error) {
+      console.log(error);
+      if ("data" in (error as any)) {
+        const errors = ((error as FetchBaseQueryError).data as ApiResponse<AuthenticationResponse>).errors;
+
+        if (errors) {
+          errors.forEach((error) => {
+            toast({
+              variant: "destructive",
+              title: "Login failed.",
+              description: error,
+            });
+          });
+        }
+      }
+    }
+  };
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className="min-h-screen w-screen flex items-center justify-center">
       <Header />
@@ -32,13 +74,13 @@ export default function Register() {
           <strong>Register</strong>
         </h1>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(register)} className="flex flex-col gap-y-4 min-w-80">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-y-4 min-w-80">
             <div className="flex gap-x-4">
               <FormField
                 control={form.control}
                 name="firstName"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="grow">
                     <FormLabel>First Name</FormLabel>
                     <FormControl>
                       <Input {...field} />
@@ -51,7 +93,7 @@ export default function Register() {
                 control={form.control}
                 name="lastName"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="grow">
                     <FormLabel>Last Name</FormLabel>
                     <FormControl>
                       <Input {...field} />
