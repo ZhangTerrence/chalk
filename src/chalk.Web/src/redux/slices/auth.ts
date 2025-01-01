@@ -30,7 +30,12 @@ export const authSlice = createSlice({
       state.accessToken = null;
       state.refreshToken = null;
     });
-  },
+    builder.addMatcher(authApi.endpoints.refresh.matchFulfilled, (state, { payload }) => {
+      state.user = payload.data.user;
+      state.accessToken = payload.data.accessToken;
+      state.refreshToken = payload.data.refreshToken;
+    });
+  }
 });
 
 export default authSlice.reducer;

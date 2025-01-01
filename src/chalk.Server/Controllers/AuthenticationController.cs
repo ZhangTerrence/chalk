@@ -71,7 +71,7 @@ public class AuthenticationController : ControllerBase
     public async Task<IActionResult> RefreshTokens()
     {
         Request.HttpContext.Items.TryGetValue("RefreshToken", out var refreshToken);
-        await _authenticationService.RefreshTokensAsync(User, refreshToken as string);
-        return NoContent();
+        var response = await _authenticationService.RefreshTokensAsync(User, refreshToken as string);
+        return Ok(new ApiResponse<AuthenticationResponse>(null, response));
     }
 }

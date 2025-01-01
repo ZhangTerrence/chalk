@@ -163,7 +163,7 @@ public class AuthenticationService : IAuthenticationService
         }
     }
 
-    public async Task RefreshTokensAsync(ClaimsPrincipal identity, string? refreshToken)
+    public async Task<AuthenticationResponse> RefreshTokensAsync(ClaimsPrincipal identity, string? refreshToken)
     {
         var currentUserId = identity.FindFirstValue(ClaimTypes.NameIdentifier);
         if (currentUserId is null || refreshToken is null)
@@ -211,6 +211,8 @@ public class AuthenticationService : IAuthenticationService
 
         AddCookie(TokenType.AccessToken, newAccessToken);
         AddCookie(TokenType.RefreshToken, newRefreshToken);
+
+        return new AuthenticationResponse(currentUser.ToResponse(), newAccessToken, newRefreshToken);
     }
 
     private string CreateAccessToken(long userId, string displayName, IEnumerable<string> roles)

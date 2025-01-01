@@ -7,6 +7,7 @@ import { Provider } from "react-redux";
 import { BrowserRouter, Route, Routes } from "react-router";
 
 import { Toaster } from "@/components/ui/toaster.tsx";
+import { ProtectedRoute } from "@/components/ProtectedRoute.tsx";
 
 export default function App() {
   return (
@@ -16,7 +17,7 @@ export default function App() {
           <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
         </Routes>
       </BrowserRouter>
       <Toaster />

@@ -10,14 +10,18 @@ import authReducer from "./slices/auth.ts";
 
 const queryErrorLogger: Middleware = (_: MiddlewareAPI) => (next) => (action) => {
   if (isRejectedWithValue(action)) {
-    console.error(action);
+    // @ts-ignore
+    if ("endpointName" in action.meta.arg && action.meta.arg.endpointName === "refresh") {
+      console.log(action.payload);
+      return next(action);
+    }
 
     const response = action.payload as FetchBaseQueryError;
     const errors = (response.data as ApiResponse<AuthenticationResponse>).errors;
     for (const error of errors) {
       toast({
         variant: "destructive",
-        description: error,
+        description: error
       });
     }
   }
@@ -28,9 +32,9 @@ const queryErrorLogger: Middleware = (_: MiddlewareAPI) => (next) => (action) =>
 export const store = configureStore({
   reducer: {
     [authApi.reducerPath]: authApi.reducer,
-    auth: authReducer,
+    auth: authReducer
   },
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(queryErrorLogger).concat(authApi.middleware),
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(queryErrorLogger).concat(authApi.middleware)
 });
 
 export type RootState = ReturnType<typeof store.getState>;
