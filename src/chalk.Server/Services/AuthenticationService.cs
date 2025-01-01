@@ -161,23 +161,20 @@ public class AuthenticationService : IAuthenticationService
         {
             throw new BadHttpRequestException(Errors.UnableToUpdate("User"), StatusCodes.Status500InternalServerError);
         }
+
+        _httpContextAccessor.HttpContext?.Response.Cookies.Delete("AccessToken");
+        _httpContextAccessor.HttpContext?.Response.Cookies.Delete("RefreshToken");
     }
 
     public async Task<AuthenticationResponse> RefreshTokensAsync(ClaimsPrincipal identity, string? refreshToken)
     {
-        var currentUserId = identity.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (currentUserId is null || refreshToken is null)
-        {
-            throw new BadHttpRequestException(Errors.Unauthorized, StatusCodes.Status401Unauthorized);
-        }
-
-        var currentUser = await _userManager.FindByIdAsync(currentUserId);
-        if (currentUser is null)
+        var user = await _userManager.GetUserAsync(identity);
+        if (user is null)
         {
             throw new BadHttpRequestException(Errors.NotFound("User"), StatusCodes.Status404NotFound);
         }
 
-        if (currentUser.RefreshToken != refreshToken)
+        if (user.RefreshToken != refreshToken)
         {
             throw new BadHttpRequestException(
                 Errors.Authentication.RefreshTokenInvalid,
@@ -185,7 +182,7 @@ public class AuthenticationService : IAuthenticationService
             );
         }
 
-        if (currentUser.RefreshTokenExpiryDate < DateTime.UtcNow)
+        if (user.RefreshTokenExpiryDate < DateTime.UtcNow)
         {
             throw new BadHttpRequestException(
                 Errors.Authentication.RefreshTokenExpired,
@@ -193,14 +190,14 @@ public class AuthenticationService : IAuthenticationService
             );
         }
 
-        var roles = await _userManager.GetRolesAsync(currentUser);
+        var roles = await _userManager.GetRolesAsync(user);
 
-        var newAccessToken = CreateAccessToken(currentUser.Id, currentUser.DisplayName, roles);
+        var newAccessToken = CreateAccessToken(user.Id, user.DisplayName, roles);
         var newRefreshToken = CreateRefreshToken();
 
-        currentUser.RefreshToken = newRefreshToken;
-        currentUser.RefreshTokenExpiryDate = RefreshTokenExpiryDate.DateTime.ToUniversalTime();
-        var updatedUser = await _userManager.UpdateAsync(currentUser);
+        user.RefreshToken = newRefreshToken;
+        user.RefreshTokenExpiryDate = RefreshTokenExpiryDate.DateTime.ToUniversalTime();
+        var updatedUser = await _userManager.UpdateAsync(user);
         if (!updatedUser.Succeeded)
         {
             throw new BadHttpRequestException(
@@ -212,7 +209,7 @@ public class AuthenticationService : IAuthenticationService
         AddCookie(TokenType.AccessToken, newAccessToken);
         AddCookie(TokenType.RefreshToken, newRefreshToken);
 
-        return new AuthenticationResponse(currentUser.ToResponse(), newAccessToken, newRefreshToken);
+        return new AuthenticationResponse(user.ToResponse(), newAccessToken, newRefreshToken);
     }
 
     private string CreateAccessToken(long userId, string displayName, IEnumerable<string> roles)

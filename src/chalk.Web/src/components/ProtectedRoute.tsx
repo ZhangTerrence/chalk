@@ -12,7 +12,6 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     try {
       await refresh(null).unwrap();
     } catch (error) {
-      console.log(error);
       navigate("/login");
     }
   };

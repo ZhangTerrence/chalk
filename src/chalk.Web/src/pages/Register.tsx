@@ -31,18 +31,14 @@ export default function Register() {
       lastName: "",
       displayName: "",
       email: "",
-      password: "",
-    },
+      password: ""
+    }
   });
 
   const [register, { isLoading }] = useRegisterMutation();
 
   const onSubmit = async (data: RegisterSchemaType) => {
-    try {
-      await register(data).unwrap();
-    } catch (error) {
-      console.log(error);
-    }
+    await register(data).unwrap();
   };
 
   if (isLoading) {

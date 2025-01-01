@@ -61,8 +61,6 @@ public class AuthenticationController : ControllerBase
     public async Task<IActionResult> Logout()
     {
         await _authenticationService.LogoutUserAsync(User);
-        HttpContext.Response.Cookies.Delete("AccessToken");
-        HttpContext.Response.Cookies.Delete("RefreshToken");
         return NoContent();
     }
 

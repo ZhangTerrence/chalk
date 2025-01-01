@@ -28,18 +28,14 @@ export default function Login() {
     resolver: zodResolver(LoginSchema),
     defaultValues: {
       email: "",
-      password: "",
-    },
+      password: ""
+    }
   });
 
   const [login, { isLoading }] = useLoginMutation();
 
   const onSubmit = async (data: LoginSchemaType) => {
-    try {
-      await login(data).unwrap();
-    } catch (error) {
-      console.log(error);
-    }
+    await login(data).unwrap();
   };
 
   if (isLoading) {
