@@ -25,7 +25,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\chalk.Server\chalk.Server.csproj"/>
+        <ProjectReference Include="..\..\src\chalk.Server\chalk.Server.csproj"/>
     </ItemGroup>
 
 </Project>
