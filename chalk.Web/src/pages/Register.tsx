@@ -1,4 +1,4 @@
-import { useRegisterMutation } from "@/redux/services/authentication.ts";
+import { useRegisterMutation } from "@/redux/services/auth.ts";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { NavLink } from "react-router-dom";

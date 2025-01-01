@@ -27,6 +27,11 @@ export type ChannelDTO = {
   name?: string;
 };
 
+export type ApiResponse<T> = {
+  errors: string[];
+  data: T;
+};
+
 export type UserResponse = {
   id: string;
   email: string;

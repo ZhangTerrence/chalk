@@ -1,3 +1,4 @@
+import Dashboard from "@/pages/Dashboard.tsx";
 import Landing from "@/pages/Landing.tsx";
 import Login from "@/pages/Login.tsx";
 import Register from "@/pages/Register.tsx";
@@ -13,6 +14,7 @@ export default function App() {
           <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/dashboard" element={<Dashboard />} />
         </Routes>
       </BrowserRouter>
     </Provider>
