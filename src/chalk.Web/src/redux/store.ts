@@ -1,11 +1,14 @@
-import { authApi } from "@/redux/services/auth.ts";
 import { type Middleware, type MiddlewareAPI, configureStore, isRejectedWithValue } from "@reduxjs/toolkit";
 import type { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import { toast } from "sonner";
 
-import type { ApiResponse, AuthenticationResponse } from "@/lib/types.ts";
+import { authApi } from "@/redux/services/auth.ts";
+
+import type { ApiResponse } from "@/lib/types/_index.ts";
+import type { AuthenticationResponse } from "@/lib/types/authentication.ts";
 
 import authReducer from "./slices/auth.ts";
+import themeReducer from "./slices/theme.ts";
 
 const queryErrorLogger: Middleware = (_: MiddlewareAPI) => (next) => (action) => {
   if (isRejectedWithValue(action)) {
@@ -29,6 +32,7 @@ const queryErrorLogger: Middleware = (_: MiddlewareAPI) => (next) => (action) =>
 export const store = configureStore({
   reducer: {
     [authApi.reducerPath]: authApi.reducer,
+    theme: themeReducer,
     auth: authReducer,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(queryErrorLogger).concat(authApi.middleware),

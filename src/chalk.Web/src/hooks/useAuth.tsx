@@ -1,10 +1,12 @@
 import { useMemo } from "react";
 
 import { selectAuthenticatedUser } from "@/redux/slices/auth.ts";
-import { useSelector } from "react-redux";
+
+import { useStore } from "@/hooks/useStore.tsx";
 
 export const useAuth = () => {
-  const user = useSelector(selectAuthenticatedUser);
+  const [useTypedSelector] = useStore();
+  const user = useTypedSelector(selectAuthenticatedUser);
 
   return useMemo(() => ({ user }), [user]);
 };

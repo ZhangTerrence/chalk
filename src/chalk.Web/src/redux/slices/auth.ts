@@ -1,10 +1,11 @@
-import { authApi } from "@/redux/services/auth.ts";
-import type { RootState } from "@/redux/store.ts";
 import { createSlice } from "@reduxjs/toolkit";
 
-import type { UserResponse } from "@/lib/types.ts";
+import { authApi } from "@/redux/services/auth.ts";
+import type { RootState } from "@/redux/store.ts";
 
-export type authState = {
+import type { UserResponse } from "@/lib/types/user.ts";
+
+export type AuthState = {
   user: UserResponse | null;
   accessToken: string | null;
   refreshToken: string | null;
@@ -12,7 +13,7 @@ export type authState = {
 
 export const authSlice = createSlice({
   name: "auth",
-  initialState: { user: null, accessToken: null, refreshToken: null } as authState,
+  initialState: { user: null, accessToken: null, refreshToken: null } as AuthState,
   reducers: {},
   extraReducers: (builder) => {
     builder.addMatcher(authApi.endpoints.register.matchFulfilled, (state, { payload }) => {

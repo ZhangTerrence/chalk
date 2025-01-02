@@ -1,6 +1,7 @@
 import baseApi from "@/redux/services/base.ts";
 
-import type { ApiResponse, AuthenticationResponse, LoginRequest, RegisterRequest } from "@/lib/types.ts";
+import type { ApiResponse } from "@/lib/types/_index.ts";
+import type { AuthenticationResponse, LoginRequest, RegisterRequest } from "@/lib/types/authentication.ts";
 
 export const authApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({

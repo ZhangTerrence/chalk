@@ -46,7 +46,7 @@ export default function Login() {
         <title>Chalk - Login</title>
       </Helmet>
       {isLoading && <LoaderIcon className="absolute" />}
-      <main className="flex flex-col gap-y-4 w-1/3">
+      <main className="flex flex-col gap-y-4 w-1/2 max-xl:w-3/4 max-sm:w-full max-sm:p-4">
         <h1 className="text-2xl underline">
           <strong>Login</strong>
         </h1>

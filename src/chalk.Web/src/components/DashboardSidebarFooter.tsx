@@ -10,7 +10,11 @@ import { useLogoutMutation } from "@/redux/services/auth.ts";
 
 import { useAuth } from "@/hooks/useAuth.tsx";
 
-export const DashboardSidebarFooter = () => {
+type DashboardSidebarFooterProps = {
+  setDialog: (dialog: null | "profile" | "settings") => void;
+};
+
+export const DashboardSidebarFooter = (props: DashboardSidebarFooterProps) => {
   const user = useAuth().user!;
   const { isMobile } = useSidebar();
   const [logout] = useLogoutMutation();
@@ -43,13 +47,13 @@ export const DashboardSidebarFooter = () => {
             sideOffset={15}
           >
             <DropdownMenuItem>
-              <Button className="grow justify-normal p-0" variant="ghost" onClick={() => {}}>
+              <Button className="grow justify-normal p-0" variant="ghost" onClick={() => props.setDialog("profile")}>
                 <UserIcon />
                 Profile
               </Button>
             </DropdownMenuItem>
             <DropdownMenuItem>
-              <Button className="grow justify-normal p-0" variant="ghost" onClick={() => {}}>
+              <Button className="grow justify-normal p-0" variant="ghost" onClick={() => props.setDialog("settings")}>
                 <SettingsIcon />
                 Settings
               </Button>
