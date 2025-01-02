@@ -8,10 +8,12 @@ public class Channel
     public required DateTime CreatedDate { get; set; }
     public required DateTime UpdatedDate { get; set; }
 
+    public long? OrganizationId { get; set; }
     public long? CourseId { get; set; }
 
+    public Organization? Organization { get; set; }
     public Course? Course { get; set; }
-    public ICollection<ChannelParticipant> ChannelParticipants { get; set; } = [];
-    public ICollection<ChannelRolePermission> ChannelRolePermissions { get; set; } = [];
+    public ICollection<ChannelUser> Users { get; set; } = [];
+    public ICollection<ChannelRolePermission> RolePermissions { get; set; } = [];
     public ICollection<Message> Messages { get; set; } = [];
 }

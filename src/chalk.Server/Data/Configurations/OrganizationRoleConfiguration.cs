@@ -21,12 +21,12 @@ public class OrganizationRoleConfiguration : IEntityTypeConfiguration<Organizati
 
         builder
             .HasOne(e => e.Organization)
-            .WithMany(e => e.OrganizationRoles)
+            .WithMany(e => e.Roles)
             .HasForeignKey(e => e.OrganizationId)
             .IsRequired();
         builder
-            .HasMany(e => e.UserOrganizations)
-            .WithOne(e => e.OrganizationRole)
+            .HasMany(e => e.Users)
+            .WithOne(e => e.Role)
             .HasForeignKey(e => e.OrganizationRoleId)
             .IsRequired();
     }

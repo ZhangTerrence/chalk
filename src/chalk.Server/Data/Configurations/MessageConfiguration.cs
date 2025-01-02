@@ -23,7 +23,7 @@ public class MessageConfiguration : IEntityTypeConfiguration<Message>
             .HasForeignKey(e => e.ChannelId)
             .IsRequired();
         builder
-            .HasOne(e => e.ChannelParticipant)
+            .HasOne(e => e.User)
             .WithMany(e => e.Messages)
             .HasForeignKey(e => new { e.ChannelId, e.UserId })
             .IsRequired();

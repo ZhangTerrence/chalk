@@ -12,9 +12,9 @@ public class Course
     public long OrganizationId { get; set; }
 
     public Organization Organization { get; set; } = null!;
-    public ICollection<UserCourse> UserCourses { get; set; } = [];
-    public ICollection<CourseModule> CourseModules { get; set; } = [];
+    public ICollection<UserCourse> Users { get; set; } = [];
+    public ICollection<CourseModule> Modules { get; set; } = [];
     public ICollection<Assignment> Assignments { get; set; } = [];
-    public ICollection<CourseRole> CourseRoles { get; set; } = [];
+    public ICollection<CourseRole> Roles { get; set; } = [];
     public ICollection<Channel> Channels { get; set; } = [];
 }

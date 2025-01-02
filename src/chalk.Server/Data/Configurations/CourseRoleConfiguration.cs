@@ -21,21 +21,21 @@ public class CourseRoleConfiguration : IEntityTypeConfiguration<CourseRole>
 
         builder
             .HasOne(e => e.Course)
-            .WithMany(e => e.CourseRoles)
+            .WithMany(e => e.Roles)
             .HasForeignKey(e => e.CourseId)
             .IsRequired();
         builder
-            .HasMany(e => e.UserCourses)
+            .HasMany(e => e.Users)
             .WithOne(e => e.CourseRole)
             .HasForeignKey(e => e.CourseRoleId)
             .IsRequired();
         builder
-            .HasMany(e => e.ChannelParticipants)
+            .HasMany(e => e.Channels)
             .WithOne(e => e.CourseRole)
             .HasForeignKey(e => e.CourseRoleId)
             .IsRequired();
         builder
-            .HasMany(e => e.ChannelRolePermissions)
+            .HasMany(e => e.ChannelPermissions)
             .WithOne(e => e.CourseRole)
             .HasForeignKey(e => e.CourseRoleId)
             .IsRequired();

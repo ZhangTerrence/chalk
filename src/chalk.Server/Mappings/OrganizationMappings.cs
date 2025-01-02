@@ -33,7 +33,7 @@ public static class OrganizationMappings
             Status = status,
             Organization = organization,
             User = user,
-            OrganizationRole = organizationRole,
+            Role = organizationRole,
         };
     }
 
@@ -51,24 +51,31 @@ public static class OrganizationMappings
         return new OrganizationResponse(
             organization.Id,
             organization.Name,
-            organization.ProfilePictureUri,
+            organization.ProfilePicture,
             organization.Description,
             organization.CreatedDate.ToString(CultureInfo.CurrentCulture),
             organization.UpdatedDate.ToString(CultureInfo.CurrentCulture),
             new UserDTO(
                 organization.Owner.Id,
-                $"{organization.Owner.FirstName} {organization.Owner.LastName}",
+                organization.Owner.FirstName,
+                organization.Owner.LastName,
+                organization.Owner.DisplayName,
                 organization.CreatedDate.ToString(CultureInfo.CurrentCulture)
             ),
-            organization.UserOrganizations
+            organization.Users
                 .Select(e => new UserDTO(
                     e.User.Id,
+                    e.User.FirstName,
+                    e.User.LastName,
                     e.User.DisplayName,
                     e.JoinedDate?.ToString(CultureInfo.CurrentCulture)
                 ))
                 .ToList(),
-            organization.OrganizationRoles
+            organization.Roles
                 .Select(e => new OrganizationRoleDTO(e.Id, e.Name, e.Permissions))
+                .ToList(),
+            organization.Channels
+                .Select(e => new ChannelDTO(e.Id, e.Name))
                 .ToList(),
             organization.Courses
                 .Select(e => new CourseDTO(e.Id, e.Name, e.Code))

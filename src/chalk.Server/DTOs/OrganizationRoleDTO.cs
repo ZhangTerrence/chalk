@@ -7,7 +7,7 @@ namespace chalk.Server.DTOs;
 public sealed record OrganizationRoleDTO(
     [property: JsonRequired]
     [property: JsonPropertyName("id")]
-    long RoleId,
+    long Id,
     [property: JsonRequired]
     [property: JsonPropertyName("name")]
     string Name,

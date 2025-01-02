@@ -23,9 +23,9 @@ public class UserService : IUserService
     public async Task<IEnumerable<UserResponse>> GetUsersAsync()
     {
         return await _context.Users
-            .Include(e => e.UserOrganizations).ThenInclude(e => e.Organization)
-            .Include(e => e.UserCourses).ThenInclude(e => e.Course)
-            .Include(e => e.ChannelParticipants).ThenInclude(e => e.Channel)
+            .Include(e => e.DirectMessages).ThenInclude(e => e.Channel)
+            .Include(e => e.Organizations).ThenInclude(e => e.Organization)
+            .Include(e => e.Courses).ThenInclude(e => e.Course)
             .Select(e => e.ToResponse())
             .ToListAsync();
     }
@@ -33,9 +33,9 @@ public class UserService : IUserService
     public async Task<UserResponse> GetUserAsync(long userId)
     {
         var user = await _context.Users
-            .Include(e => e.UserOrganizations).ThenInclude(e => e.Organization)
-            .Include(e => e.UserCourses).ThenInclude(e => e.Course)
-            .Include(e => e.ChannelParticipants).ThenInclude(e => e.Channel)
+            .Include(e => e.DirectMessages).ThenInclude(e => e.Channel)
+            .Include(e => e.Organizations).ThenInclude(e => e.Organization)
+            .Include(e => e.Courses).ThenInclude(e => e.Course)
             .FirstOrDefaultAsync(e => e.Id == userId);
         if (user is null)
         {

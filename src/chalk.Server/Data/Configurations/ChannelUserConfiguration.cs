@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace chalk.Server.Data.Configurations;
 
-public class ChannelParticipantConfiguration : IEntityTypeConfiguration<ChannelParticipant>
+public class ChannelUserConfiguration : IEntityTypeConfiguration<ChannelUser>
 {
-    public void Configure(EntityTypeBuilder<ChannelParticipant> builder)
+    public void Configure(EntityTypeBuilder<ChannelUser> builder)
     {
-        builder.ToTable("channel_participants");
+        builder.ToTable("channel_users");
 
         builder.HasKey(e => new { e.UserId, e.ChannelId });
 
@@ -16,26 +16,29 @@ public class ChannelParticipantConfiguration : IEntityTypeConfiguration<ChannelP
 
         builder
             .HasOne(e => e.User)
-            .WithMany(e => e.ChannelParticipants)
+            .WithMany(e => e.DirectMessages)
             .HasForeignKey(e => e.UserId)
             .IsRequired();
         builder
             .HasOne(e => e.Channel)
-            .WithMany(e => e.ChannelParticipants)
+            .WithMany(e => e.Users)
             .HasForeignKey(e => e.ChannelId)
             .IsRequired();
         builder
-            .HasOne(e => e.CourseRole)
-            .WithMany(e => e.ChannelParticipants)
-            .HasForeignKey(e => e.CourseRoleId)
-            .IsRequired();
+            .HasOne(e => e.OrganizationRole)
+            .WithMany(e => e.Channels)
+            .HasForeignKey(e => e.OrganizationRoleId);
         builder
-            .HasOne(e => e.ChannelRolePermission)
-            .WithMany(e => e.ChannelParticipants)
+            .HasOne(e => e.CourseRole)
+            .WithMany(e => e.Channels)
+            .HasForeignKey(e => e.CourseRoleId);
+        builder
+            .HasOne(e => e.RolePermission)
+            .WithMany(e => e.Users)
             .HasForeignKey(e => new { e.ChannelId, e.CourseRoleId });
         builder
             .HasMany(e => e.Messages)
-            .WithOne(e => e.ChannelParticipant)
+            .WithOne(e => e.User)
             .HasForeignKey(e => new { e.UserId, e.ChannelId })
             .IsRequired();
     }

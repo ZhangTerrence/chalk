@@ -24,8 +24,8 @@ public class OrganizationService : IOrganizationService
     {
         return await _context.Organizations
             .Include(e => e.Owner)
-            .Include(e => e.UserOrganizations).ThenInclude(e => e.User)
-            .Include(e => e.OrganizationRoles)
+            .Include(e => e.Users).ThenInclude(e => e.User)
+            .Include(e => e.Roles)
             .Include(e => e.Courses)
             .Select(e => e.ToResponse())
             .ToListAsync();
@@ -35,8 +35,8 @@ public class OrganizationService : IOrganizationService
     {
         var organization = await _context.Organizations
             .Include(e => e.Owner)
-            .Include(e => e.UserOrganizations).ThenInclude(e => e.User)
-            .Include(e => e.OrganizationRoles)
+            .Include(e => e.Users).ThenInclude(e => e.User)
+            .Include(e => e.Roles)
             .Include(e => e.Courses)
             .FirstOrDefaultAsync(e => e.Id == organizationId);
         if (organization is null)
@@ -77,17 +77,17 @@ public class OrganizationService : IOrganizationService
             UpdatedDate = DateTime.UtcNow,
         };
 
-        organization.UserOrganizations.Add(new UserOrganization
+        organization.Users.Add(new UserOrganization
         {
             Status = Status.User,
             JoinedDate = DateTime.UtcNow,
             User = user,
             Organization = organization,
-            OrganizationRole = adminRole
+            Role = adminRole
         });
 
-        organization.OrganizationRoles.Add(userRole);
-        organization.OrganizationRoles.Add(adminRole);
+        organization.Roles.Add(userRole);
+        organization.Roles.Add(adminRole);
 
         var createdOrganization = await _context.Organizations.AddAsync(organization);
 
@@ -177,14 +177,14 @@ public class OrganizationService : IOrganizationService
         }
 
         var organization = await _context.Organizations
-            .Include(e => e.UserOrganizations)
+            .Include(e => e.Users)
             .FirstOrDefaultAsync(e => e.Id == sendInviteRequest.OrganizationId);
         if (organization is null)
         {
             throw new ServiceException("Organization not found.", StatusCodes.Status404NotFound);
         }
 
-        var invite = organization.UserOrganizations
+        var invite = organization.Users
             .FirstOrDefault(e => e.Status == Status.Invited && e.UserId == sendInviteRequest.UserId);
         if (invite is not null)
         {
@@ -197,7 +197,7 @@ public class OrganizationService : IOrganizationService
             throw new ServiceException("Organization role not found.", StatusCodes.Status404NotFound);
         }
 
-        var currentMembers = organization.UserOrganizations
+        var currentMembers = organization.Users
             .Where(e => e.Status == Status.User)
             .ToList();
 
@@ -217,7 +217,7 @@ public class OrganizationService : IOrganizationService
             receiver,
             organizationRole);
 
-        organization.UserOrganizations.Add(userOrganization);
+        organization.Users.Add(userOrganization);
 
         await _context.SaveChangesAsync();
     }

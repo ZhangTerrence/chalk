@@ -11,7 +11,7 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(e => e.FirstName).HasMaxLength(31).IsRequired();
         builder.Property(e => e.LastName).HasMaxLength(31).IsRequired();
         builder.Property(e => e.DisplayName).HasMaxLength(31).IsRequired();
-        builder.Property(e => e.ProfilePictureUri);
+        builder.Property(e => e.ProfilePicture);
         builder.Property(e => e.Description).HasMaxLength(255);
         builder.Property(e => e.RefreshToken);
         builder.Property(e => e.RefreshTokenExpiryDate);
@@ -19,17 +19,17 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(e => e.UpdatedDate).IsRequired();
 
         builder
-            .HasMany(e => e.UserOrganizations)
+            .HasMany(e => e.DirectMessages)
             .WithOne(e => e.User)
             .HasForeignKey(e => e.UserId)
             .IsRequired();
         builder
-            .HasMany(e => e.UserCourses)
+            .HasMany(e => e.Organizations)
             .WithOne(e => e.User)
             .HasForeignKey(e => e.UserId)
             .IsRequired();
         builder
-            .HasMany(e => e.ChannelParticipants)
+            .HasMany(e => e.Courses)
             .WithOne(e => e.User)
             .HasForeignKey(e => e.UserId)
             .IsRequired();

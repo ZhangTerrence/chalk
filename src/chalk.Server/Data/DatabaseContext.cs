@@ -21,7 +21,7 @@ public class DatabaseContext : IdentityDbContext<User, IdentityRole<long>, long>
     public DbSet<OrganizationRole> OrganizationRoles { get; set; }
     public DbSet<UserCourse> UserCourses { get; set; }
     public DbSet<CourseRole> CourseRoles { get; set; }
-    public DbSet<ChannelParticipant> ChannelParticipants { get; set; }
+    public DbSet<ChannelUser> ChannelParticipants { get; set; }
     public DbSet<ChannelRolePermission> ChannelRolePermissions { get; set; }
     public DbSet<Attachment> Attachments { get; set; }
     public DbSet<CourseModule> CourseModules { get; set; }
@@ -49,7 +49,7 @@ public class DatabaseContext : IdentityDbContext<User, IdentityRole<long>, long>
         new OrganizationRoleConfiguration().Configure(builder.Entity<OrganizationRole>());
         new UserCourseConfiguration().Configure(builder.Entity<UserCourse>());
         new CourseRoleConfiguration().Configure(builder.Entity<CourseRole>());
-        new ChannelParticipantConfiguration().Configure(builder.Entity<ChannelParticipant>());
+        new ChannelUserConfiguration().Configure(builder.Entity<ChannelUser>());
         new ChannelRolePermissionConfiguration().Configure(builder.Entity<ChannelRolePermission>());
         new AttachmentConfiguration().Configure(builder.Entity<Attachment>());
         new CourseModuleConfiguration().Configure(builder.Entity<CourseModule>());

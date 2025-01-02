@@ -12,7 +12,7 @@ public class CourseRole
     public long CourseId { get; set; }
 
     public Course Course { get; set; } = null!;
-    public ICollection<UserCourse> UserCourses { get; set; } = [];
-    public ICollection<ChannelParticipant> ChannelParticipants { get; set; } = [];
-    public ICollection<ChannelRolePermission> ChannelRolePermissions { get; set; } = [];
+    public ICollection<UserCourse> Users { get; set; } = [];
+    public ICollection<ChannelUser> Channels { get; set; } = [];
+    public ICollection<ChannelRolePermission> ChannelPermissions { get; set; } = [];
 }

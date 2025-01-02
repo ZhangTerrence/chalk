@@ -7,7 +7,7 @@ namespace chalk.Server.DTOs;
 public record OrganizationDTO(
     [property: JsonRequired]
     [property: JsonPropertyName("id")]
-    long OrganizationId,
+    long Id,
     [property: JsonRequired]
     [property: JsonPropertyName("name")]
     string Name);

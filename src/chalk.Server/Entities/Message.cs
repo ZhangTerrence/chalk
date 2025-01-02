@@ -11,5 +11,5 @@ public class Message
     public long UserId { get; set; }
 
     public Channel Channel { get; set; } = null!;
-    public ChannelParticipant ChannelParticipant { get; set; } = null!;
+    public ChannelUser User { get; set; } = null!;
 }

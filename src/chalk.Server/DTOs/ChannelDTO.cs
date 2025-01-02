@@ -7,7 +7,7 @@ namespace chalk.Server.DTOs;
 public record ChannelDTO(
     [property: JsonRequired]
     [property: JsonPropertyName("id")]
-    long ChannelId,
+    long Id,
     [property: JsonRequired]
     [property: JsonPropertyName("name")]
     string? Name);

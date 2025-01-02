@@ -13,9 +13,9 @@ public static class UserExtensions
         return new User
         {
             Email = registerRequest.Email,
-            FirstName = registerRequest.FirstName,
-            LastName = registerRequest.LastName,
-            DisplayName = registerRequest.DisplayName,
+            FirstName = registerRequest.FirstName!,
+            LastName = registerRequest.LastName!,
+            DisplayName = registerRequest.DisplayName!,
             UserName = registerRequest.Email,
             CreatedDate = DateTime.UtcNow,
             UpdatedDate = DateTime.UtcNow
@@ -26,21 +26,21 @@ public static class UserExtensions
     {
         return new UserResponse(
             user.Id,
-            user.Email,
+            user.Email!,
             user.FirstName,
             user.LastName,
             user.DisplayName,
-            user.ProfilePictureUri,
+            user.ProfilePicture,
             user.CreatedDate.ToString(CultureInfo.CurrentCulture),
             user.UpdatedDate.ToString(CultureInfo.CurrentCulture),
-            user.UserOrganizations
+            user.DirectMessages
+                .Select(e => new ChannelDTO(e.Channel.Id, e.Channel.Name))
+                .ToList(),
+            user.Organizations
                 .Select(e => new OrganizationDTO(e.Organization.Id, e.Organization.Name))
                 .ToList(),
-            user.UserCourses
+            user.Courses
                 .Select(e => new CourseDTO(e.Course.Id, e.Course.Name, e.Course.Code))
-                .ToList(),
-            user.ChannelParticipants
-                .Select(e => new ChannelDTO(e.Channel.Id, e.Channel.Name))
                 .ToList()
         );
     }

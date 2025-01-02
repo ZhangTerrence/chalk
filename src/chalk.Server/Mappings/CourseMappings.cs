@@ -41,14 +41,16 @@ public static class CourseMappings
             course.CreatedDate.ToString(CultureInfo.CurrentCulture),
             course.UpdatedDate.ToString(CultureInfo.CurrentCulture),
             new OrganizationDTO(course.Organization.Id, course.Organization.Name),
-            course.UserCourses
+            course.Users
                 .Select(e => new UserDTO(
                     e.User.Id,
+                    e.User.FirstName,
+                    e.User.LastName,
                     e.User.DisplayName,
                     e.JoinedDate?.ToString(CultureInfo.CurrentCulture)
                 ))
                 .ToList(),
-            course.CourseRoles
+            course.Roles
                 .Select(e => new CourseRoleDTO(e.Id, e.Name, e.Permissions))
                 .ToList()
         );

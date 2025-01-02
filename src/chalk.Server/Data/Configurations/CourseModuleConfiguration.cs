@@ -20,7 +20,7 @@ public class CourseModuleConfiguration : IEntityTypeConfiguration<CourseModule>
 
         builder
             .HasOne(e => e.Course)
-            .WithMany(e => e.CourseModules)
+            .WithMany(e => e.Modules)
             .HasForeignKey(e => e.CourseId)
             .IsRequired();
         builder

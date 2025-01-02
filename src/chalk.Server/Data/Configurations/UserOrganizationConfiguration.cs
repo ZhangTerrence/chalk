@@ -17,17 +17,17 @@ public class UserOrganizationConfiguration : IEntityTypeConfiguration<UserOrgani
 
         builder
             .HasOne(e => e.User)
-            .WithMany(e => e.UserOrganizations)
+            .WithMany(e => e.Organizations)
             .HasForeignKey(e => e.UserId)
             .IsRequired();
         builder
             .HasOne(e => e.Organization)
-            .WithMany(e => e.UserOrganizations)
+            .WithMany(e => e.Users)
             .HasForeignKey(e => e.OrganizationId)
             .IsRequired();
         builder
-            .HasOne(e => e.OrganizationRole)
-            .WithMany(e => e.UserOrganizations)
+            .HasOne(e => e.Role)
+            .WithMany(e => e.Users)
             .HasForeignKey(e => e.OrganizationRoleId)
             .IsRequired();
     }

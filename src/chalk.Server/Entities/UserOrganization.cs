@@ -13,5 +13,5 @@ public class UserOrganization
 
     public User User { get; set; } = null!;
     public Organization Organization { get; set; } = null!;
-    public OrganizationRole OrganizationRole { get; set; } = null!;
+    public OrganizationRole Role { get; set; } = null!;
 }

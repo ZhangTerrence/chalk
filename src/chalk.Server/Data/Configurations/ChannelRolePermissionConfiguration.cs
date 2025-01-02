@@ -16,17 +16,20 @@ public class ChannelRolePermissionConfiguration : IEntityTypeConfiguration<Chann
 
         builder
             .HasOne(e => e.Channel)
-            .WithMany(e => e.ChannelRolePermissions)
+            .WithMany(e => e.RolePermissions)
             .HasForeignKey(e => e.ChannelId)
             .IsRequired();
         builder
-            .HasOne(e => e.CourseRole)
-            .WithMany(e => e.ChannelRolePermissions)
-            .HasForeignKey(e => e.CourseRoleId)
-            .IsRequired();
+            .HasOne(e => e.OrganizationRole)
+            .WithMany(e => e.ChannelPermissions)
+            .HasForeignKey(e => e.OrganizationRoleId);
         builder
-            .HasMany(e => e.ChannelParticipants)
-            .WithOne(e => e.ChannelRolePermission)
+            .HasOne(e => e.CourseRole)
+            .WithMany(e => e.ChannelPermissions)
+            .HasForeignKey(e => e.CourseRoleId);
+        builder
+            .HasMany(e => e.Users)
+            .WithOne(e => e.RolePermission)
             .HasForeignKey(e => new { e.ChannelId, e.CourseRoleId });
     }
 }

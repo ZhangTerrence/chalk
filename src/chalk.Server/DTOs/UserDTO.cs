@@ -7,7 +7,13 @@ namespace chalk.Server.DTOs;
 public record UserDTO(
     [property: JsonRequired]
     [property: JsonPropertyName("id")]
-    long UserId,
+    long Id,
+    [property: JsonRequired]
+    [property: JsonPropertyName("firstName")]
+    string FirstName,
+    [property: JsonRequired]
+    [property: JsonPropertyName("lastName")]
+    string LastName,
     [property: JsonRequired]
     [property: JsonPropertyName("displayName")]
     string DisplayName,

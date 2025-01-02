@@ -25,12 +25,12 @@ public class CourseConfiguration : IEntityTypeConfiguration<Course>
             .HasForeignKey(e => e.OrganizationId)
             .IsRequired();
         builder
-            .HasMany(e => e.UserCourses)
+            .HasMany(e => e.Users)
             .WithOne(e => e.Course)
             .HasForeignKey(e => e.CourseId)
             .IsRequired();
         builder
-            .HasMany(e => e.CourseModules)
+            .HasMany(e => e.Modules)
             .WithOne(e => e.Course)
             .HasForeignKey(e => e.CourseId)
             .IsRequired();
@@ -40,7 +40,7 @@ public class CourseConfiguration : IEntityTypeConfiguration<Course>
             .HasForeignKey(e => e.CourseId)
             .IsRequired();
         builder
-            .HasMany(e => e.CourseRoles)
+            .HasMany(e => e.Roles)
             .WithOne(e => e.Course)
             .HasForeignKey(e => e.CourseId)
             .IsRequired();

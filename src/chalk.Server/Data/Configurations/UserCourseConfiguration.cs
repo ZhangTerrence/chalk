@@ -17,17 +17,17 @@ public class UserCourseConfiguration : IEntityTypeConfiguration<UserCourse>
 
         builder
             .HasOne(e => e.User)
-            .WithMany(e => e.UserCourses)
+            .WithMany(e => e.Courses)
             .HasForeignKey(e => e.UserId)
             .IsRequired();
         builder
             .HasOne(e => e.Course)
-            .WithMany(e => e.UserCourses)
+            .WithMany(e => e.Users)
             .HasForeignKey(e => e.CourseId)
             .IsRequired();
         builder
             .HasOne(e => e.CourseRole)
-            .WithMany(e => e.UserCourses)
+            .WithMany(e => e.Users)
             .HasForeignKey(e => e.CourseRoleId)
             .IsRequired();
     }

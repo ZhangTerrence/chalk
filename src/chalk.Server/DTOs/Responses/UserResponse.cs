@@ -7,7 +7,7 @@ namespace chalk.Server.DTOs.Responses;
 public record UserResponse(
     [property: JsonRequired]
     [property: JsonPropertyName("id")]
-    long UserId,
+    long Id,
     [property: JsonRequired]
     [property: JsonPropertyName("email")]
     string Email,
@@ -30,11 +30,11 @@ public record UserResponse(
     [property: JsonPropertyName("updatedDate")]
     string UpdatedDate,
     [property: JsonRequired]
+    [property: JsonPropertyName("directMessages")]
+    IEnumerable<ChannelDTO> DirectMessages,
+    [property: JsonRequired]
     [property: JsonPropertyName("organizations")]
     IEnumerable<OrganizationDTO> Organizations,
     [property: JsonRequired]
     [property: JsonPropertyName("courses")]
-    IEnumerable<CourseDTO> Courses,
-    [property: JsonRequired]
-    [property: JsonPropertyName("channels")]
-    IEnumerable<ChannelDTO> Channels);
+    IEnumerable<CourseDTO> Courses);

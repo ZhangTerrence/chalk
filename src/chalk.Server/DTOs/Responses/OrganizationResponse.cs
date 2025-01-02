@@ -33,5 +33,8 @@ public record OrganizationResponse(
     [property: JsonPropertyName("roles")]
     IEnumerable<OrganizationRoleDTO> Roles,
     [property: JsonRequired]
+    [property: JsonPropertyName("channels")]
+    IEnumerable<ChannelDTO> Channels,
+    [property: JsonRequired]
     [property: JsonPropertyName("courses")]
     IEnumerable<CourseDTO> Courses);

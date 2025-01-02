@@ -12,5 +12,7 @@ public class OrganizationRole
     public long OrganizationId { get; set; }
 
     public Organization Organization { get; set; } = null!;
-    public ICollection<UserOrganization> UserOrganizations { get; set; } = [];
+    public ICollection<UserOrganization> Users { get; set; } = [];
+    public ICollection<ChannelUser> Channels { get; set; } = [];
+    public ICollection<ChannelRolePermission> ChannelPermissions { get; set; } = [];
 }

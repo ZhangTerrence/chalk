@@ -14,7 +14,7 @@ public class OrganizationConfiguration : IEntityTypeConfiguration<Organization>
 
         builder.Property(e => e.Id).ValueGeneratedOnAdd();
         builder.Property(e => e.Name).HasMaxLength(31).IsRequired();
-        builder.Property(e => e.ProfilePictureUri);
+        builder.Property(e => e.ProfilePicture);
         builder.Property(e => e.Description).HasMaxLength(255);
         builder.Property(e => e.CreatedDate).IsRequired();
         builder.Property(e => e.UpdatedDate).IsRequired();
@@ -25,12 +25,12 @@ public class OrganizationConfiguration : IEntityTypeConfiguration<Organization>
             .HasForeignKey(e => e.OwnerId)
             .IsRequired();
         builder
-            .HasMany(e => e.UserOrganizations)
+            .HasMany(e => e.Users)
             .WithOne(e => e.Organization)
             .HasForeignKey(e => e.OrganizationId)
             .IsRequired();
         builder
-            .HasMany(e => e.OrganizationRoles)
+            .HasMany(e => e.Roles)
             .WithOne(e => e.Organization)
             .HasForeignKey(e => e.OrganizationId)
             .IsRequired();
