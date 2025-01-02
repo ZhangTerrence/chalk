@@ -2,6 +2,7 @@ import { useEffect } from "react";
 
 import { useRegisterMutation } from "@/redux/services/auth.ts";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { LoaderIcon } from "lucide-react";
 import { Helmet } from "react-helmet-async";
 import { useForm } from "react-hook-form";
 import { NavLink, useNavigate } from "react-router-dom";
@@ -43,15 +44,12 @@ export default function Register() {
     await register(data).unwrap();
   };
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
   return (
     <div className="min-h-screen w-screen flex items-center justify-center">
       <Helmet>
         <title>Chalk - Register</title>
       </Helmet>
+      {isLoading && <LoaderIcon className="absolute" />}
       <Header />
       <main className="flex flex-col gap-y-4 w-1/3">
         <h1 className="text-2xl underline">
