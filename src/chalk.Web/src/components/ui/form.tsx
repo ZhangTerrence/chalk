@@ -6,7 +6,7 @@ import { Controller, ControllerProps, FieldPath, FieldValues, FormProvider, useF
 
 import { Label } from "@/components/ui/label";
 
-import { cn } from "@/lib/utils.ts";
+import { cn } from "@/lib/utils";
 
 const Form = FormProvider;
 

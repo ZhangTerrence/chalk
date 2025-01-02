@@ -1,22 +1,21 @@
-import { useLogoutMutation } from "@/redux/services/auth.ts";
+import { Helmet } from "react-helmet-async";
 
-import { Button } from "@/components/ui/button.tsx";
+import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar.tsx";
 
-import { useAuth } from "@/hooks/useAuth.tsx";
+import { DashboardSidebar } from "@/components/DashboardSidebar.tsx";
 
 export default function Dashboard() {
-  const user = useAuth().user!;
-  const [logout] = useLogoutMutation();
-
   return (
-    <div className="min-h-screen w-screen flex p-4 items-center flex-col">
-      <h1>
-        <strong>
-          {user.firstName} {user.lastName}
-        </strong>
-      </h1>
-      <h2>{user.displayName}</h2>
-      <Button onClick={() => logout(null)}>Logout</Button>
+    <div className="min-h-screen w-screen">
+      <Helmet>
+        <title>Chalk - Dashboard</title>
+      </Helmet>
+      <SidebarProvider>
+        <DashboardSidebar />
+        <SidebarInset className="p-4">
+          <SidebarTrigger />
+        </SidebarInset>
+      </SidebarProvider>
     </div>
   );
 }

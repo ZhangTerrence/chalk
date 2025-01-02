@@ -7,10 +7,12 @@
   "importOrder": [
     "^react$",
     "<THIRD_PARTY_MODULES>",
+    "^@/pages/(.*)$",
     "^@/components/ui/(.*)$",
     "^@/components/(.*)$",
     "^@/lib/(.*)$",
     "^@/hooks/(.*)$",
+    "^@/assets/(.*)$",
     "^[./]"
   ],
   "importOrderSeparation": true,

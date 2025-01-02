@@ -178,6 +178,7 @@ public class AuthenticationService : IAuthenticationService
             Issuer = _configuration["Jwt:Issuer"],
             Audience = _configuration["Jwt:Audience"],
             Expires = AccessTokenExpiryDate.DateTime.ToUniversalTime(),
+            NotBefore = DateTime.UtcNow,
             SigningCredentials = new SigningCredentials(_securityKey, SecurityAlgorithms.HmacSha256Signature)
         };
         var tokenHandler = new JwtSecurityTokenHandler();

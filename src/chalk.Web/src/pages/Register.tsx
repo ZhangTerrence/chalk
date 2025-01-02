@@ -2,6 +2,7 @@ import { useEffect } from "react";
 
 import { useRegisterMutation } from "@/redux/services/auth.ts";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Helmet } from "react-helmet-async";
 import { useForm } from "react-hook-form";
 import { NavLink, useNavigate } from "react-router-dom";
 
@@ -48,8 +49,11 @@ export default function Register() {
 
   return (
     <div className="min-h-screen w-screen flex items-center justify-center">
+      <Helmet>
+        <title>Chalk - Register</title>
+      </Helmet>
       <Header />
-      <div className="flex flex-col gap-y-4 w-1/3">
+      <main className="flex flex-col gap-y-4 w-1/3">
         <h1 className="text-2xl underline">
           <strong>Register</strong>
         </h1>
@@ -132,7 +136,7 @@ export default function Register() {
           </NavLink>
           .
         </p>
-      </div>
+      </main>
     </div>
   );
 }

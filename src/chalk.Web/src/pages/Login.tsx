@@ -2,13 +2,15 @@ import { useEffect } from "react";
 
 import { useLoginMutation } from "@/redux/services/auth.ts";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Helmet } from "react-helmet-async";
 import { useForm } from "react-hook-form";
 import { NavLink, useNavigate } from "react-router-dom";
 
-import { Header } from "@/components/Header.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form.tsx";
 import { Input } from "@/components/ui/input.tsx";
+
+import { Header } from "@/components/Header.tsx";
 
 import { LoginSchema, type LoginSchemaType } from "@/lib/validators/login.ts";
 
@@ -28,8 +30,8 @@ export default function Login() {
     resolver: zodResolver(LoginSchema),
     defaultValues: {
       email: "",
-      password: ""
-    }
+      password: "",
+    },
   });
 
   const [login, { isLoading }] = useLoginMutation();
@@ -44,8 +46,11 @@ export default function Login() {
 
   return (
     <div className="min-h-screen w-screen flex items-center justify-center">
+      <Helmet>
+        <title>Chalk - Login</title>
+      </Helmet>
       <Header />
-      <div className="flex flex-col gap-y-4 w-1/3">
+      <main className="flex flex-col gap-y-4 w-1/3">
         <h1 className="text-2xl underline">
           <strong>Login</strong>
         </h1>
@@ -87,7 +92,7 @@ export default function Login() {
           </NavLink>
           .
         </p>
-      </div>
+      </main>
     </div>
   );
 }
