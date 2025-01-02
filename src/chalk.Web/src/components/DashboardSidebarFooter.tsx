@@ -39,7 +39,7 @@ export const DashboardSidebarFooter = () => {
             className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
             side={isMobile ? "bottom" : "right"}
             align="end"
-            sideOffset={4}
+            sideOffset={15}
           >
             <DropdownMenuItem>
               <Button className="grow justify-normal p-0" variant="ghost" onClick={() => {}}>

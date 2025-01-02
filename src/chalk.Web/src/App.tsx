@@ -6,6 +6,7 @@ import { BrowserRouter, Route, Routes } from "react-router";
 import Dashboard from "@/pages/Dashboard.tsx";
 import Landing from "@/pages/Landing.tsx";
 import Login from "@/pages/Login.tsx";
+import NotFound from "@/pages/NotFound.tsx";
 import Register from "@/pages/Register.tsx";
 
 import { Toaster } from "@/components/ui/toaster.tsx";
@@ -31,6 +32,7 @@ export default function App() {
                 </ProtectedRoute>
               }
             />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
         <Toaster />
