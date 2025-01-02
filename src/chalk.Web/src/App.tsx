@@ -1,8 +1,10 @@
-import { store } from "@/redux/store.ts";
 import { HelmetProvider } from "react-helmet-async";
 import { Provider } from "react-redux";
 import { BrowserRouter, Route, Routes } from "react-router";
 import { Toaster } from "sonner";
+
+import DashboardLayout from "@/pages/layouts/DashboardLayout.tsx";
+import Layout from "@/pages/layouts/Layout.tsx";
 
 import Dashboard from "@/pages/Dashboard.tsx";
 import Landing from "@/pages/Landing.tsx";
@@ -12,6 +14,8 @@ import Register from "@/pages/Register.tsx";
 
 import { ProtectedRoute } from "@/components/ProtectedRoute.tsx";
 
+import { store } from "@/redux/store.ts";
+
 export default function App() {
   const context = {};
 
@@ -20,17 +24,21 @@ export default function App() {
       <HelmetProvider context={context}>
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<Landing />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
+            <Route element={<Layout />}>
+              <Route index element={<Landing />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+            </Route>
             <Route
               path="/dashboard"
               element={
                 <ProtectedRoute>
-                  <Dashboard />
+                  <DashboardLayout />
                 </ProtectedRoute>
               }
-            />
+            >
+              <Route index element={<Dashboard />} />
+            </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

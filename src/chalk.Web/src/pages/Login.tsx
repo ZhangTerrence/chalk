@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 
-import { useLoginMutation } from "@/redux/services/auth.ts";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoaderIcon } from "lucide-react";
 import { Helmet } from "react-helmet-async";
@@ -11,7 +10,7 @@ import { Button } from "@/components/ui/button.tsx";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form.tsx";
 import { Input } from "@/components/ui/input.tsx";
 
-import { Header } from "@/components/Header.tsx";
+import { useLoginMutation } from "@/redux/services/auth.ts";
 
 import { LoginSchema, type LoginSchemaType } from "@/lib/validators/login.ts";
 
@@ -42,12 +41,11 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen w-screen relative flex items-center justify-center">
+    <>
       <Helmet>
         <title>Chalk - Login</title>
       </Helmet>
       {isLoading && <LoaderIcon className="absolute" />}
-      <Header />
       <main className="flex flex-col gap-y-4 w-1/3">
         <h1 className="text-2xl underline">
           <strong>Login</strong>
@@ -91,6 +89,6 @@ export default function Login() {
           .
         </p>
       </main>
-    </div>
+    </>
   );
 }

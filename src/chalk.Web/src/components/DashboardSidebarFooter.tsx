@@ -1,4 +1,3 @@
-import { useLogoutMutation } from "@/redux/services/auth.ts";
 import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 import { LogOutIcon, SettingsIcon, UserIcon } from "lucide-react";
 
@@ -6,6 +5,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar.tsx"
 import { Button } from "@/components/ui/button.tsx";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu.tsx";
 import { SidebarFooter, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/components/ui/sidebar.tsx";
+
+import { useLogoutMutation } from "@/redux/services/auth.ts";
 
 import { useAuth } from "@/hooks/useAuth.tsx";
 
