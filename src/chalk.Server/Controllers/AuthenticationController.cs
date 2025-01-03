@@ -57,20 +57,20 @@ public class AuthenticationController : ControllerBase
         return Ok(new ApiResponse<AuthenticationResponse>(null, response));
     }
 
+    [HttpPatch("refresh")]
+    public async Task<IActionResult> RefreshTokens()
+    {
+        Request.HttpContext.Items.TryGetValue("AccessToken", out var accessToken);
+        Request.HttpContext.Items.TryGetValue("RefreshToken", out var refreshToken);
+        var response = await _authenticationService.RefreshTokensAsync(accessToken as string, refreshToken as string);
+        return Ok(new ApiResponse<AuthenticationResponse>(null, response));
+    }
+
     [HttpDelete("logout")]
     [Authorize]
     public async Task<IActionResult> Logout()
     {
         await _authenticationService.LogoutUserAsync(User);
         return NoContent();
-    }
-
-    [HttpPatch("refresh")]
-    [Authorize]
-    public async Task<IActionResult> RefreshTokens()
-    {
-        Request.HttpContext.Items.TryGetValue("RefreshToken", out var refreshToken);
-        var response = await _authenticationService.RefreshTokensAsync(User, refreshToken as string);
-        return Ok(new ApiResponse<AuthenticationResponse>(null, response));
     }
 }

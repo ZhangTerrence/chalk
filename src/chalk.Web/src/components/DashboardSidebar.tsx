@@ -52,7 +52,7 @@ export const DashboardSidebar = () => {
   };
 
   return (
-    <Dialog open={!!dialog}>
+    <Dialog open={!!dialog} onOpenChange={() => null}>
       <Sidebar>
         <SidebarHeader />
         <SidebarContent>

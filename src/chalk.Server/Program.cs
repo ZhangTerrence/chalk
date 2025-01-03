@@ -63,7 +63,8 @@ builder.Services
             ValidateIssuerSigningKey = true,
             ValidIssuer = builder.Configuration["Jwt:Issuer"],
             ValidAudience = builder.Configuration["Jwt:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!)),
+            ClockSkew = TimeSpan.Zero
         };
         options.Events = new JwtBearerEvents
         {
@@ -72,6 +73,7 @@ builder.Services
                 var accessToken = context.Request.Cookies["AccessToken"];
                 var refreshToken = context.Request.Cookies["RefreshToken"];
                 context.Token = accessToken;
+                context.HttpContext.Items.Add("AccessToken", accessToken);
                 context.HttpContext.Items.Add("RefreshToken", refreshToken);
                 return Task.CompletedTask;
             }

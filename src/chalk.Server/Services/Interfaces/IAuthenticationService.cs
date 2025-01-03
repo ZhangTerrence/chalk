@@ -10,7 +10,7 @@ public interface IAuthenticationService
 
     public Task<AuthenticationResponse> LoginUserAsync(LoginRequest loginRequest);
 
-    public Task LogoutUserAsync(ClaimsPrincipal identity);
+    public Task<AuthenticationResponse> RefreshTokensAsync(string? accessToken, string? refreshToken);
 
-    public Task<AuthenticationResponse> RefreshTokensAsync(ClaimsPrincipal identity, string? refreshToken);
+    public Task LogoutUserAsync(ClaimsPrincipal identity);
 }

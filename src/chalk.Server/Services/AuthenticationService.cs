@@ -1,13 +1,13 @@
-using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
 using chalk.Server.Configurations;
+using chalk.Server.DTOs;
 using chalk.Server.DTOs.Requests;
 using chalk.Server.DTOs.Responses;
 using chalk.Server.Entities;
 using chalk.Server.Mappings;
 using chalk.Server.Services.Interfaces;
+using chalk.Server.Utilities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 
@@ -15,27 +15,30 @@ namespace chalk.Server.Services;
 
 public class AuthenticationService : IAuthenticationService
 {
-    private static readonly DateTimeOffset AccessTokenExpiryDate = DateTimeOffset.UtcNow.AddHours(1);
-    private static readonly DateTimeOffset RefreshTokenExpiryDate = DateTimeOffset.UtcNow.AddDays(1);
-
-    private readonly IConfiguration _configuration;
     private readonly UserManager<User> _userManager;
     private readonly RoleManager<IdentityRole<long>> _roleManager;
+
+    private readonly JwtTokenInfoDTO _jwtTokenInfo;
+
     private readonly IHttpContextAccessor _httpContextAccessor;
-    private readonly SymmetricSecurityKey _securityKey;
 
     public AuthenticationService(
-        IConfiguration configuration,
         UserManager<User> userManager,
         RoleManager<IdentityRole<long>> roleManager,
+        IConfiguration configuration,
         IHttpContextAccessor httpContextAccessor
     )
     {
-        _configuration = configuration;
         _userManager = userManager;
         _roleManager = roleManager;
+
+        _jwtTokenInfo = new JwtTokenInfoDTO(
+            configuration["Jwt:Issuer"]!,
+            configuration["Jwt:Audience"]!,
+            new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]!))
+        );
+
         _httpContextAccessor = httpContextAccessor;
-        _securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));
     }
 
     public async Task<AuthenticationResponse> RegisterUserAsync(RegisterRequest registerRequest)
@@ -66,18 +69,22 @@ public class AuthenticationService : IAuthenticationService
                 StatusCodes.Status500InternalServerError);
         }
 
-        var accessToken = CreateAccessToken(user.Id, user.DisplayName, ["User"]);
-        var refreshToken = CreateRefreshToken();
+        var accessToken = JwtUtilities.CreateAccessToken(
+            _jwtTokenInfo,
+            new JwtClaimInfoDTO(user.Id, user.DisplayName, ["User"]),
+            DateTime.UtcNow.AddMinutes(15)
+        );
+        var refreshToken = JwtUtilities.CreateRefreshToken();
 
         user.RefreshToken = refreshToken;
-        user.RefreshTokenExpiryDate = RefreshTokenExpiryDate.DateTime.ToUniversalTime();
+        user.RefreshTokenExpiryDate = DateTime.UtcNow.AddHours(6);
         if (!(await _userManager.UpdateAsync(user)).Succeeded)
         {
             throw new ServiceException("Unable to set refresh token.", StatusCodes.Status500InternalServerError);
         }
 
-        AddCookie(TokenType.AccessToken, accessToken);
-        AddCookie(TokenType.RefreshToken, refreshToken);
+        AddCookie(JwtUtilities.TokenType.AccessToken, accessToken);
+        AddCookie(JwtUtilities.TokenType.RefreshToken, refreshToken);
 
         return new AuthenticationResponse(user.ToResponse(), accessToken, refreshToken);
     }
@@ -97,20 +104,70 @@ public class AuthenticationService : IAuthenticationService
         }
 
         var roles = await _userManager.GetRolesAsync(user);
-        var accessToken = CreateAccessToken(user.Id, user.DisplayName, roles);
-        var refreshToken = CreateRefreshToken();
+        var accessToken = JwtUtilities.CreateAccessToken(
+            _jwtTokenInfo,
+            new JwtClaimInfoDTO(user.Id, user.DisplayName, roles),
+            DateTime.UtcNow.AddMinutes(15)
+        );
+        var refreshToken = JwtUtilities.CreateRefreshToken();
 
         user.RefreshToken = refreshToken;
-        user.RefreshTokenExpiryDate = RefreshTokenExpiryDate.DateTime.ToUniversalTime();
+        user.RefreshTokenExpiryDate = DateTime.UtcNow.AddHours(6);
         if (!(await _userManager.UpdateAsync(user)).Succeeded)
         {
             throw new ServiceException("Unable to set refresh token.", StatusCodes.Status500InternalServerError);
         }
 
-        AddCookie(TokenType.AccessToken, accessToken);
-        AddCookie(TokenType.RefreshToken, refreshToken);
+        AddCookie(JwtUtilities.TokenType.AccessToken, accessToken);
+        AddCookie(JwtUtilities.TokenType.RefreshToken, refreshToken);
 
         return new AuthenticationResponse(user.ToResponse(), accessToken, refreshToken);
+    }
+
+    public async Task<AuthenticationResponse> RefreshTokensAsync(string? accessToken, string? refreshToken)
+    {
+        if (accessToken is null)
+        {
+            throw new ServiceException("Cannot find user.", StatusCodes.Status400BadRequest);
+        }
+
+        if (refreshToken is null)
+        {
+            throw new ServiceException("Refresh token is required.", StatusCodes.Status401Unauthorized);
+        }
+
+        var userId = JwtUtilities.GetUserIdFromExpiredAccessToken(_jwtTokenInfo, accessToken);
+        if (userId is null)
+        {
+            throw new ServiceException("Cannot find user.", StatusCodes.Status400BadRequest);
+        }
+
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user is null)
+        {
+            throw new ServiceException("User not found.", StatusCodes.Status404NotFound);
+        }
+
+        if (user.RefreshToken != refreshToken)
+        {
+            throw new ServiceException("Refresh token is invalid.", StatusCodes.Status401Unauthorized);
+        }
+
+        if (user.RefreshTokenExpiryDate < DateTime.UtcNow)
+        {
+            throw new ServiceException("Refresh token is expired.", StatusCodes.Status401Unauthorized);
+        }
+
+        var roles = await _userManager.GetRolesAsync(user);
+        var newAccessToken = JwtUtilities.CreateAccessToken(
+            _jwtTokenInfo,
+            new JwtClaimInfoDTO(user.Id, user.DisplayName, roles),
+            DateTime.UtcNow.AddMinutes(15)
+        );
+
+        AddCookie(JwtUtilities.TokenType.AccessToken, newAccessToken);
+
+        return new AuthenticationResponse(user.ToResponse(), newAccessToken, refreshToken);
     }
 
     public async Task LogoutUserAsync(ClaimsPrincipal identity)
@@ -133,105 +190,16 @@ public class AuthenticationService : IAuthenticationService
         _httpContextAccessor.HttpContext?.Response.Cookies.Delete("RefreshToken");
     }
 
-    public async Task<AuthenticationResponse> RefreshTokensAsync(ClaimsPrincipal identity, string? refreshToken)
+    private void AddCookie(JwtUtilities.TokenType tokenType, string token)
     {
-        var user = await _userManager.GetUserAsync(identity);
-        if (user is null)
+        _httpContextAccessor.HttpContext?.Response.Cookies.Append(tokenType.GetString(), token, new CookieOptions
         {
-            throw new ServiceException("User not found.", StatusCodes.Status404NotFound);
-        }
-
-        if (user.RefreshToken != refreshToken)
-        {
-            throw new ServiceException("Refresh token is invalid.", StatusCodes.Status401Unauthorized);
-        }
-
-        if (user.RefreshTokenExpiryDate < DateTime.UtcNow)
-        {
-            throw new ServiceException("Refresh token is expired.", StatusCodes.Status401Unauthorized);
-        }
-
-        var roles = await _userManager.GetRolesAsync(user);
-
-        var newAccessToken = CreateAccessToken(user.Id, user.DisplayName, roles);
-        var newRefreshToken = CreateRefreshToken();
-
-        user.RefreshToken = newRefreshToken;
-        user.RefreshTokenExpiryDate = RefreshTokenExpiryDate.DateTime.ToUniversalTime();
-        var updatedUser = await _userManager.UpdateAsync(user);
-        if (!updatedUser.Succeeded)
-        {
-            throw new ServiceException("Unable to set refresh token.", StatusCodes.Status500InternalServerError);
-        }
-
-        AddCookie(TokenType.AccessToken, newAccessToken);
-        AddCookie(TokenType.RefreshToken, newRefreshToken);
-
-        return new AuthenticationResponse(user.ToResponse(), newAccessToken, newRefreshToken);
-    }
-
-    private string CreateAccessToken(long userId, string displayName, IEnumerable<string> roles)
-    {
-        var tokenDescriptor = new SecurityTokenDescriptor
-        {
-            Subject = CreateClaims(userId, displayName, roles),
-            Issuer = _configuration["Jwt:Issuer"],
-            Audience = _configuration["Jwt:Audience"],
-            Expires = AccessTokenExpiryDate.DateTime.ToUniversalTime(),
-            NotBefore = DateTime.UtcNow,
-            SigningCredentials = new SigningCredentials(_securityKey, SecurityAlgorithms.HmacSha256Signature)
-        };
-        var tokenHandler = new JwtSecurityTokenHandler();
-        var token = tokenHandler.CreateToken(tokenDescriptor);
-        return tokenHandler.WriteToken(token);
-    }
-
-    private static ClaimsIdentity CreateClaims(long userId, string displayName, IEnumerable<string> roles)
-    {
-        var claims = new ClaimsIdentity();
-        claims.AddClaim(new Claim(ClaimTypes.NameIdentifier, userId.ToString()));
-        claims.AddClaim(new Claim(ClaimTypes.Name, displayName));
-        claims.AddClaims(roles.Select(role => new Claim(ClaimTypes.Role, role)));
-        return claims;
-    }
-
-    private static string CreateRefreshToken()
-    {
-        var bytes = new byte[64];
-        using var rng = RandomNumberGenerator.Create();
-        rng.GetBytes(bytes);
-        return Convert.ToBase64String(bytes);
-    }
-
-    private void AddCookie(TokenType tokenType, string token)
-    {
-        _httpContextAccessor.HttpContext?.Response.Cookies.Append(ToString(tokenType), token, new CookieOptions
-        {
-            Expires = tokenType == TokenType.AccessToken ? AccessTokenExpiryDate : RefreshTokenExpiryDate,
+            Expires = DateTime.UtcNow.AddDays(1),
             Path = "/api",
             HttpOnly = true,
             Secure = true,
             IsEssential = true,
             SameSite = SameSiteMode.Strict,
         });
-    }
-
-    private static string ToString(TokenType tokenType)
-    {
-        switch (tokenType)
-        {
-            case TokenType.AccessToken:
-                return "AccessToken";
-            case TokenType.RefreshToken:
-                return "RefreshToken";
-            default:
-                throw new ArgumentOutOfRangeException(nameof(tokenType), tokenType, null);
-        }
-    }
-
-    private enum TokenType
-    {
-        AccessToken,
-        RefreshToken
     }
 }
