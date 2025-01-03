@@ -9,11 +9,14 @@ export type ThemeState = {
   darkMode: boolean;
 };
 
-const root = window.document.documentElement;
-root.classList.remove("light", "dark");
+const defaultColorScheme = localStorage.getItem("colorScheme") ?? ColorScheme.Zinc;
 const defaultDarkMode = localStorage.getItem("darkMode")
   ? localStorage.getItem("darkMode") === "true"
   : window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+const root = window.document.documentElement;
+root.setAttribute("data-theme", defaultColorScheme);
+root.classList.remove("light", "dark");
 root.classList.add(defaultDarkMode ? "dark" : "light");
 
 export const themeSlice = createSlice({
@@ -25,10 +28,14 @@ export const themeSlice = createSlice({
   reducers: {
     changeColorScheme: (state, action: PayloadAction<ColorScheme>) => {
       state.colorScheme = action.payload;
+
+      root.setAttribute("data-theme", state.colorScheme);
+      localStorage.setItem("colorScheme", state.colorScheme);
     },
     toggleDarkMode: (state) => {
-      root.classList.remove("light", "dark");
       state.darkMode = !state.darkMode;
+
+      root.classList.remove("light", "dark");
       root.classList.add(state.darkMode ? "dark" : "light");
       localStorage.setItem("darkMode", state.darkMode.toString());
     },
