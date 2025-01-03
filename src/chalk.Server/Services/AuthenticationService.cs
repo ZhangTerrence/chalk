@@ -71,13 +71,12 @@ public class AuthenticationService : IAuthenticationService
 
         var accessToken = JwtUtilities.CreateAccessToken(
             _jwtTokenInfo,
-            new JwtClaimInfoDTO(user.Id, user.DisplayName, ["User"]),
-            DateTime.UtcNow.AddMinutes(15)
+            new JwtClaimInfoDTO(user.Id, user.DisplayName, ["User"])
         );
         var refreshToken = JwtUtilities.CreateRefreshToken();
 
         user.RefreshToken = refreshToken;
-        user.RefreshTokenExpiryDate = DateTime.UtcNow.AddHours(6);
+        user.RefreshTokenExpiryDate = DateTime.UtcNow.AddHours(2);
         if (!(await _userManager.UpdateAsync(user)).Succeeded)
         {
             throw new ServiceException("Unable to set refresh token.", StatusCodes.Status500InternalServerError);
@@ -106,13 +105,12 @@ public class AuthenticationService : IAuthenticationService
         var roles = await _userManager.GetRolesAsync(user);
         var accessToken = JwtUtilities.CreateAccessToken(
             _jwtTokenInfo,
-            new JwtClaimInfoDTO(user.Id, user.DisplayName, roles),
-            DateTime.UtcNow.AddMinutes(15)
+            new JwtClaimInfoDTO(user.Id, user.DisplayName, roles)
         );
         var refreshToken = JwtUtilities.CreateRefreshToken();
 
         user.RefreshToken = refreshToken;
-        user.RefreshTokenExpiryDate = DateTime.UtcNow.AddHours(6);
+        user.RefreshTokenExpiryDate = DateTime.UtcNow.AddHours(2);
         if (!(await _userManager.UpdateAsync(user)).Succeeded)
         {
             throw new ServiceException("Unable to set refresh token.", StatusCodes.Status500InternalServerError);
@@ -161,8 +159,7 @@ public class AuthenticationService : IAuthenticationService
         var roles = await _userManager.GetRolesAsync(user);
         var newAccessToken = JwtUtilities.CreateAccessToken(
             _jwtTokenInfo,
-            new JwtClaimInfoDTO(user.Id, user.DisplayName, roles),
-            DateTime.UtcNow.AddMinutes(15)
+            new JwtClaimInfoDTO(user.Id, user.DisplayName, roles)
         );
 
         AddCookie(JwtUtilities.TokenType.AccessToken, newAccessToken);

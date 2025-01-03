@@ -12,8 +12,8 @@ public record OrganizationResponse(
     [property: JsonPropertyName("name")]
     string Name,
     [property: JsonRequired]
-    [property: JsonPropertyName("profilePictureUri")]
-    string? ProfilePictureUri,
+    [property: JsonPropertyName("profilePicture")]
+    string? ProfilePicture,
     [property: JsonRequired]
     [property: JsonPropertyName("description")]
     string? Description,

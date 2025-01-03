@@ -6,7 +6,7 @@ import { useRefreshMutation } from "@/redux/services/auth.ts";
 
 import { useAuth } from "@/hooks/useAuth.tsx";
 
-export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+export const AuthenticationGuard = ({ children }: { children: React.ReactNode }) => {
   const user = useAuth().user;
   const navigate = useNavigate();
   const [refresh] = useRefreshMutation();

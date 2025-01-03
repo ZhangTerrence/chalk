@@ -29,7 +29,7 @@ export const SettingsDialog = (props: SettingsProps) => {
       <div className="flex flex-col gap-y-4">
         <h3 className="text-md font-semibold">Color Scheme</h3>
         <Select
-          value={theme.colorScheme}
+          defaultValue={theme.colorScheme}
           onValueChange={(colorScheme) => dispatch(changeColorScheme(colorScheme as ColorScheme))}
         >
           <SelectTrigger>

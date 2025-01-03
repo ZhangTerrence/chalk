@@ -1,4 +1,4 @@
-import type { UserResponse } from "@/lib/types.ts";
+import type { UserResponse } from "@/lib/types/user.ts";
 
 export type RegisterRequest = {
   firstName: string;

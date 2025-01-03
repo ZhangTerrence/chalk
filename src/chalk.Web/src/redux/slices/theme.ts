@@ -9,9 +9,9 @@ export type ThemeState = {
   darkMode: boolean;
 };
 
-const defaultColorScheme = localStorage.getItem("colorScheme") ?? ColorScheme.Zinc;
-const defaultDarkMode = localStorage.getItem("darkMode")
-  ? localStorage.getItem("darkMode") === "true"
+const defaultColorScheme = (localStorage.getItem("color-scheme") as ColorScheme) ?? ColorScheme.Zinc;
+const defaultDarkMode = localStorage.getItem("dark-mode")
+  ? localStorage.getItem("dark-mode") === "true"
   : window.matchMedia("(prefers-color-scheme: dark)").matches;
 
 const root = window.document.documentElement;
@@ -22,7 +22,7 @@ root.classList.add(defaultDarkMode ? "dark" : "light");
 export const themeSlice = createSlice({
   name: "theme",
   initialState: {
-    colorScheme: ColorScheme.Zinc,
+    colorScheme: defaultColorScheme,
     darkMode: defaultDarkMode,
   } as ThemeState,
   reducers: {
@@ -30,14 +30,14 @@ export const themeSlice = createSlice({
       state.colorScheme = action.payload;
 
       root.setAttribute("data-theme", state.colorScheme);
-      localStorage.setItem("colorScheme", state.colorScheme);
+      localStorage.setItem("color-scheme", state.colorScheme);
     },
     toggleDarkMode: (state) => {
       state.darkMode = !state.darkMode;
 
       root.classList.remove("light", "dark");
       root.classList.add(state.darkMode ? "dark" : "light");
-      localStorage.setItem("darkMode", state.darkMode.toString());
+      localStorage.setItem("dark-mode", state.darkMode.toString());
     },
   },
 });

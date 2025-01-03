@@ -28,14 +28,14 @@ public static class JwtUtilities
         }
     }
 
-    public static string CreateAccessToken(JwtTokenInfoDTO tokenInfo, JwtClaimInfoDTO claimInfo, DateTime expires)
+    public static string CreateAccessToken(JwtTokenInfoDTO tokenInfo, JwtClaimInfoDTO claimInfo)
     {
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = CreateClaims(claimInfo),
             Issuer = tokenInfo.Issuer,
             Audience = tokenInfo.Audience,
-            Expires = expires,
+            Expires = DateTime.UtcNow.AddMinutes(15),
             NotBefore = DateTime.UtcNow,
             SigningCredentials = new SigningCredentials(tokenInfo.SecurityKey, SecurityAlgorithms.HmacSha256Signature)
         };

@@ -23,9 +23,9 @@ public class UserService : IUserService
     public async Task<IEnumerable<UserResponse>> GetUsersAsync()
     {
         return await _context.Users
-            .Include(e => e.DirectMessages).ThenInclude(e => e.Channel)
-            .Include(e => e.Organizations).ThenInclude(e => e.Organization)
-            .Include(e => e.Courses).ThenInclude(e => e.Course)
+            .Include(e => e.DirectMessages).ThenInclude(e => e.Channel).AsSplitQuery()
+            .Include(e => e.Organizations).ThenInclude(e => e.Organization).AsSplitQuery()
+            .Include(e => e.Courses).ThenInclude(e => e.Course).AsSplitQuery()
             .Select(e => e.ToResponse())
             .ToListAsync();
     }
@@ -33,9 +33,9 @@ public class UserService : IUserService
     public async Task<UserResponse> GetUserAsync(long userId)
     {
         var user = await _context.Users
-            .Include(e => e.DirectMessages).ThenInclude(e => e.Channel)
-            .Include(e => e.Organizations).ThenInclude(e => e.Organization)
-            .Include(e => e.Courses).ThenInclude(e => e.Course)
+            .Include(e => e.DirectMessages).ThenInclude(e => e.Channel).AsSplitQuery()
+            .Include(e => e.Organizations).ThenInclude(e => e.Organization).AsSplitQuery()
+            .Include(e => e.Courses).ThenInclude(e => e.Course).AsSplitQuery()
             .FirstOrDefaultAsync(e => e.Id == userId);
         if (user is null)
         {

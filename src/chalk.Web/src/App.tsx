@@ -5,14 +5,14 @@ import { Toaster } from "sonner";
 
 import DashboardLayout from "@/pages/layouts/DashboardLayout.tsx";
 import Layout from "@/pages/layouts/Layout.tsx";
+import PrivateLayout from "@/pages/layouts/PrivateLayout.tsx";
 
 import Dashboard from "@/pages/Dashboard.tsx";
 import Landing from "@/pages/Landing.tsx";
 import Login from "@/pages/Login.tsx";
 import NotFound from "@/pages/NotFound.tsx";
+import Organizations from "@/pages/Organizations.tsx";
 import Register from "@/pages/Register.tsx";
-
-import { ProtectedRoute } from "@/components/ProtectedRoute.tsx";
 
 import { store } from "@/redux/store.ts";
 
@@ -29,15 +29,13 @@ export default function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
             </Route>
-            <Route
-              path="/dashboard"
-              element={
-                <ProtectedRoute>
-                  <DashboardLayout />
-                </ProtectedRoute>
-              }
-            >
-              <Route index element={<Dashboard />} />
+            <Route element={<PrivateLayout />}>
+              <Route path="/dashboard" element={<DashboardLayout />}>
+                <Route index element={<Dashboard />} />
+              </Route>
+              <Route path="/organizations">
+                <Route index element={<Organizations />}></Route>
+              </Route>
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>

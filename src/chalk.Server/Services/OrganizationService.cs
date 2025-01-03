@@ -7,6 +7,7 @@ using chalk.Server.Entities;
 using chalk.Server.Mappings;
 using chalk.Server.Services.Interfaces;
 using chalk.Server.Shared;
+using chalk.Server.Utilities;
 using Microsoft.EntityFrameworkCore;
 
 namespace chalk.Server.Services;
@@ -23,10 +24,10 @@ public class OrganizationService : IOrganizationService
     public async Task<IEnumerable<OrganizationResponse>> GetOrganizationsAsync()
     {
         return await _context.Organizations
-            .Include(e => e.Owner)
-            .Include(e => e.Users).ThenInclude(e => e.User)
-            .Include(e => e.Roles)
-            .Include(e => e.Courses)
+            .Include(e => e.Owner).AsSplitQuery()
+            .Include(e => e.Users).ThenInclude(e => e.User).AsSplitQuery()
+            .Include(e => e.Roles).AsSplitQuery()
+            .Include(e => e.Courses).AsSplitQuery()
             .Select(e => e.ToResponse())
             .ToListAsync();
     }
@@ -34,10 +35,10 @@ public class OrganizationService : IOrganizationService
     public async Task<OrganizationResponse> GetOrganizationAsync(long organizationId)
     {
         var organization = await _context.Organizations
-            .Include(e => e.Owner)
-            .Include(e => e.Users).ThenInclude(e => e.User)
-            .Include(e => e.Roles)
-            .Include(e => e.Courses)
+            .Include(e => e.Owner).AsSplitQuery()
+            .Include(e => e.Users).ThenInclude(e => e.User).AsSplitQuery()
+            .Include(e => e.Roles).AsSplitQuery()
+            .Include(e => e.Courses).AsSplitQuery()
             .FirstOrDefaultAsync(e => e.Id == organizationId);
         if (organization is null)
         {
@@ -62,17 +63,10 @@ public class OrganizationService : IOrganizationService
 
         var organization = createOrganizationRequest.ToEntity(user);
 
-        var userRole = new OrganizationRole
+        var ownerRole = new OrganizationRole
         {
-            Name = "User",
-            Permissions = 0,
-            CreatedDate = DateTime.UtcNow,
-            UpdatedDate = DateTime.UtcNow,
-        };
-        var adminRole = new OrganizationRole
-        {
-            Name = "Admin",
-            Permissions = 0,
+            Name = "Owner",
+            Permissions = PermissionUtilities.All,
             CreatedDate = DateTime.UtcNow,
             UpdatedDate = DateTime.UtcNow,
         };
@@ -83,11 +77,10 @@ public class OrganizationService : IOrganizationService
             JoinedDate = DateTime.UtcNow,
             User = user,
             Organization = organization,
-            Role = adminRole
+            Role = ownerRole
         });
 
-        organization.Roles.Add(userRole);
-        organization.Roles.Add(adminRole);
+        organization.Roles.Add(ownerRole);
 
         var createdOrganization = await _context.Organizations.AddAsync(organization);
 
@@ -119,17 +112,6 @@ public class OrganizationService : IOrganizationService
         if (updateOrganizationRequest.Description is not null)
         {
             organization.Description = updateOrganizationRequest.Description;
-        }
-
-        if (updateOrganizationRequest.OwnerId is not null)
-        {
-            var user = await _context.Users.FindAsync(updateOrganizationRequest.OwnerId);
-            if (user is null)
-            {
-                throw new ServiceException("User not found.", StatusCodes.Status404NotFound);
-            }
-
-            organization.Owner = user;
         }
 
         organization.UpdatedDate = DateTime.UtcNow;
