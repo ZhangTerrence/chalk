@@ -37,7 +37,14 @@ public class OrganizationConfiguration : IEntityTypeConfiguration<Organization>
         builder
             .HasMany(e => e.Courses)
             .WithOne(e => e.Organization)
-            .HasForeignKey(e => e.OrganizationId)
-            .IsRequired();
+            .HasForeignKey(e => e.OrganizationId);
+        builder
+            .HasMany(e => e.Courses)
+            .WithOne(e => e.Organization)
+            .HasForeignKey(e => e.OrganizationId);
+        builder
+            .HasMany(e => e.Tags)
+            .WithOne()
+            .HasForeignKey(e => e.OrganizationId);
     }
 }

@@ -67,6 +67,7 @@ public class OrganizationService : IOrganizationService
         {
             Name = "Owner",
             Permissions = PermissionUtilities.All,
+            Rank = 0,
             CreatedDate = DateTime.UtcNow,
             UpdatedDate = DateTime.UtcNow,
         };

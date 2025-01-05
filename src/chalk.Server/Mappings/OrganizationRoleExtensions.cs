@@ -14,6 +14,7 @@ public static class OrganizationRoleExtensions
             Name = createOrganizationRoleRequest.Name,
             Description = createOrganizationRoleRequest.Description,
             Permissions = createOrganizationRoleRequest.Permissions,
+            Rank = 0,
             CreatedDate = DateTime.UtcNow,
             UpdatedDate = DateTime.UtcNow,
         };

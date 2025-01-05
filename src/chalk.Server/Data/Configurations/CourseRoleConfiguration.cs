@@ -16,6 +16,7 @@ public class CourseRoleConfiguration : IEntityTypeConfiguration<CourseRole>
         builder.Property(e => e.Name).HasMaxLength(31).IsRequired();
         builder.Property(e => e.Description).HasMaxLength(255);
         builder.Property(e => e.Permissions).IsRequired();
+        builder.Property(e => e.Rank).IsRequired();
         builder.Property(e => e.CreatedDate).IsRequired();
         builder.Property(e => e.UpdatedDate).IsRequired();
 

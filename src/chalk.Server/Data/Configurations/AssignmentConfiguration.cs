@@ -16,16 +16,15 @@ public class AssignmentConfiguration : IEntityTypeConfiguration<Assignment>
         builder.Property(e => e.Name).HasMaxLength(31).IsRequired();
         builder.Property(e => e.Description).HasMaxLength(255);
         builder.Property(e => e.Open).IsRequired();
-        builder.Property(e => e.MaxGrade);
         builder.Property(e => e.DueDate);
         builder.Property(e => e.AllowedAttempts);
         builder.Property(e => e.CreatedDate).IsRequired();
         builder.Property(e => e.UpdatedDate).IsRequired();
 
         builder
-            .HasOne(e => e.Course)
+            .HasOne(e => e.AssignmentGroup)
             .WithMany(e => e.Assignments)
-            .HasForeignKey(e => e.CourseId)
+            .HasForeignKey(e => e.AssignmentGroupId)
             .IsRequired();
         builder
             .HasMany(e => e.Attachments)

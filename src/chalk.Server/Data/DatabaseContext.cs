@@ -12,15 +12,17 @@ public class DatabaseContext : IdentityDbContext<User, IdentityRole<long>, long>
     {
     }
 
-    public DbSet<Organization> Organizations { get; set; }
     public DbSet<Course> Courses { get; set; }
+    public DbSet<Organization> Organizations { get; set; }
+    public DbSet<Tag> Tags { get; set; }
     public DbSet<Channel> Channels { get; set; }
+    public DbSet<Assignment> AssignmentGroups { get; set; }
     public DbSet<Assignment> Assignments { get; set; }
     public DbSet<Submission> Submissions { get; set; }
-    public DbSet<UserOrganization> UserOrganizations { get; set; }
-    public DbSet<OrganizationRole> OrganizationRoles { get; set; }
     public DbSet<UserCourse> UserCourses { get; set; }
     public DbSet<CourseRole> CourseRoles { get; set; }
+    public DbSet<UserOrganization> UserOrganizations { get; set; }
+    public DbSet<OrganizationRole> OrganizationRoles { get; set; }
     public DbSet<ChannelUser> ChannelParticipants { get; set; }
     public DbSet<ChannelRolePermission> ChannelRolePermissions { get; set; }
     public DbSet<Attachment> Attachments { get; set; }
@@ -40,15 +42,17 @@ public class DatabaseContext : IdentityDbContext<User, IdentityRole<long>, long>
         builder.Entity<IdentityUserRole<long>>(e => e.ToTable("user_roles"));
 
         new UserConfiguration().Configure(builder.Entity<User>());
-        new OrganizationConfiguration().Configure(builder.Entity<Organization>());
         new CourseConfiguration().Configure(builder.Entity<Course>());
+        new OrganizationConfiguration().Configure(builder.Entity<Organization>());
+        new TagConfiguration().Configure(builder.Entity<Tag>());
         new ChannelConfiguration().Configure(builder.Entity<Channel>());
+        new AssignmentGroupConfiguration().Configure(builder.Entity<AssignmentGroup>());
         new AssignmentConfiguration().Configure(builder.Entity<Assignment>());
         new SubmissionConfiguration().Configure(builder.Entity<Submission>());
-        new UserOrganizationConfiguration().Configure(builder.Entity<UserOrganization>());
-        new OrganizationRoleConfiguration().Configure(builder.Entity<OrganizationRole>());
         new UserCourseConfiguration().Configure(builder.Entity<UserCourse>());
         new CourseRoleConfiguration().Configure(builder.Entity<CourseRole>());
+        new UserOrganizationConfiguration().Configure(builder.Entity<UserOrganization>());
+        new OrganizationRoleConfiguration().Configure(builder.Entity<OrganizationRole>());
         new ChannelUserConfiguration().Configure(builder.Entity<ChannelUser>());
         new ChannelRolePermissionConfiguration().Configure(builder.Entity<ChannelRolePermission>());
         new AttachmentConfiguration().Configure(builder.Entity<Attachment>());

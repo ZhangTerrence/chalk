@@ -16,9 +16,10 @@ public static class CourseMappings
             Name = createCourseRequest.Name,
             Code = createCourseRequest.Code,
             Description = createCourseRequest.Description,
-            Organization = organization,
+            Public = true,
             CreatedDate = DateTime.UtcNow,
             UpdatedDate = DateTime.UtcNow,
+            Organization = organization,
         };
     }
 

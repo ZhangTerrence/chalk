@@ -20,13 +20,13 @@ public class ChannelRolePermissionConfiguration : IEntityTypeConfiguration<Chann
             .HasForeignKey(e => e.ChannelId)
             .IsRequired();
         builder
-            .HasOne(e => e.OrganizationRole)
-            .WithMany(e => e.ChannelPermissions)
-            .HasForeignKey(e => e.OrganizationRoleId);
-        builder
             .HasOne(e => e.CourseRole)
             .WithMany(e => e.ChannelPermissions)
             .HasForeignKey(e => e.CourseRoleId);
+        builder
+            .HasOne(e => e.OrganizationRole)
+            .WithMany(e => e.ChannelPermissions)
+            .HasForeignKey(e => e.OrganizationRoleId);
         builder
             .HasMany(e => e.Users)
             .WithOne(e => e.RolePermission)
