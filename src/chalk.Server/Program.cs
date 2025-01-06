@@ -97,9 +97,8 @@ builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 // Adds scoped services
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IOrganizationService, OrganizationService>();
-builder.Services.AddScoped<IOrganizationRoleService, OrganizationRoleService>();
 builder.Services.AddScoped<ICourseService, CourseService>();
+builder.Services.AddScoped<IOrganizationService, OrganizationService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

@@ -1,8 +1,8 @@
 namespace chalk.Server.Shared;
 
-public enum Status
+public enum UserStatus
 {
     Invited,
-    User,
+    Joined,
     Banned
 }

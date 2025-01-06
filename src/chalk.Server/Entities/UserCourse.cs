@@ -8,7 +8,7 @@ namespace chalk.Server.Entities;
 public class UserCourse
 {
     // Properties
-    public Status Status { get; set; }
+    public UserStatus UserStatus { get; set; }
     public required int Grade { get; set; }
     public DateTime? JoinedDate { get; set; }
 

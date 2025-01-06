@@ -1,9 +1,9 @@
 namespace chalk.Server.DTOs.Requests;
 
-public record CreateOrganizationRoleRequest(
+public record CreateCourseRoleRequest(
     string? Name,
     string? Description,
     long? Permissions,
     int? Rank,
-    long? OrganizationId
+    long? CourseId
 );

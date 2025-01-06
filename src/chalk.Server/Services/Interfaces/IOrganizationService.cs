@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using chalk.Server.DTOs.Requests;
 using chalk.Server.DTOs.Responses;
 
@@ -10,14 +9,11 @@ public interface IOrganizationService
 
     public Task<OrganizationResponse> GetOrganizationAsync(long organizationId);
 
-    public Task<OrganizationResponse> CreateOrganizationAsync(CreateOrganizationRequest createOrganizationRequest);
+    public Task<OrganizationResponse> CreateOrganizationAsync(CreateOrganizationRequest request);
 
-    public Task<OrganizationResponse> UpdateOrganizationAsync(
-        long organizationId,
-        UpdateOrganizationRequest updateOrganizationRequest
-    );
+    public Task<OrganizationResponse> UpdateOrganizationAsync(long organizationId, UpdateOrganizationRequest request);
 
     public Task DeleteOrganizationAsync(long organizationId);
 
-    public Task SendInviteAsync(ClaimsPrincipal identity, SendInviteRequest sendInviteRequest);
+    public Task<RoleResponse> CreateOrganizationRoleAsync(CreateOrganizationRoleRequest request);
 }

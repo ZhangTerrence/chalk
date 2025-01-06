@@ -3,9 +3,9 @@ using FluentValidation;
 
 namespace chalk.Server.Validators;
 
-public class CreateOrganizationRoleValidator : AbstractValidator<CreateOrganizationRoleRequest>
+public class CreateCourseRoleValidator : AbstractValidator<CreateCourseRoleRequest>
 {
-    public CreateOrganizationRoleValidator()
+    public CreateCourseRoleValidator()
     {
         RuleFor(x => x.Name)
             .NotEmpty()
@@ -21,8 +21,8 @@ public class CreateOrganizationRoleValidator : AbstractValidator<CreateOrganizat
         RuleFor(e => e.Rank)
             .NotNull()
             .WithMessage("Must specify the role's rank.");
-        RuleFor(e => e.OrganizationId)
+        RuleFor(e => e.CourseId)
             .NotNull()
-            .WithMessage("Must specify the organization which the role belongs to.");
+            .WithMessage("Must specify the course which the role belongs to.");
     }
 }

@@ -3,57 +3,71 @@ using chalk.Server.DTOs;
 using chalk.Server.DTOs.Requests;
 using chalk.Server.DTOs.Responses;
 using chalk.Server.Entities;
-using chalk.Server.Shared;
+using chalk.Server.Utilities;
 
 namespace chalk.Server.Mappings;
 
 public static class CourseMappings
 {
-    public static Course ToEntity(this CreateCourseRequest createCourseRequest, Organization organization)
+    public static Course ToEntity(this CreateCourseRequest request, Organization? organization)
     {
         return new Course
         {
-            Name = createCourseRequest.Name,
-            Code = createCourseRequest.Code,
-            Description = createCourseRequest.Description,
-            Public = true,
+            Name = request.Name!,
+            Description = request.Description,
+            PreviewImage = request.PreviewImage,
+            Code = request.Code,
+            Public = request.Public!.Value,
             CreatedDate = DateTime.UtcNow,
             UpdatedDate = DateTime.UtcNow,
             Organization = organization,
         };
     }
 
-    public static InviteResponse ToResponse(this UserCourse userCourse)
-    {
-        return new InviteResponse(
-            Invite.Course,
-            null,
-            new CourseDTO(userCourse.Course.Id, userCourse.Course.Name, userCourse.Course.Code)
-        );
-    }
-
-    public static CourseResponse ToResponse(this Course course)
+    public static CourseResponse ToDTO(this Course course)
     {
         return new CourseResponse(
             course.Id,
             course.Name,
-            course.Code,
             course.Description,
+            course.PreviewImage,
+            course.Code,
+            course.Public,
             course.CreatedDate.ToString(CultureInfo.CurrentCulture),
             course.UpdatedDate.ToString(CultureInfo.CurrentCulture),
-            new OrganizationDTO(course.Organization.Id, course.Organization.Name),
+            course.Organization is not null ? new OrganizationDTO(course.Organization) : null,
             course.Users
-                .Select(e => new UserDTO(
-                    e.User.Id,
-                    e.User.FirstName,
-                    e.User.LastName,
-                    e.User.DisplayName,
-                    e.JoinedDate?.ToString(CultureInfo.CurrentCulture)
-                ))
+                .Select(e => new UserDTO(e.User, e.JoinedDate?.ToString(CultureInfo.CurrentCulture)))
                 .ToList(),
             course.Roles
-                .Select(e => new CourseRoleDTO(e.Id, e.Name, e.Permissions))
+                .Select(e => new CourseRoleDTO(e))
                 .ToList()
+        );
+    }
+
+    public static CourseRole ToEntity(this CreateCourseRoleRequest request)
+    {
+        return new CourseRole
+        {
+            Name = request.Name!,
+            Description = request.Description,
+            Permissions = request.Permissions!.Value,
+            Rank = request.Rank!.Value,
+            CreatedDate = DateTime.UtcNow,
+            UpdatedDate = DateTime.UtcNow,
+        };
+    }
+
+    public static RoleResponse ToResponse(this CourseRole courseRole)
+    {
+        return new RoleResponse(
+            courseRole.Id,
+            courseRole.Name,
+            courseRole.Description,
+            courseRole.Permissions,
+            courseRole.Rank,
+            courseRole.CreatedDate.ToString(CultureInfo.CurrentCulture),
+            courseRole.UpdatedDate.ToString(CultureInfo.CurrentCulture)
         );
     }
 }

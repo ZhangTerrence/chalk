@@ -4,12 +4,12 @@ using chalk.Server.Configurations;
 using chalk.Server.DTOs;
 using chalk.Server.DTOs.Requests;
 using chalk.Server.DTOs.Responses;
-using chalk.Server.Entities;
 using chalk.Server.Mappings;
 using chalk.Server.Services.Interfaces;
 using chalk.Server.Utilities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
+using User = chalk.Server.Entities.User;
 
 namespace chalk.Server.Services;
 
@@ -41,16 +41,16 @@ public class AuthenticationService : IAuthenticationService
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public async Task<AuthenticationResponse> RegisterUserAsync(RegisterRequest registerRequest)
+    public async Task<AuthenticationResponse> RegisterUserAsync(RegisterRequest request)
     {
-        if (await _userManager.FindByEmailAsync(registerRequest.Email!) is not null)
+        if (await _userManager.FindByEmailAsync(request.Email!) is not null)
         {
             throw new ServiceException("User already exists.", StatusCodes.Status409Conflict);
         }
 
-        var user = registerRequest.ToEntity();
+        var user = request.ToEntity();
 
-        if (!(await _userManager.CreateAsync(user, registerRequest.Password!)).Succeeded)
+        if (!(await _userManager.CreateAsync(user, request.Password!)).Succeeded)
         {
             throw new ServiceException("Unable to create user.", StatusCodes.Status500InternalServerError);
         }
@@ -85,18 +85,18 @@ public class AuthenticationService : IAuthenticationService
         AddCookie(JwtUtilities.TokenType.AccessToken, accessToken);
         AddCookie(JwtUtilities.TokenType.RefreshToken, refreshToken);
 
-        return new AuthenticationResponse(user.ToResponse(), accessToken, refreshToken);
+        return new AuthenticationResponse(user.ToDTO(), accessToken, refreshToken);
     }
 
-    public async Task<AuthenticationResponse> LoginUserAsync(LoginRequest loginRequest)
+    public async Task<AuthenticationResponse> LoginUserAsync(LoginRequest request)
     {
-        var user = await _userManager.FindByEmailAsync(loginRequest.Email!);
+        var user = await _userManager.FindByEmailAsync(request.Email!);
         if (user is null)
         {
             throw new ServiceException("User not found.", StatusCodes.Status404NotFound);
         }
 
-        var authenticated = await _userManager.CheckPasswordAsync(user, loginRequest.Password!);
+        var authenticated = await _userManager.CheckPasswordAsync(user, request.Password!);
         if (!authenticated)
         {
             throw new ServiceException("Invalid credentials.", StatusCodes.Status401Unauthorized);
@@ -119,7 +119,7 @@ public class AuthenticationService : IAuthenticationService
         AddCookie(JwtUtilities.TokenType.AccessToken, accessToken);
         AddCookie(JwtUtilities.TokenType.RefreshToken, refreshToken);
 
-        return new AuthenticationResponse(user.ToResponse(), accessToken, refreshToken);
+        return new AuthenticationResponse(user.ToDTO(), accessToken, refreshToken);
     }
 
     public async Task<AuthenticationResponse> RefreshTokensAsync(string? accessToken, string? refreshToken)
@@ -164,7 +164,7 @@ public class AuthenticationService : IAuthenticationService
 
         AddCookie(JwtUtilities.TokenType.AccessToken, newAccessToken);
 
-        return new AuthenticationResponse(user.ToResponse(), newAccessToken, refreshToken);
+        return new AuthenticationResponse(user.ToDTO(), newAccessToken, refreshToken);
     }
 
     public async Task LogoutUserAsync(ClaimsPrincipal identity)

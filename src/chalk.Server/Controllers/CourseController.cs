@@ -47,31 +47,28 @@ public class CourseController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateCourse([FromBody] CreateCourseRequest createCourseRequest)
+    public async Task<IActionResult> CreateCourse([FromBody] CreateCourseRequest request)
     {
-        var result = await _createCourseValidator.ValidateAsync(createCourseRequest);
+        var result = await _createCourseValidator.ValidateAsync(request);
         if (!result.IsValid)
         {
             return BadRequest(new ApiResponse<object>(result.GetErrorMessages()));
         }
 
-        var createdCourse = await _courseService.CreateCourseAsync(createCourseRequest);
+        var createdCourse = await _courseService.CreateCourseAsync(request);
         return Ok(new ApiResponse<CourseResponse>(null, createdCourse));
     }
 
     [HttpPatch("{id:long}")]
-    public async Task<IActionResult> UpdateCourse(
-        [FromRoute] long id,
-        [FromBody] UpdateCourseRequest updateCourseRequest
-    )
+    public async Task<IActionResult> UpdateCourse([FromRoute] long id, [FromBody] UpdateCourseRequest request)
     {
-        var result = await _updateCourseValidator.ValidateAsync(updateCourseRequest);
+        var result = await _updateCourseValidator.ValidateAsync(request);
         if (!result.IsValid)
         {
             return BadRequest(new ApiResponse<object>(result.GetErrorMessages()));
         }
 
-        var updatedCourse = await _courseService.UpdateCourseAsync(id, updateCourseRequest);
+        var updatedCourse = await _courseService.UpdateCourseAsync(id, request);
         return Ok(new ApiResponse<CourseResponse>(null, updatedCourse));
     }
 

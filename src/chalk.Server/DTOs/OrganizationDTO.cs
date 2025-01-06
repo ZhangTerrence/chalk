@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using chalk.Server.Entities;
 
 namespace chalk.Server.DTOs;
 
@@ -10,4 +11,10 @@ public record OrganizationDTO(
     long Id,
     [property: JsonRequired]
     [property: JsonPropertyName("name")]
-    string Name);
+    string Name
+)
+{
+    public OrganizationDTO(Organization organization) : this(organization.Id, organization.Name)
+    {
+    }
+}

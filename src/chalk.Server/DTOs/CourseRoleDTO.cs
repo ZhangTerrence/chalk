@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using chalk.Server.Entities;
 
 namespace chalk.Server.DTOs;
 
@@ -13,4 +14,10 @@ public sealed record CourseRoleDTO(
     string Name,
     [property: JsonRequired]
     [property: JsonPropertyName("permissions")]
-    long Permissions);
+    long Permissions
+)
+{
+    public CourseRoleDTO(CourseRole courseRole) : this(courseRole.Id, courseRole.Name, courseRole.Permissions)
+    {
+    }
+}

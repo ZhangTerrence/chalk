@@ -8,8 +8,8 @@ public class Organization
     // Properties
     public long Id { get; set; }
     public required string Name { get; set; }
-    public string? ProfilePicture { get; set; }
     public string? Description { get; set; }
+    public string? ProfilePicture { get; set; }
     public required DateTime CreatedDate { get; set; }
     public required DateTime UpdatedDate { get; set; }
 

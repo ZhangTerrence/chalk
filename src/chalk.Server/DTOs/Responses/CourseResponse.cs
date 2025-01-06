@@ -12,11 +12,17 @@ public record CourseResponse(
     [property: JsonPropertyName("name")]
     string Name,
     [property: JsonRequired]
+    [property: JsonPropertyName("description")]
+    string? Description,
+    [property: JsonRequired]
+    [property: JsonPropertyName("previewImage")]
+    string? PreviewImage,
+    [property: JsonRequired]
     [property: JsonPropertyName("code")]
     string? Code,
     [property: JsonRequired]
-    [property: JsonPropertyName("description")]
-    string? Description,
+    [property: JsonPropertyName("public")]
+    bool Public,
     [property: JsonRequired]
     [property: JsonPropertyName("createdDate")]
     string CreatedDate,
@@ -25,7 +31,7 @@ public record CourseResponse(
     string UpdatedDate,
     [property: JsonRequired]
     [property: JsonPropertyName("organization")]
-    OrganizationDTO Organization,
+    OrganizationDTO? Organization,
     [property: JsonRequired]
     [property: JsonPropertyName("users")]
     IEnumerable<UserDTO> Users,

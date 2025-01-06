@@ -1,8 +1,5 @@
-using chalk.Server.DTOs.Requests;
 using chalk.Server.DTOs.Responses;
 using chalk.Server.Services.Interfaces;
-using chalk.Server.Utilities;
-using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,13 +14,10 @@ public class UserController : ControllerBase
     private readonly IUserService _userService;
 
     // Validators
-    private readonly IValidator<RespondToInviteRequest> _respondToInviteValidator;
 
-    public UserController(IUserService userService, IValidator<RespondToInviteRequest> respondToInviteValidator)
+    public UserController(IUserService userService)
     {
         _userService = userService;
-
-        _respondToInviteValidator = respondToInviteValidator;
     }
 
     [HttpGet]
@@ -38,25 +32,5 @@ public class UserController : ControllerBase
     {
         var user = await _userService.GetUserAsync(id);
         return Ok(new ApiResponse<UserResponse>(null, user));
-    }
-
-    [HttpGet("invite/{id:long}")]
-    public async Task<IActionResult> GetInvites([FromRoute] long id)
-    {
-        var invites = await _userService.GetPendingInvitesAsync(User, id);
-        return Ok(new ApiResponse<IEnumerable<InviteResponse>>(null, invites));
-    }
-
-    [HttpPost("invite")]
-    public async Task<IActionResult> RespondInvite([FromBody] RespondToInviteRequest respondToInviteRequest)
-    {
-        var result = await _respondToInviteValidator.ValidateAsync(respondToInviteRequest);
-        if (!result.IsValid)
-        {
-            return BadRequest(new ApiResponse<object>(result.GetErrorMessages()));
-        }
-
-        await _userService.RespondToInviteAsync(respondToInviteRequest);
-        return NoContent();
     }
 }

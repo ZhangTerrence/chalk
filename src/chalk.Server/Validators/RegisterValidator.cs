@@ -9,29 +9,29 @@ public class RegisterValidator : AbstractValidator<RegisterRequest>
     {
         RuleFor(e => e.FirstName)
             .NotEmpty()
-            .WithMessage("First name is required.")
+            .WithMessage("The user's first name is required.")
             .Length(1, 31)
-            .WithMessage("First name must have between 1 and 31 characters.");
+            .WithMessage("The user's first name must have between 1 and 31 characters.");
         RuleFor(e => e.LastName)
             .NotEmpty()
-            .WithMessage("Last name is required.")
+            .WithMessage("The user's last name is required.")
             .Length(1, 31)
-            .WithMessage("Last name must have between 1 and 31 characters.");
+            .WithMessage("The user's last name must have between 1 and 31 characters.");
         RuleFor(e => e.DisplayName)
             .NotEmpty()
-            .WithMessage("Display name is required.")
+            .WithMessage("The user's display name is required.")
             .Length(3, 31)
-            .WithMessage("Display name must have between 3 and 31 characters.");
+            .WithMessage("The user's display name must have between 3 and 31 characters.");
         RuleFor(e => e.Email)
             .NotEmpty()
-            .WithMessage("Email is required.")
+            .WithMessage("The user's email is required.")
             .EmailAddress()
-            .WithMessage("Email is invalid.");
+            .WithMessage("The user's email is invalid.");
         RuleFor(e => e.Password)
             .NotEmpty()
-            .WithMessage("Password is required.")
+            .WithMessage("The user's password is required.")
             .Matches("^(?:(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[-._@+]).*).{8,}$")
             .WithMessage(
-                "Password must have at least 8 characters with least one number, one lowercase letter, one upper case letter, one special character.");
+                "The user's password must have at least 8 characters with least one number, one lowercase letter, one upper case letter, one special character.");
     }
 }

@@ -15,6 +15,8 @@ public static class JwtUtilities
         RefreshToken
     }
 
+    private const string Alg = SecurityAlgorithms.HmacSha256;
+
     public static string GetString(this TokenType tokenType)
     {
         switch (tokenType)
@@ -80,10 +82,7 @@ public static class JwtUtilities
 
         if (
             securityToken is not JwtSecurityToken jwtSecurityToken ||
-            !jwtSecurityToken.Header.Alg.Equals(
-                SecurityAlgorithms.HmacSha256,
-                StringComparison.InvariantCultureIgnoreCase
-            )
+            !jwtSecurityToken.Header.Alg.Equals(Alg, StringComparison.InvariantCultureIgnoreCase)
         )
         {
             throw new ServiceException("Access token is invalid.", StatusCodes.Status401Unauthorized);

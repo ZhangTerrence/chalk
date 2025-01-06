@@ -12,11 +12,11 @@ public record OrganizationResponse(
     [property: JsonPropertyName("name")]
     string Name,
     [property: JsonRequired]
-    [property: JsonPropertyName("profilePicture")]
-    string? ProfilePicture,
-    [property: JsonRequired]
     [property: JsonPropertyName("description")]
     string? Description,
+    [property: JsonRequired]
+    [property: JsonPropertyName("profilePicture")]
+    string? ProfilePicture,
     [property: JsonRequired]
     [property: JsonPropertyName("createdDate")]
     string CreatedDate,
@@ -37,4 +37,5 @@ public record OrganizationResponse(
     IEnumerable<ChannelDTO> Channels,
     [property: JsonRequired]
     [property: JsonPropertyName("courses")]
-    IEnumerable<CourseDTO> Courses);
+    IEnumerable<CourseDTO> Courses
+);

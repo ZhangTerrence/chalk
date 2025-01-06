@@ -4,7 +4,7 @@ namespace chalk.Server.DTOs.Responses;
 
 [Serializable]
 [method: JsonConstructor]
-public record OrganizationRoleResponse(
+public record RoleResponse(
     [property: JsonRequired]
     [property: JsonPropertyName("id")]
     long Id,
@@ -18,8 +18,12 @@ public record OrganizationRoleResponse(
     [property: JsonPropertyName("permissions")]
     long Permissions,
     [property: JsonRequired]
+    [property: JsonPropertyName("rank")]
+    int Rank,
+    [property: JsonRequired]
     [property: JsonPropertyName("createdDate")]
     string CreatedDate,
     [property: JsonRequired]
     [property: JsonPropertyName("updatedDate")]
-    string UpdatedDate);
+    string UpdatedDate
+);

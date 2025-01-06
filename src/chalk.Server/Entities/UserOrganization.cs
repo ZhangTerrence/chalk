@@ -8,7 +8,7 @@ namespace chalk.Server.Entities;
 public class UserOrganization
 {
     // Properties
-    public required Status Status { get; set; }
+    public required UserStatus UserStatus { get; set; }
     public DateTime? JoinedDate { get; set; }
 
     // Foreign Keys

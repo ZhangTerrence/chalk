@@ -7,10 +7,11 @@ namespace chalk.Server.DTOs.Responses;
 public record AuthenticationResponse(
     [property: JsonRequired]
     [property: JsonPropertyName("user")]
-    UserResponse User,
+    UserResponse UserResponse,
     [property: JsonRequired]
     [property: JsonPropertyName("accessToken")]
     string AccessToken,
     [property: JsonRequired]
     [property: JsonPropertyName("refreshToken")]
-    string RefreshToken);
+    string RefreshToken
+);

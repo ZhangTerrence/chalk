@@ -7,4 +7,5 @@ namespace chalk.Server.DTOs;
 public record ErrorDTO(
     [property: JsonRequired]
     [property: JsonPropertyName("description")]
-    string Description);
+    string Description
+);

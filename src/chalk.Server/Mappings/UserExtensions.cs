@@ -12,17 +12,17 @@ public static class UserExtensions
     {
         return new User
         {
-            Email = registerRequest.Email,
+            Email = registerRequest.Email!,
             FirstName = registerRequest.FirstName!,
             LastName = registerRequest.LastName!,
             DisplayName = registerRequest.DisplayName!,
-            UserName = registerRequest.Email,
+            UserName = registerRequest.Email!,
             CreatedDate = DateTime.UtcNow,
             UpdatedDate = DateTime.UtcNow
         };
     }
 
-    public static UserResponse ToResponse(this User user)
+    public static UserResponse ToDTO(this User user)
     {
         return new UserResponse(
             user.Id,
@@ -34,13 +34,13 @@ public static class UserExtensions
             user.CreatedDate.ToString(CultureInfo.CurrentCulture),
             user.UpdatedDate.ToString(CultureInfo.CurrentCulture),
             user.DirectMessages
-                .Select(e => new ChannelDTO(e.Channel.Id, e.Channel.Name))
+                .Select(e => new ChannelDTO(e.Channel))
                 .ToList(),
             user.Organizations
-                .Select(e => new OrganizationDTO(e.Organization.Id, e.Organization.Name))
+                .Select(e => new OrganizationDTO(e.Organization))
                 .ToList(),
             user.Courses
-                .Select(e => new CourseDTO(e.Course.Id, e.Course.Name, e.Course.Code))
+                .Select(e => new CourseDTO(e.Course))
                 .ToList()
         );
     }

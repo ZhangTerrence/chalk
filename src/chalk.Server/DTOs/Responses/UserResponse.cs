@@ -37,4 +37,5 @@ public record UserResponse(
     IEnumerable<OrganizationDTO> Organizations,
     [property: JsonRequired]
     [property: JsonPropertyName("courses")]
-    IEnumerable<CourseDTO> Courses);
+    IEnumerable<CourseDTO> Courses
+);

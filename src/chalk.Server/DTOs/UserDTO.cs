@@ -1,4 +1,6 @@
+using System.Globalization;
 using System.Text.Json.Serialization;
+using chalk.Server.Entities;
 
 namespace chalk.Server.DTOs;
 
@@ -19,4 +21,11 @@ public record UserDTO(
     string DisplayName,
     [property: JsonRequired]
     [property: JsonPropertyName("joinedDate")]
-    string? JoinedDate);
+    string? JoinedDate
+)
+{
+    public UserDTO(User user, string? joinedDate) :
+        this(user.Id, user.FirstName, user.LastName, user.DisplayName, joinedDate)
+    {
+    }
+}

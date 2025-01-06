@@ -19,20 +19,21 @@ public class OrganizationController : ControllerBase
     // Validators
     private readonly IValidator<CreateOrganizationRequest> _createOrganizationValidator;
     private readonly IValidator<UpdateOrganizationRequest> _updateOrganizationValidator;
-    private readonly IValidator<SendInviteRequest> _sendInviteValidator;
+    private readonly IValidator<CreateOrganizationRoleRequest> _createOrganizationRoleValidator;
+
 
     public OrganizationController(
         IOrganizationService organizationService,
         IValidator<CreateOrganizationRequest> createOrganizationValidator,
         IValidator<UpdateOrganizationRequest> updateOrganizationValidator,
-        IValidator<SendInviteRequest> sendInviteValidator
+        IValidator<CreateOrganizationRoleRequest> createOrganizationRoleValidator
     )
     {
         _organizationService = organizationService;
 
         _createOrganizationValidator = createOrganizationValidator;
         _updateOrganizationValidator = updateOrganizationValidator;
-        _sendInviteValidator = sendInviteValidator;
+        _createOrganizationRoleValidator = createOrganizationRoleValidator;
     }
 
     [HttpGet]
@@ -85,16 +86,15 @@ public class OrganizationController : ControllerBase
         return NoContent();
     }
 
-    [HttpPost("invite")]
-    public async Task<IActionResult> SendInvite([FromBody] SendInviteRequest sendInviteRequest)
+    [HttpPost("role")]
+    public async Task<IActionResult> CreateRole([FromBody] CreateOrganizationRoleRequest createOrganizationRoleRequest)
     {
-        var result = await _sendInviteValidator.ValidateAsync(sendInviteRequest);
+        var result = await _createOrganizationRoleValidator.ValidateAsync(createOrganizationRoleRequest);
         if (!result.IsValid)
         {
             return BadRequest(new ApiResponse<object>(result.GetErrorMessages()));
         }
 
-        await _organizationService.SendInviteAsync(User, sendInviteRequest);
-        return NoContent();
+        return Ok();
     }
 }

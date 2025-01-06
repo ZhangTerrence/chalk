@@ -18,7 +18,7 @@ public class CourseService : ICourseService
 
     public async Task<IEnumerable<CourseResponse>> GetCoursesAsync()
     {
-        return await _context.Courses.Select(e => e.ToResponse()).ToListAsync();
+        return await _context.Courses.Select(e => e.ToDTO()).ToListAsync();
     }
 
     public async Task<CourseResponse> GetCourseAsync(long courseId)
@@ -29,25 +29,22 @@ public class CourseService : ICourseService
             throw new BadHttpRequestException("Course not found.", StatusCodes.Status404NotFound);
         }
 
-        return course.ToResponse();
+        return course.ToDTO();
     }
 
-    public async Task<CourseResponse> CreateCourseAsync(CreateCourseRequest createCourseRequest)
+    public async Task<CourseResponse> CreateCourseAsync(CreateCourseRequest request)
     {
-        var organization = await _context.Organizations.FindAsync(createCourseRequest.OrganizationId);
-        if (organization is null)
-        {
-            throw new BadHttpRequestException("Organization not found.", StatusCodes.Status404NotFound);
-        }
+        var organization = await _context.Organizations.FindAsync(request.OrganizationId);
 
-        var course = createCourseRequest.ToEntity(organization);
+        var course = request.ToEntity(organization);
+
         await _context.Courses.AddAsync(course);
 
         await _context.SaveChangesAsync();
-        return course.ToResponse();
+        return course.ToDTO();
     }
 
-    public async Task<CourseResponse> UpdateCourseAsync(long courseId, UpdateCourseRequest updateCourseRequest)
+    public async Task<CourseResponse> UpdateCourseAsync(long courseId, UpdateCourseRequest request)
     {
         var course = await _context.Courses.FindAsync(courseId);
         if (course is null)
@@ -55,34 +52,23 @@ public class CourseService : ICourseService
             throw new BadHttpRequestException("Course not found.", StatusCodes.Status404NotFound);
         }
 
-        if (updateCourseRequest.Name is not null)
+        if (request.Name is not null)
         {
             course.Name = course.Name;
         }
 
-        if (updateCourseRequest.Code is not null)
+        if (request.Code is not null)
         {
-            course.Code = updateCourseRequest.Code;
+            course.Code = request.Code;
         }
 
-        if (updateCourseRequest.Description is not null)
+        if (request.Description is not null)
         {
-            course.Description = updateCourseRequest.Description;
-        }
-
-        if (updateCourseRequest.OrganizationId is not null)
-        {
-            var organization = await _context.Organizations.FindAsync(updateCourseRequest.OrganizationId);
-            if (organization is null)
-            {
-                throw new BadHttpRequestException("Organization not found.", StatusCodes.Status404NotFound);
-            }
-
-            course.Organization = organization;
+            course.Description = request.Description;
         }
 
         await _context.SaveChangesAsync();
-        return course.ToResponse();
+        return course.ToDTO();
     }
 
     public async Task DeleteCourseAsync(long courseId)

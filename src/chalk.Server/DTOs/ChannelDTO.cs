@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using chalk.Server.Entities;
 
 namespace chalk.Server.DTOs;
 
@@ -10,4 +11,10 @@ public record ChannelDTO(
     long Id,
     [property: JsonRequired]
     [property: JsonPropertyName("name")]
-    string? Name);
+    string? Name
+)
+{
+    public ChannelDTO(Channel channel) : this(channel.Id, channel.Name)
+    {
+    }
+}
