@@ -19,21 +19,21 @@ public class OrganizationController : ControllerBase
     // Validators
     private readonly IValidator<CreateOrganizationRequest> _createOrganizationValidator;
     private readonly IValidator<UpdateOrganizationRequest> _updateOrganizationValidator;
-    private readonly IValidator<CreateOrganizationRoleRequest> _createOrganizationRoleValidator;
+    private readonly IValidator<CreateRoleRequest> _createRoleValidator;
 
 
     public OrganizationController(
         IOrganizationService organizationService,
         IValidator<CreateOrganizationRequest> createOrganizationValidator,
         IValidator<UpdateOrganizationRequest> updateOrganizationValidator,
-        IValidator<CreateOrganizationRoleRequest> createOrganizationRoleValidator
+        IValidator<CreateRoleRequest> createRoleValidator
     )
     {
         _organizationService = organizationService;
 
         _createOrganizationValidator = createOrganizationValidator;
         _updateOrganizationValidator = updateOrganizationValidator;
-        _createOrganizationRoleValidator = createOrganizationRoleValidator;
+        _createRoleValidator = createRoleValidator;
     }
 
     [HttpGet]
@@ -51,31 +51,31 @@ public class OrganizationController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateOrganization([FromBody] CreateOrganizationRequest createOrganizationRequest)
+    public async Task<IActionResult> CreateOrganization([FromBody] CreateOrganizationRequest request)
     {
-        var result = await _createOrganizationValidator.ValidateAsync(createOrganizationRequest);
+        var result = await _createOrganizationValidator.ValidateAsync(request);
         if (!result.IsValid)
         {
             return BadRequest(new ApiResponse<object>(result.GetErrorMessages()));
         }
 
-        var createdOrganization = await _organizationService.CreateOrganizationAsync(createOrganizationRequest);
+        var createdOrganization = await _organizationService.CreateOrganizationAsync(request);
         return Ok(new ApiResponse<OrganizationResponse>(null, createdOrganization));
     }
 
     [HttpPatch("{id:long}")]
     public async Task<IActionResult> UpdateOrganization(
         [FromRoute] long id,
-        [FromBody] UpdateOrganizationRequest updateOrganizationRequest
+        [FromBody] UpdateOrganizationRequest request
     )
     {
-        var result = await _updateOrganizationValidator.ValidateAsync(updateOrganizationRequest);
+        var result = await _updateOrganizationValidator.ValidateAsync(request);
         if (!result.IsValid)
         {
             return BadRequest(new ApiResponse<object>(result.GetErrorMessages()));
         }
 
-        var updatedOrganization = await _organizationService.UpdateOrganizationAsync(id, updateOrganizationRequest);
+        var updatedOrganization = await _organizationService.UpdateOrganizationAsync(id, request);
         return Ok(new ApiResponse<OrganizationResponse>(null, updatedOrganization));
     }
 
@@ -87,9 +87,9 @@ public class OrganizationController : ControllerBase
     }
 
     [HttpPost("role")]
-    public async Task<IActionResult> CreateRole([FromBody] CreateOrganizationRoleRequest createOrganizationRoleRequest)
+    public async Task<IActionResult> CreateRole([FromBody] CreateRoleRequest request)
     {
-        var result = await _createOrganizationRoleValidator.ValidateAsync(createOrganizationRoleRequest);
+        var result = await _createRoleValidator.ValidateAsync(request);
         if (!result.IsValid)
         {
             return BadRequest(new ApiResponse<object>(result.GetErrorMessages()));

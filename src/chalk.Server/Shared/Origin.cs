@@ -1,6 +1,6 @@
 namespace chalk.Server.Shared;
 
-public enum InviteType
+public enum Origin
 {
     Course,
     Organization

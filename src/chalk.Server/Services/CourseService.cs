@@ -1,8 +1,10 @@
+using chalk.Server.Configurations;
 using chalk.Server.Data;
 using chalk.Server.DTOs.Requests;
 using chalk.Server.DTOs.Responses;
 using chalk.Server.Mappings;
 using chalk.Server.Services.Interfaces;
+using chalk.Server.Utilities;
 using Microsoft.EntityFrameworkCore;
 
 namespace chalk.Server.Services;
@@ -26,19 +28,30 @@ public class CourseService : ICourseService
         var course = await _context.Courses.FindAsync(courseId);
         if (course is null)
         {
-            throw new BadHttpRequestException("Course not found.", StatusCodes.Status404NotFound);
+            throw new ServiceException("Course not found.", StatusCodes.Status404NotFound);
         }
 
         return course.ToDTO();
     }
 
-    public async Task<CourseResponse> CreateCourseAsync(CreateCourseRequest request)
+    public async Task<CourseResponse> CreateCourseAsync(string userId, CreateCourseRequest request)
     {
+        var user = await _context.Users.FindAsync(userId);
+        if (user is null)
+        {
+            throw new ServiceException("User not found.", StatusCodes.Status404NotFound);
+        }
+
         var organization = await _context.Organizations.FindAsync(request.OrganizationId);
 
         var course = request.ToEntity(organization);
 
+        var role = CreateRoleRequest
+            .CreateCourseRole("Instructor", null, PermissionUtilities.All, 0, course.Id)
+            .ToEntity(course);
+
         await _context.Courses.AddAsync(course);
+        await _context.CourseRoles.AddAsync(role);
 
         await _context.SaveChangesAsync();
         return course.ToDTO();
@@ -49,7 +62,7 @@ public class CourseService : ICourseService
         var course = await _context.Courses.FindAsync(courseId);
         if (course is null)
         {
-            throw new BadHttpRequestException("Course not found.", StatusCodes.Status404NotFound);
+            throw new ServiceException("Course not found.", StatusCodes.Status404NotFound);
         }
 
         if (request.Name is not null)
@@ -76,7 +89,7 @@ public class CourseService : ICourseService
         var course = await _context.Courses.FindAsync(courseId);
         if (course is null)
         {
-            throw new BadHttpRequestException("Course not found.", StatusCodes.Status404NotFound);
+            throw new ServiceException("Course not found.", StatusCodes.Status404NotFound);
         }
 
         _context.Courses.Remove(course);

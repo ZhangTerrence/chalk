@@ -3,7 +3,7 @@ using chalk.Server.Shared;
 namespace chalk.Server.DTOs.Requests;
 
 public record InviteResponseRequest(
-    InviteType? InviteType,
+    Origin? Origin,
     long? UserId,
     long? CourseId,
     long? OrganizationId,

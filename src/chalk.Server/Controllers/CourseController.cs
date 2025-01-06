@@ -55,7 +55,7 @@ public class CourseController : ControllerBase
             return BadRequest(new ApiResponse<object>(result.GetErrorMessages()));
         }
 
-        var createdCourse = await _courseService.CreateCourseAsync(request);
+        var createdCourse = await _courseService.CreateCourseAsync(User.GetUserId(), request);
         return Ok(new ApiResponse<CourseResponse>(null, createdCourse));
     }
 

@@ -3,6 +3,7 @@ namespace chalk.Server.Utilities;
 public static class PermissionUtilities
 {
     public const long All = long.MinValue;
+    public const long None = 0L;
 
     public static long Create(params long[] permissions)
     {

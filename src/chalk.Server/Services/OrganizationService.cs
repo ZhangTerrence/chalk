@@ -88,10 +88,7 @@ public class OrganizationService : IOrganizationService
         return await GetOrganizationAsync(createdOrganization.Entity.Id);
     }
 
-    public async Task<OrganizationResponse> UpdateOrganizationAsync(
-        long organizationId,
-        UpdateOrganizationRequest request
-    )
+    public async Task<OrganizationResponse> UpdateOrganizationAsync(long organizationId, UpdateOrganizationRequest request)
     {
         var organization = await _context.Organizations.FindAsync(organizationId);
         if (organization is null)
@@ -133,7 +130,7 @@ public class OrganizationService : IOrganizationService
         await _context.SaveChangesAsync();
     }
 
-    public async Task<RoleResponse> CreateOrganizationRoleAsync(CreateOrganizationRoleRequest request)
+    public async Task<RoleResponse> CreateOrganizationRoleAsync(CreateRoleRequest request)
     {
         throw new NotImplementedException();
     }

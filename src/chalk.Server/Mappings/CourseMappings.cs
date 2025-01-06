@@ -3,7 +3,6 @@ using chalk.Server.DTOs;
 using chalk.Server.DTOs.Requests;
 using chalk.Server.DTOs.Responses;
 using chalk.Server.Entities;
-using chalk.Server.Utilities;
 
 namespace chalk.Server.Mappings;
 
@@ -45,7 +44,7 @@ public static class CourseMappings
         );
     }
 
-    public static CourseRole ToEntity(this CreateCourseRoleRequest request)
+    public static CourseRole ToEntity(this CreateRoleRequest request, Course course)
     {
         return new CourseRole
         {
@@ -55,6 +54,7 @@ public static class CourseMappings
             Rank = request.Rank!.Value,
             CreatedDate = DateTime.UtcNow,
             UpdatedDate = DateTime.UtcNow,
+            Course = course,
         };
     }
 

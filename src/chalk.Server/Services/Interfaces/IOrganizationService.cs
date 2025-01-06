@@ -15,5 +15,5 @@ public interface IOrganizationService
 
     public Task DeleteOrganizationAsync(long organizationId);
 
-    public Task<RoleResponse> CreateOrganizationRoleAsync(CreateOrganizationRoleRequest request);
+    public Task<RoleResponse> CreateOrganizationRoleAsync(CreateRoleRequest request);
 }

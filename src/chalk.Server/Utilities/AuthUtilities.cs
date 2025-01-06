@@ -1,21 +1,22 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
+using System.Text;
 using chalk.Server.Configurations;
 using chalk.Server.DTOs;
 using Microsoft.IdentityModel.Tokens;
 
 namespace chalk.Server.Utilities;
 
-public static class JwtUtilities
+public static class AuthUtilities
 {
+    private const string Alg = SecurityAlgorithms.HmacSha256;
+
     public enum TokenType
     {
         AccessToken,
         RefreshToken
     }
-
-    private const string Alg = SecurityAlgorithms.HmacSha256;
 
     public static string GetString(this TokenType tokenType)
     {
@@ -30,29 +31,20 @@ public static class JwtUtilities
         }
     }
 
-    public static string CreateAccessToken(JwtTokenInfoDTO tokenInfo, JwtClaimInfoDTO claimInfo)
+    public static string CreateAccessToken(TokenDTO tokenData, ClaimDTO claimData)
     {
         var tokenDescriptor = new SecurityTokenDescriptor
         {
-            Subject = CreateClaims(claimInfo),
-            Issuer = tokenInfo.Issuer,
-            Audience = tokenInfo.Audience,
+            Subject = CreateClaims(claimData),
+            Issuer = tokenData.Issuer,
+            Audience = tokenData.Audience,
             Expires = DateTime.UtcNow.AddMinutes(15),
             NotBefore = DateTime.UtcNow,
-            SigningCredentials = new SigningCredentials(tokenInfo.SecurityKey, SecurityAlgorithms.HmacSha256Signature)
+            SigningCredentials = new SigningCredentials(CreateKey(tokenData.Key), SecurityAlgorithms.HmacSha256Signature)
         };
         var tokenHandler = new JwtSecurityTokenHandler();
         var token = tokenHandler.CreateToken(tokenDescriptor);
         return tokenHandler.WriteToken(token);
-    }
-
-    private static ClaimsIdentity CreateClaims(JwtClaimInfoDTO claimInfo)
-    {
-        var claims = new ClaimsIdentity();
-        claims.AddClaim(new Claim(ClaimTypes.NameIdentifier, claimInfo.UserId.ToString()));
-        claims.AddClaim(new Claim(ClaimTypes.Name, claimInfo.DisplayName));
-        claims.AddClaims(claimInfo.Roles.Select(role => new Claim(ClaimTypes.Role, role)));
-        return claims;
     }
 
     public static string CreateRefreshToken()
@@ -63,31 +55,53 @@ public static class JwtUtilities
         return Convert.ToBase64String(bytes);
     }
 
-    public static string? GetUserIdFromExpiredAccessToken(JwtTokenInfoDTO tokenInfo, string accessToken)
+    public static string? GetUserId(this string accessToken, TokenDTO tokenData)
     {
         var tokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
             ValidateAudience = true,
-            ValidateLifetime = false,
+            ValidateLifetime = false, // Accept expired tokens
             ValidateIssuerSigningKey = true,
-            ValidIssuer = tokenInfo.Issuer,
-            ValidAudience = tokenInfo.Audience,
-            IssuerSigningKey = tokenInfo.SecurityKey,
+            ValidIssuer = tokenData.Issuer,
+            ValidAudience = tokenData.Audience,
+            IssuerSigningKey = CreateKey(tokenData.Key),
             ClockSkew = TimeSpan.Zero
         };
 
         var tokenHandler = new JwtSecurityTokenHandler();
         var principal = tokenHandler.ValidateToken(accessToken, tokenValidationParameters, out var securityToken);
 
-        if (
-            securityToken is not JwtSecurityToken jwtSecurityToken ||
-            !jwtSecurityToken.Header.Alg.Equals(Alg, StringComparison.InvariantCultureIgnoreCase)
-        )
+        if (securityToken is not JwtSecurityToken jwtSecurityToken || !jwtSecurityToken.Header.Alg.Equals(Alg, StringComparison.InvariantCultureIgnoreCase))
         {
             throw new ServiceException("Access token is invalid.", StatusCodes.Status401Unauthorized);
         }
 
         return principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+    }
+
+    public static string GetUserId(this ClaimsPrincipal principal)
+    {
+        var id = principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (id is null)
+        {
+            throw new ServiceException("Not logged in.", StatusCodes.Status401Unauthorized);
+        }
+
+        return id;
+    }
+
+    private static SymmetricSecurityKey CreateKey(string securityKey)
+    {
+        return new SymmetricSecurityKey(Encoding.UTF8.GetBytes(securityKey));
+    }
+
+    private static ClaimsIdentity CreateClaims(ClaimDTO claimData)
+    {
+        var claims = new ClaimsIdentity();
+        claims.AddClaim(new Claim(ClaimTypes.NameIdentifier, claimData.UserId.ToString()));
+        claims.AddClaim(new Claim(ClaimTypes.Name, claimData.DisplayName));
+        claims.AddClaims(claimData.Roles.Select(role => new Claim(ClaimTypes.Role, role)));
+        return claims;
     }
 }

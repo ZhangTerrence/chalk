@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using chalk.Server.DTOs.Requests;
 using chalk.Server.DTOs.Responses;
 
@@ -12,5 +11,5 @@ public interface IAuthenticationService
 
     public Task<AuthenticationResponse> RefreshTokensAsync(string? accessToken, string? refreshToken);
 
-    public Task LogoutUserAsync(ClaimsPrincipal identity);
+    public Task LogoutUserAsync(string userId);
 }

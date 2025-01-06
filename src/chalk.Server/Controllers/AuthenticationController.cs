@@ -70,7 +70,7 @@ public class AuthenticationController : ControllerBase
     [Authorize]
     public async Task<IActionResult> Logout()
     {
-        await _authenticationService.LogoutUserAsync(User);
+        await _authenticationService.LogoutUserAsync(User.GetUserId());
         return NoContent();
     }
 }

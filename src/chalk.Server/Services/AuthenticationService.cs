@@ -1,15 +1,12 @@
-using System.Security.Claims;
-using System.Text;
 using chalk.Server.Configurations;
 using chalk.Server.DTOs;
 using chalk.Server.DTOs.Requests;
 using chalk.Server.DTOs.Responses;
+using chalk.Server.Entities;
 using chalk.Server.Mappings;
 using chalk.Server.Services.Interfaces;
 using chalk.Server.Utilities;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.IdentityModel.Tokens;
-using User = chalk.Server.Entities.User;
 
 namespace chalk.Server.Services;
 
@@ -18,7 +15,7 @@ public class AuthenticationService : IAuthenticationService
     private readonly UserManager<User> _userManager;
     private readonly RoleManager<IdentityRole<long>> _roleManager;
 
-    private readonly JwtTokenInfoDTO _jwtTokenInfo;
+    private readonly TokenDTO _tokenData;
 
     private readonly IHttpContextAccessor _httpContextAccessor;
 
@@ -32,11 +29,7 @@ public class AuthenticationService : IAuthenticationService
         _userManager = userManager;
         _roleManager = roleManager;
 
-        _jwtTokenInfo = new JwtTokenInfoDTO(
-            configuration["Jwt:Issuer"]!,
-            configuration["Jwt:Audience"]!,
-            new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]!))
-        );
+        _tokenData = new TokenDTO(configuration["Jwt:Issuer"]!, configuration["Jwt:Audience"]!, configuration["Jwt:Key"]!);
 
         _httpContextAccessor = httpContextAccessor;
     }
@@ -65,15 +58,11 @@ public class AuthenticationService : IAuthenticationService
 
         if (!(await _userManager.AddToRoleAsync(user, "User")).Succeeded)
         {
-            throw new ServiceException("Unable to assign user to role 'User'.",
-                StatusCodes.Status500InternalServerError);
+            throw new ServiceException("Unable to assign user to role 'User'.", StatusCodes.Status500InternalServerError);
         }
 
-        var accessToken = JwtUtilities.CreateAccessToken(
-            _jwtTokenInfo,
-            new JwtClaimInfoDTO(user.Id, user.DisplayName, ["User"])
-        );
-        var refreshToken = JwtUtilities.CreateRefreshToken();
+        var accessToken = AuthUtilities.CreateAccessToken(_tokenData, new ClaimDTO(user.Id, user.DisplayName, ["User"]));
+        var refreshToken = AuthUtilities.CreateRefreshToken();
 
         user.RefreshToken = refreshToken;
         user.RefreshTokenExpiryDate = DateTime.UtcNow.AddHours(2);
@@ -82,8 +71,8 @@ public class AuthenticationService : IAuthenticationService
             throw new ServiceException("Unable to set refresh token.", StatusCodes.Status500InternalServerError);
         }
 
-        AddCookie(JwtUtilities.TokenType.AccessToken, accessToken);
-        AddCookie(JwtUtilities.TokenType.RefreshToken, refreshToken);
+        AddCookie(AuthUtilities.TokenType.AccessToken, accessToken);
+        AddCookie(AuthUtilities.TokenType.RefreshToken, refreshToken);
 
         return new AuthenticationResponse(user.ToDTO(), accessToken, refreshToken);
     }
@@ -103,11 +92,8 @@ public class AuthenticationService : IAuthenticationService
         }
 
         var roles = await _userManager.GetRolesAsync(user);
-        var accessToken = JwtUtilities.CreateAccessToken(
-            _jwtTokenInfo,
-            new JwtClaimInfoDTO(user.Id, user.DisplayName, roles)
-        );
-        var refreshToken = JwtUtilities.CreateRefreshToken();
+        var accessToken = AuthUtilities.CreateAccessToken(_tokenData, new ClaimDTO(user.Id, user.DisplayName, roles));
+        var refreshToken = AuthUtilities.CreateRefreshToken();
 
         user.RefreshToken = refreshToken;
         user.RefreshTokenExpiryDate = DateTime.UtcNow.AddHours(2);
@@ -116,8 +102,8 @@ public class AuthenticationService : IAuthenticationService
             throw new ServiceException("Unable to set refresh token.", StatusCodes.Status500InternalServerError);
         }
 
-        AddCookie(JwtUtilities.TokenType.AccessToken, accessToken);
-        AddCookie(JwtUtilities.TokenType.RefreshToken, refreshToken);
+        AddCookie(AuthUtilities.TokenType.AccessToken, accessToken);
+        AddCookie(AuthUtilities.TokenType.RefreshToken, refreshToken);
 
         return new AuthenticationResponse(user.ToDTO(), accessToken, refreshToken);
     }
@@ -134,7 +120,7 @@ public class AuthenticationService : IAuthenticationService
             throw new ServiceException("Refresh token is required.", StatusCodes.Status401Unauthorized);
         }
 
-        var userId = JwtUtilities.GetUserIdFromExpiredAccessToken(_jwtTokenInfo, accessToken);
+        var userId = accessToken.GetUserId(_tokenData);
         if (userId is null)
         {
             throw new ServiceException("Cannot find user.", StatusCodes.Status400BadRequest);
@@ -157,19 +143,16 @@ public class AuthenticationService : IAuthenticationService
         }
 
         var roles = await _userManager.GetRolesAsync(user);
-        var newAccessToken = JwtUtilities.CreateAccessToken(
-            _jwtTokenInfo,
-            new JwtClaimInfoDTO(user.Id, user.DisplayName, roles)
-        );
+        var newAccessToken = AuthUtilities.CreateAccessToken(_tokenData, new ClaimDTO(user.Id, user.DisplayName, roles));
 
-        AddCookie(JwtUtilities.TokenType.AccessToken, newAccessToken);
+        AddCookie(AuthUtilities.TokenType.AccessToken, newAccessToken);
 
         return new AuthenticationResponse(user.ToDTO(), newAccessToken, refreshToken);
     }
 
-    public async Task LogoutUserAsync(ClaimsPrincipal identity)
+    public async Task LogoutUserAsync(string userId)
     {
-        var user = await _userManager.GetUserAsync(identity);
+        var user = await _userManager.FindByIdAsync(userId);
         if (user is null)
         {
             throw new ServiceException("User not found.", StatusCodes.Status404NotFound);
@@ -187,7 +170,7 @@ public class AuthenticationService : IAuthenticationService
         _httpContextAccessor.HttpContext?.Response.Cookies.Delete("RefreshToken");
     }
 
-    private void AddCookie(JwtUtilities.TokenType tokenType, string token)
+    private void AddCookie(AuthUtilities.TokenType tokenType, string token)
     {
         _httpContextAccessor.HttpContext?.Response.Cookies.Append(tokenType.GetString(), token, new CookieOptions
         {

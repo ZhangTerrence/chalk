@@ -63,7 +63,7 @@ public static class OrganizationMappings
         };
     }
 
-    public static OrganizationRole ToEntity(this CreateOrganizationRoleRequest request)
+    public static OrganizationRole ToEntity(this CreateRoleRequest request)
     {
         return new OrganizationRole
         {
