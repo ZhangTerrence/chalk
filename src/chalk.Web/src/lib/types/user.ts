@@ -2,8 +2,16 @@ import type { ChannelDTO } from "@/lib/types/channel.ts";
 import type { CourseDTO } from "@/lib/types/course.ts";
 import type { OrganizationDTO } from "@/lib/types/organization.ts";
 
+export type UserDTO = {
+  id: number;
+  firstName: string;
+  lastName: string;
+  displayName: string;
+  joinedDate: string | null;
+};
+
 export type UserResponse = {
-  id: string;
+  id: number;
   email: string;
   firstName: string;
   lastName: string;

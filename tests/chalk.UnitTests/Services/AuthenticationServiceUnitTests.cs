@@ -4,6 +4,7 @@ using chalk.Server.DTOs.Requests;
 using chalk.Server.Entities;
 using chalk.Server.Mappings;
 using chalk.Server.Services;
+using chalk.Server.Services.Interfaces;
 using chalk.UnitTests.Shared;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -21,6 +22,8 @@ public class AuthenticationServiceUnitTests : BaseUnitTests
 
     public AuthenticationServiceUnitTests()
     {
+        var userService = Substitute.For<IUserService>();
+
         var configuration = Substitute.For<IConfiguration>();
         configuration["Jwt:Key"] = SecurityKey;
         configuration["Jwt:Issuer"] = Issuer;
@@ -46,7 +49,7 @@ public class AuthenticationServiceUnitTests : BaseUnitTests
         );
         var httpContextAccessor = Substitute.For<IHttpContextAccessor>();
 
-        _sut = new AuthenticationService(_userManager, roleManager, configuration, httpContextAccessor);
+        _sut = new AuthenticationService(userService, _userManager, roleManager, configuration, httpContextAccessor);
     }
 
     [Fact]
@@ -177,11 +180,10 @@ public class AuthenticationServiceUnitTests : BaseUnitTests
     public async Task LogoutAsync_UserNotFound_ShouldThrow()
     {
         // Arrange
-        var identity = Substitute.For<ClaimsPrincipal>();
-        _userManager.GetUserAsync(Arg.Any<ClaimsPrincipal>()).ReturnsNull();
+        _userManager.FindByIdAsync(Arg.Any<string>()).ReturnsNull();
 
         // Act
-        var act = async () => { await _sut.LogoutUserAsync(identity); };
+        var act = async () => { await _sut.LogoutUserAsync(1); };
 
         // Assert
         await act.Should().ThrowAsync<ServiceException>()

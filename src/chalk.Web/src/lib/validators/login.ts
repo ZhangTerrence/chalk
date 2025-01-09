@@ -3,19 +3,20 @@ import { z } from "zod";
 export const LoginSchema = z.object({
   email: z
     .string({
-      message: "Email is required.",
+      message: "The user's email is required.",
     })
     .email({
-      message: "Email is invalid.",
+      message: "The user's is invalid.",
     }),
   password: z
     .string({
-      message: "Password is required.",
+      message: "The user's password is required.",
     })
     .regex(/^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[-._@+]).*.{8,}$/, {
       message:
-        "Password must have at least 8 characters with least one number, one lowercase letter, one upper case letter, one special character.",
-    }),
+        "The user's password must have at least 8 characters with least one number, one lowercase letter, one upper case letter, one special character.",
+    })
+    .transform((e) => e ?? null),
 });
 
 export type LoginSchemaType = z.infer<typeof LoginSchema>;

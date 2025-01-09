@@ -1,4 +1,4 @@
 export type OrganizationDTO = {
-  id: string;
+  id: number;
   name: string;
 };

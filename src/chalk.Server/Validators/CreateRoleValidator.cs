@@ -20,7 +20,7 @@ public class CreateRoleValidator : AbstractValidator<CreateRoleRequest>
             .WithMessage("The role's name must have between 3 and 31 characters.");
         RuleFor(e => e.Description)
             .MaximumLength(255)
-            .WithMessage("The role's description must have between 3 and 255 characters.");
+            .WithMessage("The role's description must have at most 255 characters.");
         RuleFor(e => e.Permissions)
             .NotNull()
             .WithMessage("Must specify the role's permissions.");

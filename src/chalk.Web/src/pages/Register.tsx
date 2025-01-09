@@ -11,13 +11,13 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input.tsx";
 
 import { useRegisterMutation } from "@/redux/services/auth.ts";
+import { selectUser } from "@/redux/slices/user.ts";
+import { useTypedSelector } from "@/redux/store.ts";
 
 import { RegisterSchema, type RegisterSchemaType } from "@/lib/validators/register.ts";
 
-import { useAuth } from "@/hooks/useAuth.tsx";
-
 export default function Register() {
-  const user = useAuth().user;
+  const user = useTypedSelector(selectUser);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -39,10 +39,6 @@ export default function Register() {
 
   const [register, { isLoading }] = useRegisterMutation();
 
-  const onSubmit = async (data: RegisterSchemaType) => {
-    await register(data).unwrap();
-  };
-
   return (
     <>
       <Helmet>
@@ -54,7 +50,10 @@ export default function Register() {
           <strong>Register</strong>
         </h1>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-y-4">
+          <form
+            onSubmit={form.handleSubmit(async (data) => await register(data).unwrap())}
+            className="flex flex-col gap-y-4"
+          >
             <div className="flex gap-x-4">
               <FormField
                 control={form.control}

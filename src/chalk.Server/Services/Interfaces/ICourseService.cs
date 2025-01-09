@@ -9,7 +9,7 @@ public interface ICourseService
 
     public Task<CourseResponse> GetCourseAsync(long courseId);
 
-    public Task<CourseResponse> CreateCourseAsync(string userId, CreateCourseRequest request);
+    public Task<CourseResponse> CreateCourseAsync(long userId, CreateCourseRequest request);
 
     public Task<CourseResponse> UpdateCourseAsync(long courseId, UpdateCourseRequest request);
 

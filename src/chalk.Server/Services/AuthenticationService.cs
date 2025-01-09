@@ -12,6 +12,7 @@ namespace chalk.Server.Services;
 
 public class AuthenticationService : IAuthenticationService
 {
+    private readonly IUserService _userService;
     private readonly UserManager<User> _userManager;
     private readonly RoleManager<IdentityRole<long>> _roleManager;
 
@@ -20,12 +21,14 @@ public class AuthenticationService : IAuthenticationService
     private readonly IHttpContextAccessor _httpContextAccessor;
 
     public AuthenticationService(
+        IUserService userService,
         UserManager<User> userManager,
         RoleManager<IdentityRole<long>> roleManager,
         IConfiguration configuration,
         IHttpContextAccessor httpContextAccessor
     )
     {
+        _userService = userService;
         _userManager = userManager;
         _roleManager = roleManager;
 
@@ -74,7 +77,7 @@ public class AuthenticationService : IAuthenticationService
         AddCookie(AuthUtilities.TokenType.AccessToken, accessToken);
         AddCookie(AuthUtilities.TokenType.RefreshToken, refreshToken);
 
-        return new AuthenticationResponse(user.ToDTO(), accessToken, refreshToken);
+        return new AuthenticationResponse(await _userService.GetUserAsync(user.Id), accessToken, refreshToken);
     }
 
     public async Task<AuthenticationResponse> LoginUserAsync(LoginRequest request)
@@ -105,7 +108,7 @@ public class AuthenticationService : IAuthenticationService
         AddCookie(AuthUtilities.TokenType.AccessToken, accessToken);
         AddCookie(AuthUtilities.TokenType.RefreshToken, refreshToken);
 
-        return new AuthenticationResponse(user.ToDTO(), accessToken, refreshToken);
+        return new AuthenticationResponse(await _userService.GetUserAsync(user.Id), accessToken, refreshToken);
     }
 
     public async Task<AuthenticationResponse> RefreshTokensAsync(string? accessToken, string? refreshToken)
@@ -147,12 +150,12 @@ public class AuthenticationService : IAuthenticationService
 
         AddCookie(AuthUtilities.TokenType.AccessToken, newAccessToken);
 
-        return new AuthenticationResponse(user.ToDTO(), newAccessToken, refreshToken);
+        return new AuthenticationResponse(await _userService.GetUserAsync(user.Id), newAccessToken, refreshToken);
     }
 
-    public async Task LogoutUserAsync(string userId)
+    public async Task LogoutUserAsync(long userId)
     {
-        var user = await _userManager.FindByIdAsync(userId);
+        var user = await _userManager.FindByIdAsync(userId.ToString());
         if (user is null)
         {
             throw new ServiceException("User not found.", StatusCodes.Status404NotFound);

@@ -2,8 +2,10 @@ using chalk.Server.Configurations;
 using chalk.Server.Data;
 using chalk.Server.DTOs.Requests;
 using chalk.Server.DTOs.Responses;
+using chalk.Server.Entities;
 using chalk.Server.Mappings;
 using chalk.Server.Services.Interfaces;
+using chalk.Server.Shared;
 using chalk.Server.Utilities;
 using Microsoft.EntityFrameworkCore;
 
@@ -34,7 +36,7 @@ public class CourseService : ICourseService
         return course.ToDTO();
     }
 
-    public async Task<CourseResponse> CreateCourseAsync(string userId, CreateCourseRequest request)
+    public async Task<CourseResponse> CreateCourseAsync(long userId, CreateCourseRequest request)
     {
         var user = await _context.Users.FindAsync(userId);
         if (user is null)
@@ -42,19 +44,26 @@ public class CourseService : ICourseService
             throw new ServiceException("User not found.", StatusCodes.Status404NotFound);
         }
 
-        var organization = await _context.Organizations.FindAsync(request.OrganizationId);
-
-        var course = request.ToEntity(organization);
-
+        var course = request.ToEntity(null);
         var role = CreateRoleRequest
             .CreateCourseRole("Instructor", null, PermissionUtilities.All, 0, course.Id)
             .ToEntity(course);
+        var courseUser = new UserCourse
+        {
+            Status = UserStatus.Joined,
+            Grade = 0,
+            JoinedDate = DateTime.UtcNow,
+            User = user,
+            Course = course,
+            Role = role
+        };
 
-        await _context.Courses.AddAsync(course);
-        await _context.CourseRoles.AddAsync(role);
+        var createdCourse = await _context.Courses.AddAsync(course);
+        course.Users.Add(courseUser);
+        course.Roles.Add(role);
 
         await _context.SaveChangesAsync();
-        return course.ToDTO();
+        return await GetCourseAsync(createdCourse.Entity.Id);
     }
 
     public async Task<CourseResponse> UpdateCourseAsync(long courseId, UpdateCourseRequest request)
@@ -67,7 +76,17 @@ public class CourseService : ICourseService
 
         if (request.Name is not null)
         {
-            course.Name = course.Name;
+            course.Name = request.Name;
+        }
+
+        if (request.Description is not null)
+        {
+            course.Description = request.Description;
+        }
+
+        if (request.PreviewImage is not null)
+        {
+            course.PreviewImage = request.PreviewImage;
         }
 
         if (request.Code is not null)
@@ -75,9 +94,9 @@ public class CourseService : ICourseService
             course.Code = request.Code;
         }
 
-        if (request.Description is not null)
+        if (request.Public is not null)
         {
-            course.Description = request.Description;
+            course.Public = request.Public!.Value;
         }
 
         await _context.SaveChangesAsync();

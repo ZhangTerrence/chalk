@@ -64,10 +64,7 @@ public class OrganizationController : ControllerBase
     }
 
     [HttpPatch("{id:long}")]
-    public async Task<IActionResult> UpdateOrganization(
-        [FromRoute] long id,
-        [FromBody] UpdateOrganizationRequest request
-    )
+    public async Task<IActionResult> UpdateOrganization([FromRoute] long id, [FromBody] UpdateOrganizationRequest request)
     {
         var result = await _updateOrganizationValidator.ValidateAsync(request);
         if (!result.IsValid)

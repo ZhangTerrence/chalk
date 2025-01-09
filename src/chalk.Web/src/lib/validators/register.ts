@@ -1,50 +1,43 @@
 import { z } from "zod";
 
+import { inRange } from "@/lib/utils.ts";
+
 export const RegisterSchema = z.object({
   firstName: z
     .string({
-      message: "First name is required.",
+      message: "The user's first name is required.",
     })
-    .min(1, {
-      message: "First name must have between 1 and 31 characters.",
-    })
-    .max(31, {
-      message: "First name must have between 1 and 31 characters.",
+    .refine((e) => inRange(e.length, 1, 31), {
+      message: "The user's first name must have between 1 and 31 characters.",
     }),
   lastName: z
     .string({
-      message: "Last name is required.",
+      message: "The user's last name is required.",
     })
-    .min(1, {
-      message: "Last name must have between 1 and 31 characters.",
-    })
-    .max(31, {
-      message: "Last name must have between 1 and 31 characters.",
+    .refine((e) => inRange(e.length, 1, 31), {
+      message: "The user's last name must have between 1 and 31 characters.",
     }),
   displayName: z
     .string({
-      message: "Display name is required.",
+      message: "The user's display name is required.",
     })
-    .min(3, {
-      message: "Display name must have between 1 and 31 characters.",
-    })
-    .max(31, {
-      message: "Display name must have between 1 and 31 characters.",
+    .refine((e) => inRange(e.length, 3, 31), {
+      message: "The user's display name must have between 3 and 31 characters.",
     }),
   email: z
     .string({
-      message: "Email is required.",
+      message: "The user's email is required.",
     })
     .email({
-      message: "Email is invalid.",
+      message: "The user's is invalid.",
     }),
   password: z
     .string({
-      message: "Password is required.",
+      message: "The user's password is required.",
     })
     .regex(/^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[-._@+]).*.{8,}$/, {
       message:
-        "Password must have at least 8 characters with least one number, one lowercase letter, one upper case letter, one special character.",
+        "The user's password must have at least 8 characters with least one number, one lowercase letter, one upper case letter, one special character.",
     }),
 });
 

@@ -1,5 +1,6 @@
 import { type Middleware, type MiddlewareAPI, configureStore, isRejectedWithValue } from "@reduxjs/toolkit";
 import type { FetchBaseQueryError } from "@reduxjs/toolkit/query";
+import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
 
 import { authApi } from "@/redux/services/auth.ts";
@@ -9,6 +10,7 @@ import type { AuthenticationResponse } from "@/lib/types/authentication.ts";
 
 import authReducer from "./slices/auth.ts";
 import themeReducer from "./slices/theme.ts";
+import userReducer from "./slices/user.ts";
 
 const queryErrorLogger: Middleware = (_: MiddlewareAPI) => (next) => (action) => {
   if (isRejectedWithValue(action)) {
@@ -32,11 +34,15 @@ const queryErrorLogger: Middleware = (_: MiddlewareAPI) => (next) => (action) =>
 export const store = configureStore({
   reducer: {
     [authApi.reducerPath]: authApi.reducer,
-    theme: themeReducer,
     auth: authReducer,
+    user: userReducer,
+    theme: themeReducer,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(queryErrorLogger).concat(authApi.middleware),
 });
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
+
+export const useTypedSelector: TypedUseSelectorHook<RootState> = useSelector;
+export const useAppDispatch = () => useDispatch<AppDispatch>();

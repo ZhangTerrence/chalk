@@ -15,7 +15,6 @@ public static class OrganizationMappings
         {
             Name = request.Name!,
             Description = request.Description,
-            ProfilePicture = request.ProfilePicture,
             CreatedDate = DateTime.UtcNow,
             UpdatedDate = DateTime.UtcNow,
             Owner = owner
@@ -56,7 +55,7 @@ public static class OrganizationMappings
     {
         return new UserOrganization
         {
-            UserStatus = userStatus,
+            Status = userStatus,
             Organization = organization,
             User = user,
             Role = organizationRole,

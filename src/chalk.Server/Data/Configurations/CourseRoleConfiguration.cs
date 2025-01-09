@@ -27,7 +27,7 @@ public class CourseRoleConfiguration : IEntityTypeConfiguration<CourseRole>
             .IsRequired();
         builder
             .HasMany(e => e.Users)
-            .WithOne(e => e.CourseRole)
+            .WithOne(e => e.Role)
             .HasForeignKey(e => e.CourseRoleId)
             .IsRequired();
         builder

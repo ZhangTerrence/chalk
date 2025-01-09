@@ -14,14 +14,12 @@ public class CreateCourseValidator : AbstractValidator<CreateCourseRequest>
             .WithMessage("The course's name must have between 3 and 31 characters.");
         RuleFor(e => e.Description)
             .MaximumLength(255)
-            .WithMessage("The course's description must have between 3 and 255 characters.");
-        RuleFor(e => e.PreviewImage);
+            .WithMessage("The course's description must have at most 255 characters.");
         RuleFor(e => e.Code)
             .MaximumLength(31)
-            .WithMessage("The course's code must have between 3 and 31 characters.");
+            .WithMessage("The course's code must have at most 31 characters.");
         RuleFor(e => e.Public)
             .NotNull()
             .WithMessage("Must specify whether the course is public.");
-        RuleFor(e => e.OrganizationId);
     }
 }

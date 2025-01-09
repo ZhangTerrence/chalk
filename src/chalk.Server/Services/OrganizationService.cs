@@ -61,8 +61,7 @@ public class OrganizationService : IOrganizationService
         }
 
         var organization = request.ToEntity(user);
-
-        var ownerRole = new OrganizationRole
+        var role = new OrganizationRole
         {
             Name = "Owner",
             Permissions = PermissionUtilities.All,
@@ -70,19 +69,18 @@ public class OrganizationService : IOrganizationService
             CreatedDate = DateTime.UtcNow,
             UpdatedDate = DateTime.UtcNow,
         };
-
-        organization.Users.Add(new UserOrganization
+        var organizationUser = new UserOrganization
         {
-            UserStatus = UserStatus.Joined,
+            Status = UserStatus.Joined,
             JoinedDate = DateTime.UtcNow,
             User = user,
             Organization = organization,
-            Role = ownerRole
-        });
-
-        organization.Roles.Add(ownerRole);
+            Role = role
+        };
 
         var createdOrganization = await _context.Organizations.AddAsync(organization);
+        organization.Users.Add(organizationUser);
+        organization.Roles.Add(role);
 
         await _context.SaveChangesAsync();
         return await GetOrganizationAsync(createdOrganization.Entity.Id);
@@ -109,6 +107,11 @@ public class OrganizationService : IOrganizationService
         if (request.Description is not null)
         {
             organization.Description = request.Description;
+        }
+
+        if (request.ProfilePicture is not null)
+        {
+            organization.ProfilePicture = request.ProfilePicture;
         }
 
         organization.UpdatedDate = DateTime.UtcNow;

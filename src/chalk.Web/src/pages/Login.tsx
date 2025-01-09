@@ -11,13 +11,13 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input.tsx";
 
 import { useLoginMutation } from "@/redux/services/auth.ts";
+import { selectUser } from "@/redux/slices/user.ts";
+import { useTypedSelector } from "@/redux/store.ts";
 
 import { LoginSchema, type LoginSchemaType } from "@/lib/validators/login.ts";
 
-import { useAuth } from "@/hooks/useAuth.tsx";
-
 export default function Login() {
-  const user = useAuth().user;
+  const user = useTypedSelector(selectUser);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -36,10 +36,6 @@ export default function Login() {
 
   const [login, { isLoading }] = useLoginMutation();
 
-  const onSubmit = async (data: LoginSchemaType) => {
-    await login(data).unwrap();
-  };
-
   return (
     <>
       <Helmet>
@@ -51,7 +47,10 @@ export default function Login() {
           <strong>Login</strong>
         </h1>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-y-4 min-w-80">
+          <form
+            onSubmit={form.handleSubmit(async (data) => await login(data).unwrap())}
+            className="flex flex-col gap-y-4 min-w-80"
+          >
             <FormField
               control={form.control}
               name="email"

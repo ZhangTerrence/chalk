@@ -24,6 +24,7 @@ import {
 import { DashboardSidebarFooter } from "@/components/DashboardSidebar/DashboardSidebarFooter.tsx";
 import { DashboardSidebarHeader } from "@/components/DashboardSidebar/DashboardSidebarHeader.tsx";
 import { SettingsDialog } from "@/components/DashboardSidebar/Dialogs/SettingsDialog.tsx";
+import { CoursesSection } from "@/components/DashboardSidebar/Sections/CoursesSection.tsx";
 import { OrganizationsSection } from "@/components/DashboardSidebar/Sections/OrganizationsSection.tsx";
 
 export type Dialog = null | "profile" | "settings";
@@ -57,21 +58,10 @@ export const DashboardSidebar = () => {
             </SidebarGroupAction>
           </SidebarGroup>
         );
+      case "courses":
+        return <CoursesSection />;
       case "organizations":
         return <OrganizationsSection />;
-      case "courses":
-        return (
-          <SidebarGroup>
-            <SidebarGroupLabel>Courses</SidebarGroupLabel>
-            <SidebarGroupAction>
-              <Button variant="ghost" size="icon" asChild>
-                <NavLink className="h-fit w-fit" to="/dashboard">
-                  <PlusIcon />
-                </NavLink>
-              </Button>
-            </SidebarGroupAction>
-          </SidebarGroup>
-        );
       default:
         return null;
     }

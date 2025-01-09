@@ -6,17 +6,15 @@ import { Separator } from "@/components/ui/separator.tsx";
 import { Switch } from "@/components/ui/switch.tsx";
 
 import { changeColorScheme, selectTheme, toggleDarkMode } from "@/redux/slices/theme.ts";
+import { useAppDispatch, useTypedSelector } from "@/redux/store.ts";
 
 import { ColorScheme } from "@/lib/theme.ts";
-
-import { useStore } from "@/hooks/useStore.tsx";
 
 type SettingsProps = {
   setDialog: (dialog: null | "profile" | "settings") => void;
 };
 
 export const SettingsDialog = (props: SettingsProps) => {
-  const [useTypedSelector, useAppDispatch] = useStore();
   const theme = useTypedSelector(selectTheme);
   const dispatch = useAppDispatch();
 

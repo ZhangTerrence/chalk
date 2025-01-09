@@ -8,15 +8,15 @@ import { SidebarFooter, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@
 import type { Dialog } from "@/components/DashboardSidebar/DashboardSidebar.tsx";
 
 import { useLogoutMutation } from "@/redux/services/auth.ts";
-
-import { useAuth } from "@/hooks/useAuth.tsx";
+import { selectUser } from "@/redux/slices/user.ts";
+import { useTypedSelector } from "@/redux/store.ts";
 
 type DashboardSidebarFooterProps = {
   changeDialog: (dialog: Dialog) => void;
 };
 
 export const DashboardSidebarFooter = (props: DashboardSidebarFooterProps) => {
-  const user = useAuth().user!;
+  const user = useTypedSelector(selectUser)!;
   const { isMobile } = useSidebar();
   const [logout] = useLogoutMutation();
 

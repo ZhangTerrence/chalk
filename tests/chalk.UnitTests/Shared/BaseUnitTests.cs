@@ -43,7 +43,7 @@ public abstract class BaseUnitTests
 
         public TokenBuilder AddRefreshToken()
         {
-            _refreshToken = JwtUtilities.CreateRefreshToken();
+            _refreshToken = AuthUtilities.CreateRefreshToken();
             return this;
         }
 

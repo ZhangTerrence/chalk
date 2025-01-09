@@ -3,11 +3,11 @@ import * as React from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 
 import { useRefreshMutation } from "@/redux/services/auth.ts";
-
-import { useAuth } from "@/hooks/useAuth.tsx";
+import { selectUser } from "@/redux/slices/user.ts";
+import { useTypedSelector } from "@/redux/store.ts";
 
 export const AuthenticationGuard = ({ children }: { children: React.ReactNode }) => {
-  const user = useAuth().user;
+  const user = useTypedSelector(selectUser);
   const navigate = useNavigate();
   const [refresh] = useRefreshMutation();
 

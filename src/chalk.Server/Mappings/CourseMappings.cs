@@ -14,7 +14,6 @@ public static class CourseMappings
         {
             Name = request.Name!,
             Description = request.Description,
-            PreviewImage = request.PreviewImage,
             Code = request.Code,
             Public = request.Public!.Value,
             CreatedDate = DateTime.UtcNow,

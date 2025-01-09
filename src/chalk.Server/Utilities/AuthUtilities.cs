@@ -80,7 +80,7 @@ public static class AuthUtilities
         return principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
     }
 
-    public static string GetUserId(this ClaimsPrincipal principal)
+    public static long GetUserId(this ClaimsPrincipal principal)
     {
         var id = principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (id is null)
@@ -88,7 +88,7 @@ public static class AuthUtilities
             throw new ServiceException("Not logged in.", StatusCodes.Status401Unauthorized);
         }
 
-        return id;
+        return long.Parse(id);
     }
 
     private static SymmetricSecurityKey CreateKey(string securityKey)

@@ -6,7 +6,7 @@ using chalk.Server.Entities;
 
 namespace chalk.Server.Mappings;
 
-public static class UserExtensions
+public static class UserMappings
 {
     public static User ToEntity(this RegisterRequest registerRequest)
     {

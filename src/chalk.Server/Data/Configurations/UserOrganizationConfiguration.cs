@@ -12,7 +12,7 @@ public class UserOrganizationConfiguration : IEntityTypeConfiguration<UserOrgani
 
         builder.HasKey(e => new { e.UserId, e.OrganizationId });
 
-        builder.Property(e => e.UserStatus).IsRequired();
+        builder.Property(e => e.Status).IsRequired();
         builder.Property(e => e.JoinedDate);
 
         builder

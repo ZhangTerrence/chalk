@@ -11,5 +11,5 @@ public interface IAuthenticationService
 
     public Task<AuthenticationResponse> RefreshTokensAsync(string? accessToken, string? refreshToken);
 
-    public Task LogoutUserAsync(string userId);
+    public Task LogoutUserAsync(long userId);
 }
