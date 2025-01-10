@@ -22,7 +22,7 @@ public static class UserMappings
         };
     }
 
-    public static UserResponse ToDTO(this User user)
+    public static UserResponse ToResponse(this User user)
     {
         return new UserResponse(
             user.Id,
@@ -33,15 +33,14 @@ public static class UserMappings
             user.ProfilePicture,
             user.CreatedDate.ToString(CultureInfo.CurrentCulture),
             user.UpdatedDate.ToString(CultureInfo.CurrentCulture),
-            user.DirectMessages
-                .Select(e => new ChannelDTO(e.Channel))
-                .ToList(),
-            user.Organizations
-                .Select(e => new OrganizationDTO(e.Organization))
-                .ToList(),
-            user.Courses
-                .Select(e => new CourseDTO(e.Course))
-                .ToList()
+            user.DirectMessages.Select(e => e.Channel.ToDTO()),
+            user.Organizations.Select(e => e.Organization.ToDTO()),
+            user.Courses.Select(e => e.Course.ToDTO())
         );
+    }
+
+    public static UserDTO ToDTO(this User user, string? joinedDate)
+    {
+        return new UserDTO(user.Id, user.FirstName, user.LastName, user.DisplayName, joinedDate);
     }
 }

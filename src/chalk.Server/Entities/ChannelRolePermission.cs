@@ -17,5 +17,5 @@ public class ChannelRolePermission
     public Channel Channel { get; set; } = null!;
     public CourseRole? CourseRole { get; set; }
     public OrganizationRole? OrganizationRole { get; set; }
-    public ICollection<ChannelUser> Users { get; set; } = [];
+    public ICollection<UserChannel> Users { get; set; } = [];
 }

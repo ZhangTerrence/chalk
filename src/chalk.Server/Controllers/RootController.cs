@@ -1,5 +1,6 @@
 using chalk.Server.DTOs.Requests;
 using chalk.Server.DTOs.Responses;
+using chalk.Server.Mappings;
 using chalk.Server.Services.Interfaces;
 using chalk.Server.Utilities;
 using FluentValidation;
@@ -9,24 +10,24 @@ using Microsoft.AspNetCore.Mvc;
 namespace chalk.Server.Controllers;
 
 [ApiController]
-[Route("/api/auth")]
-public class AuthenticationController : ControllerBase
+[Route("/api")]
+public class RootController : ControllerBase
 {
-    // Services
-    private readonly IAuthenticationService _authenticationService;
+    private readonly IAuthService _authService;
+    private readonly IUserService _userService;
 
-    // Validators
     private readonly IValidator<RegisterRequest> _registerValidator;
     private readonly IValidator<LoginRequest> _loginValidator;
 
-    public AuthenticationController(
-        IAuthenticationService authenticationService,
+    public RootController(
+        IAuthService authService,
+        IUserService userService,
         IValidator<RegisterRequest> registerValidator,
         IValidator<LoginRequest> loginValidator
     )
     {
-        _authenticationService = authenticationService;
-
+        _authService = authService;
+        _userService = userService;
         _registerValidator = registerValidator;
         _loginValidator = loginValidator;
     }
@@ -40,8 +41,9 @@ public class AuthenticationController : ControllerBase
             return BadRequest(new ApiResponse<object>(result.GetErrorMessages()));
         }
 
-        var response = await _authenticationService.RegisterUserAsync(request);
-        return Created(nameof(Register), new ApiResponse<AuthenticationResponse>(null, response));
+        var user = await _userService.CreateUserAsync(request);
+        var (_, accessToken, refreshToken) = await _authService.CreateTokensAsync(user, ["User"]);
+        return Created(nameof(Register), new ApiResponse<AuthResponse>(null, new AuthResponse(user.ToResponse(), accessToken, refreshToken)));
     }
 
     [HttpPost("login")]
@@ -53,24 +55,25 @@ public class AuthenticationController : ControllerBase
             return BadRequest(new ApiResponse<object>(result.GetErrorMessages()));
         }
 
-        var response = await _authenticationService.LoginUserAsync(request);
-        return Ok(new ApiResponse<AuthenticationResponse>(null, response));
+        var (id, accessToken, refreshToken) = await _authService.AuthenticateAsync(request);
+        var user = await _userService.GetUserAsync(id);
+        return Ok(new ApiResponse<AuthResponse>(null, new AuthResponse(user.ToResponse(), accessToken, refreshToken)));
     }
 
     [HttpPatch("refresh")]
-    public async Task<IActionResult> RefreshTokens()
+    public async Task<IActionResult> Refresh()
     {
         Request.HttpContext.Items.TryGetValue("AccessToken", out var accessToken);
         Request.HttpContext.Items.TryGetValue("RefreshToken", out var refreshToken);
-        var response = await _authenticationService.RefreshTokensAsync(accessToken as string, refreshToken as string);
-        return Ok(new ApiResponse<AuthenticationResponse>(null, response));
+        var (id, newAccessToken, sameRefreshToken) = await _authService.RefreshTokenAsync(accessToken as string, refreshToken as string);
+        var user = await _userService.GetUserAsync(id);
+        return Ok(new ApiResponse<AuthResponse>(null, new AuthResponse(user.ToResponse(), newAccessToken, sameRefreshToken)));
     }
 
-    [HttpDelete("logout")]
-    [Authorize]
+    [HttpDelete("logout"), Authorize]
     public async Task<IActionResult> Logout()
     {
-        await _authenticationService.LogoutUserAsync(User.GetUserId());
+        await _authService.DeleteTokensAsync(User.GetUserId());
         return NoContent();
     }
 }

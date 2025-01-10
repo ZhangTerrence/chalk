@@ -24,9 +24,9 @@ public class Invite : AbstractValidator<InviteRequest>
             .WithMessage("Must specify the organization the invite is addressed from.");
         RuleFor(e => e.CourseRoleId)
             .NotNull().When(e => e.Origin == Origin.Course)
-            .WithMessage("Must specify the role in the course the user is assigned is they accept.");
+            .WithMessage("Must specify the role in the course the user is assigned if they accept.");
         RuleFor(e => e.OrganizationRoleId)
             .NotNull().When(e => e.Origin == Origin.Organization)
-            .WithMessage("Must specify the role in the organization the user is assigned is they accept.");
+            .WithMessage("Must specify the role in the organization the user is assigned if they accept.");
     }
 }

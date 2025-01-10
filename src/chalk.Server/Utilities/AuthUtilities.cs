@@ -18,7 +18,7 @@ public static class AuthUtilities
         RefreshToken
     }
 
-    public static string GetString(this TokenType tokenType)
+    public static string CookieName(this TokenType tokenType)
     {
         switch (tokenType)
         {
@@ -40,7 +40,7 @@ public static class AuthUtilities
             Audience = tokenData.Audience,
             Expires = DateTime.UtcNow.AddMinutes(15),
             NotBefore = DateTime.UtcNow,
-            SigningCredentials = new SigningCredentials(CreateKey(tokenData.Key), SecurityAlgorithms.HmacSha256Signature)
+            SigningCredentials = new SigningCredentials(CreateSecurityKey(tokenData.SecurityKey), SecurityAlgorithms.HmacSha256Signature)
         };
         var tokenHandler = new JwtSecurityTokenHandler();
         var token = tokenHandler.CreateToken(tokenDescriptor);
@@ -55,17 +55,17 @@ public static class AuthUtilities
         return Convert.ToBase64String(bytes);
     }
 
-    public static string? GetUserId(this string accessToken, TokenDTO tokenData)
+    public static long GetUserId(this string accessToken, TokenDTO tokenData)
     {
         var tokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
             ValidateAudience = true,
-            ValidateLifetime = false, // Accept expired tokens
+            ValidateLifetime = false, // Accepts expired tokens
             ValidateIssuerSigningKey = true,
             ValidIssuer = tokenData.Issuer,
             ValidAudience = tokenData.Audience,
-            IssuerSigningKey = CreateKey(tokenData.Key),
+            IssuerSigningKey = CreateSecurityKey(tokenData.SecurityKey),
             ClockSkew = TimeSpan.Zero
         };
 
@@ -77,7 +77,13 @@ public static class AuthUtilities
             throw new ServiceException("Access token is invalid.", StatusCodes.Status401Unauthorized);
         }
 
-        return principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        var id = principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (id is null)
+        {
+            throw new ServiceException("No user authenticated.", StatusCodes.Status401Unauthorized);
+        }
+
+        return long.Parse(id);
     }
 
     public static long GetUserId(this ClaimsPrincipal principal)
@@ -85,13 +91,13 @@ public static class AuthUtilities
         var id = principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (id is null)
         {
-            throw new ServiceException("Not logged in.", StatusCodes.Status401Unauthorized);
+            throw new ServiceException("No user authenticated.", StatusCodes.Status401Unauthorized);
         }
 
         return long.Parse(id);
     }
 
-    private static SymmetricSecurityKey CreateKey(string securityKey)
+    private static SymmetricSecurityKey CreateSecurityKey(string securityKey)
     {
         return new SymmetricSecurityKey(Encoding.UTF8.GetBytes(securityKey));
     }

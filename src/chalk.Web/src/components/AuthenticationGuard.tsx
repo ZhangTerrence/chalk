@@ -2,7 +2,7 @@ import * as React from "react";
 
 import { Navigate, useNavigate } from "react-router-dom";
 
-import { useRefreshMutation } from "@/redux/services/auth.ts";
+import { useRefreshMutation } from "@/redux/services/base.ts";
 import { selectUser } from "@/redux/slices/user.ts";
 import { useTypedSelector } from "@/redux/store.ts";
 

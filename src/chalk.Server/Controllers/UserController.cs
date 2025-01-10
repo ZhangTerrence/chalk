@@ -1,4 +1,5 @@
 using chalk.Server.DTOs.Responses;
+using chalk.Server.Mappings;
 using chalk.Server.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -6,14 +7,10 @@ using Microsoft.AspNetCore.Mvc;
 namespace chalk.Server.Controllers;
 
 [ApiController]
-[Route("/api/user")]
-[Authorize]
+[Route("/api/user"), Authorize]
 public class UserController : ControllerBase
 {
-    // Services
     private readonly IUserService _userService;
-
-    // Validators
 
     public UserController(IUserService userService)
     {
@@ -24,13 +21,13 @@ public class UserController : ControllerBase
     public async Task<IActionResult> GetUsers()
     {
         var users = await _userService.GetUsersAsync();
-        return Ok(new ApiResponse<IEnumerable<UserResponse>>(null, users));
+        return Ok(new ApiResponse<IEnumerable<UserResponse>>(null, users.Select(e => e.ToResponse())));
     }
 
-    [HttpGet("{id:long}")]
-    public async Task<IActionResult> GetUser([FromRoute] long id)
+    [HttpGet("{userId:long}")]
+    public async Task<IActionResult> GetUser([FromRoute] long userId)
     {
-        var user = await _userService.GetUserAsync(id);
-        return Ok(new ApiResponse<UserResponse>(null, user));
+        var user = await _userService.GetUserAsync(userId);
+        return Ok(new ApiResponse<UserResponse>(null, user.ToResponse()));
     }
 }

@@ -1,9 +1,9 @@
 namespace chalk.Server.Entities;
 
 /// <summary>
-/// Represents the relationship between a user and a channel, i.e. whether a user in a channel.
+/// Represents the relationship between a user and a channel.
 /// </summary>
-public class ChannelUser
+public class UserChannel
 {
     // Properties
     public required DateTime JoinedDate { get; set; }

@@ -1,7 +1,6 @@
 using chalk.Server.Configurations;
 using chalk.Server.Data;
 using chalk.Server.DTOs.Requests;
-using chalk.Server.DTOs.Responses;
 using chalk.Server.Entities;
 using chalk.Server.Mappings;
 using chalk.Server.Services.Interfaces;
@@ -20,23 +19,31 @@ public class CourseService : ICourseService
         _context = context;
     }
 
-    public async Task<IEnumerable<CourseResponse>> GetCoursesAsync()
+    public async Task<IEnumerable<Course>> GetCoursesAsync()
     {
-        return await _context.Courses.Select(e => e.ToDTO()).ToListAsync();
+        return await _context.Courses
+            .Include(e => e.Organization).AsSingleQuery()
+            .Include(e => e.Users).ThenInclude(u => u.User).AsSingleQuery()
+            .Include(e => e.Roles).AsSingleQuery()
+            .ToListAsync();
     }
 
-    public async Task<CourseResponse> GetCourseAsync(long courseId)
+    public async Task<Course> GetCourseAsync(long courseId)
     {
-        var course = await _context.Courses.FindAsync(courseId);
+        var course = await _context.Courses
+            .Include(e => e.Organization).AsSingleQuery()
+            .Include(e => e.Users).ThenInclude(u => u.User).AsSingleQuery()
+            .Include(e => e.Roles).AsSingleQuery()
+            .FirstOrDefaultAsync(e => e.Id == courseId);
         if (course is null)
         {
             throw new ServiceException("Course not found.", StatusCodes.Status404NotFound);
         }
 
-        return course.ToDTO();
+        return course;
     }
 
-    public async Task<CourseResponse> CreateCourseAsync(long userId, CreateCourseRequest request)
+    public async Task<Course> CreateCourseAsync(long userId, CreateCourseRequest request)
     {
         var user = await _context.Users.FindAsync(userId);
         if (user is null)
@@ -45,28 +52,28 @@ public class CourseService : ICourseService
         }
 
         var course = request.ToEntity(null);
-        var role = CreateRoleRequest
+        var courseRole = CreateRoleRequest
             .CreateCourseRole("Instructor", null, PermissionUtilities.All, 0, course.Id)
             .ToEntity(course);
         var courseUser = new UserCourse
         {
             Status = UserStatus.Joined,
-            Grade = 0,
+            Student = false,
             JoinedDate = DateTime.UtcNow,
             User = user,
             Course = course,
-            Role = role
+            Role = courseRole
         };
 
         var createdCourse = await _context.Courses.AddAsync(course);
         course.Users.Add(courseUser);
-        course.Roles.Add(role);
+        course.Roles.Add(courseRole);
 
         await _context.SaveChangesAsync();
         return await GetCourseAsync(createdCourse.Entity.Id);
     }
 
-    public async Task<CourseResponse> UpdateCourseAsync(long courseId, UpdateCourseRequest request)
+    public async Task<Course> UpdateCourseAsync(long courseId, UpdateCourseRequest request)
     {
         var course = await _context.Courses.FindAsync(courseId);
         if (course is null)
@@ -100,7 +107,7 @@ public class CourseService : ICourseService
         }
 
         await _context.SaveChangesAsync();
-        return course.ToDTO();
+        return await GetCourseAsync(courseId);
     }
 
     public async Task DeleteCourseAsync(long courseId)

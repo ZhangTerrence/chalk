@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace chalk.Server.Data.Configurations;
 
-public class ChannelUserConfiguration : IEntityTypeConfiguration<ChannelUser>
+public class UserChannelConfiguration : IEntityTypeConfiguration<UserChannel>
 {
-    public void Configure(EntityTypeBuilder<ChannelUser> builder)
+    public void Configure(EntityTypeBuilder<UserChannel> builder)
     {
-        builder.ToTable("channel_users");
+        builder.ToTable("user_channels");
 
         builder.HasKey(e => new { e.UserId, e.ChannelId });
 

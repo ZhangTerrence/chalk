@@ -95,7 +95,7 @@ builder.Services.AddRouting(options =>
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
 // Adds scoped services
-builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ICourseService, CourseService>();
 builder.Services.AddScoped<IOrganizationService, OrganizationService>();

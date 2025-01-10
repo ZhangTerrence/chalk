@@ -17,5 +17,5 @@ public class Message
 
     // Navigation Properties
     public Channel Channel { get; set; } = null!;
-    public ChannelUser User { get; set; } = null!;
+    public UserChannel User { get; set; } = null!;
 }

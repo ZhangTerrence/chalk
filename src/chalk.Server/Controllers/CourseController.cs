@@ -1,5 +1,6 @@
 using chalk.Server.DTOs.Requests;
 using chalk.Server.DTOs.Responses;
+using chalk.Server.Mappings;
 using chalk.Server.Services.Interfaces;
 using chalk.Server.Utilities;
 using FluentValidation;
@@ -9,14 +10,11 @@ using Microsoft.AspNetCore.Mvc;
 namespace chalk.Server.Controllers;
 
 [ApiController]
-[Route("/api/course")]
-[Authorize]
+[Route("/api/course"), Authorize]
 public class CourseController : ControllerBase
 {
-    // Services
     private readonly ICourseService _courseService;
 
-    // Validators
     private readonly IValidator<CreateCourseRequest> _createCourseValidator;
     private readonly IValidator<UpdateCourseRequest> _updateCourseValidator;
 
@@ -27,7 +25,6 @@ public class CourseController : ControllerBase
     )
     {
         _courseService = courseService;
-
         _createCourseValidator = createCourseValidator;
         _updateCourseValidator = updateCourseValidator;
     }
@@ -36,14 +33,14 @@ public class CourseController : ControllerBase
     public async Task<IActionResult> GetCourses()
     {
         var courses = await _courseService.GetCoursesAsync();
-        return Ok(new ApiResponse<IEnumerable<CourseResponse>>(null, courses));
+        return Ok(new ApiResponse<IEnumerable<CourseResponse>>(null, courses.Select(e => e.ToResponse())));
     }
 
-    [HttpGet("{id:long}")]
-    public async Task<IActionResult> GetCourse([FromRoute] long id)
+    [HttpGet("{courseId:long}")]
+    public async Task<IActionResult> GetCourse([FromRoute] long courseId)
     {
-        var course = await _courseService.GetCourseAsync(id);
-        return Ok(new ApiResponse<CourseResponse>(null, course));
+        var course = await _courseService.GetCourseAsync(courseId);
+        return Ok(new ApiResponse<CourseResponse>(null, course.ToResponse()));
     }
 
     [HttpPost]
@@ -55,12 +52,12 @@ public class CourseController : ControllerBase
             return BadRequest(new ApiResponse<object>(result.GetErrorMessages()));
         }
 
-        var createdCourse = await _courseService.CreateCourseAsync(User.GetUserId(), request);
-        return Ok(new ApiResponse<CourseResponse>(null, createdCourse));
+        var course = await _courseService.CreateCourseAsync(User.GetUserId(), request);
+        return Created(nameof(CreateCourse), new ApiResponse<CourseResponse>(null, course.ToResponse()));
     }
 
-    [HttpPatch("{id:long}")]
-    public async Task<IActionResult> UpdateCourse([FromRoute] long id, [FromBody] UpdateCourseRequest request)
+    [HttpPatch("{courseId:long}")]
+    public async Task<IActionResult> UpdateCourse([FromRoute] long courseId, [FromBody] UpdateCourseRequest request)
     {
         var result = await _updateCourseValidator.ValidateAsync(request);
         if (!result.IsValid)
@@ -68,14 +65,14 @@ public class CourseController : ControllerBase
             return BadRequest(new ApiResponse<object>(result.GetErrorMessages()));
         }
 
-        var updatedCourse = await _courseService.UpdateCourseAsync(id, request);
-        return Ok(new ApiResponse<CourseResponse>(null, updatedCourse));
+        var course = await _courseService.UpdateCourseAsync(courseId, request);
+        return Ok(new ApiResponse<CourseResponse>(null, course.ToResponse()));
     }
 
-    [HttpDelete("{id:long}")]
-    public async Task<IActionResult> DeleteCourse([FromRoute] long id)
+    [HttpDelete("{courseId:long}")]
+    public async Task<IActionResult> DeleteCourse([FromRoute] long courseId)
     {
-        await _courseService.DeleteCourseAsync(id);
+        await _courseService.DeleteCourseAsync(courseId);
         return NoContent();
     }
 }

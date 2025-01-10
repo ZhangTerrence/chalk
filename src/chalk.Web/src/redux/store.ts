@@ -3,7 +3,7 @@ import type { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
 
-import { authApi } from "@/redux/services/auth.ts";
+import baseApi from "@/redux/services/base.ts";
 
 import type { ApiResponse } from "@/lib/types/_index.ts";
 import type { AuthenticationResponse } from "@/lib/types/authentication.ts";
@@ -33,12 +33,12 @@ const queryErrorLogger: Middleware = (_: MiddlewareAPI) => (next) => (action) =>
 
 export const store = configureStore({
   reducer: {
-    [authApi.reducerPath]: authApi.reducer,
+    [baseApi.reducerPath]: baseApi.reducer,
     auth: authReducer,
     user: userReducer,
     theme: themeReducer,
   },
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(queryErrorLogger).concat(authApi.middleware),
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(queryErrorLogger).concat(baseApi.middleware),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

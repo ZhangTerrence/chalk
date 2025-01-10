@@ -1,5 +1,6 @@
 using chalk.Server.DTOs.Requests;
 using chalk.Server.DTOs.Responses;
+using chalk.Server.Mappings;
 using chalk.Server.Services.Interfaces;
 using chalk.Server.Utilities;
 using FluentValidation;
@@ -9,18 +10,14 @@ using Microsoft.AspNetCore.Mvc;
 namespace chalk.Server.Controllers;
 
 [ApiController]
-[Route("/api/organization")]
-[Authorize]
+[Route("/api/organization"), Authorize]
 public class OrganizationController : ControllerBase
 {
-    // Services
     private readonly IOrganizationService _organizationService;
 
-    // Validators
     private readonly IValidator<CreateOrganizationRequest> _createOrganizationValidator;
     private readonly IValidator<UpdateOrganizationRequest> _updateOrganizationValidator;
     private readonly IValidator<CreateRoleRequest> _createRoleValidator;
-
 
     public OrganizationController(
         IOrganizationService organizationService,
@@ -30,7 +27,6 @@ public class OrganizationController : ControllerBase
     )
     {
         _organizationService = organizationService;
-
         _createOrganizationValidator = createOrganizationValidator;
         _updateOrganizationValidator = updateOrganizationValidator;
         _createRoleValidator = createRoleValidator;
@@ -40,14 +36,14 @@ public class OrganizationController : ControllerBase
     public async Task<IActionResult> GetOrganizations()
     {
         var organizations = await _organizationService.GetOrganizationsAsync();
-        return Ok(new ApiResponse<IEnumerable<OrganizationResponse>>(null, organizations));
+        return Ok(new ApiResponse<IEnumerable<OrganizationResponse>>(null, organizations.Select(e => e.ToResponse())));
     }
 
-    [HttpGet("{id:long}")]
-    public async Task<IActionResult> GetOrganization([FromRoute] long id)
+    [HttpGet("{organizationId:long}")]
+    public async Task<IActionResult> GetOrganization([FromRoute] long organizationId)
     {
-        var organization = await _organizationService.GetOrganizationAsync(id);
-        return Ok(new ApiResponse<OrganizationResponse>(null, organization));
+        var organization = await _organizationService.GetOrganizationAsync(organizationId);
+        return Ok(new ApiResponse<OrganizationResponse>(null, organization.ToResponse()));
     }
 
     [HttpPost]
@@ -59,12 +55,12 @@ public class OrganizationController : ControllerBase
             return BadRequest(new ApiResponse<object>(result.GetErrorMessages()));
         }
 
-        var createdOrganization = await _organizationService.CreateOrganizationAsync(request);
-        return Ok(new ApiResponse<OrganizationResponse>(null, createdOrganization));
+        var organization = await _organizationService.CreateOrganizationAsync(User.GetUserId(), request);
+        return Created(nameof(CreateOrganization), new ApiResponse<OrganizationResponse>(null, organization.ToResponse()));
     }
 
-    [HttpPatch("{id:long}")]
-    public async Task<IActionResult> UpdateOrganization([FromRoute] long id, [FromBody] UpdateOrganizationRequest request)
+    [HttpPatch("{organizationId:long}")]
+    public async Task<IActionResult> UpdateOrganization([FromRoute] long organizationId, [FromBody] UpdateOrganizationRequest request)
     {
         var result = await _updateOrganizationValidator.ValidateAsync(request);
         if (!result.IsValid)
@@ -72,19 +68,19 @@ public class OrganizationController : ControllerBase
             return BadRequest(new ApiResponse<object>(result.GetErrorMessages()));
         }
 
-        var updatedOrganization = await _organizationService.UpdateOrganizationAsync(id, request);
-        return Ok(new ApiResponse<OrganizationResponse>(null, updatedOrganization));
+        var organization = await _organizationService.UpdateOrganizationAsync(organizationId, request);
+        return Ok(new ApiResponse<OrganizationResponse>(null, organization.ToResponse()));
     }
 
-    [HttpDelete("{id:long}")]
-    public async Task<IActionResult> DeleteOrganization([FromRoute] long id)
+    [HttpDelete("{organizationId:long}")]
+    public async Task<IActionResult> DeleteOrganization([FromRoute] long organizationId)
     {
-        await _organizationService.DeleteOrganizationAsync(id);
+        await _organizationService.DeleteOrganizationAsync(organizationId);
         return NoContent();
     }
 
     [HttpPost("role")]
-    public async Task<IActionResult> CreateRole([FromBody] CreateRoleRequest request)
+    public async Task<IActionResult> CreateOrganizationRole([FromBody] CreateRoleRequest request)
     {
         var result = await _createRoleValidator.ValidateAsync(request);
         if (!result.IsValid)
@@ -92,6 +88,7 @@ public class OrganizationController : ControllerBase
             return BadRequest(new ApiResponse<object>(result.GetErrorMessages()));
         }
 
-        return Ok();
+        var organizationRole = await _organizationService.CreateOrganizationRoleAsync(request);
+        return Created(nameof(CreateOrganizationRole), new ApiResponse<RoleResponse>(null, organizationRole.ToResponse()));
     }
 }

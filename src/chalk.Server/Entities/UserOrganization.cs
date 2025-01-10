@@ -3,7 +3,7 @@ using chalk.Server.Shared;
 namespace chalk.Server.Entities;
 
 /// <summary>
-/// Represents the relationship between a user and an organization, i.e. whether a user is a member of an organization.
+/// Represents the relationship between a user and an organization.
 /// </summary>
 public class UserOrganization
 {

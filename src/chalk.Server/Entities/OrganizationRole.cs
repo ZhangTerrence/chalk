@@ -20,6 +20,6 @@ public class OrganizationRole
     // Navigation Properties
     public Organization Organization { get; set; } = null!;
     public ICollection<UserOrganization> Users { get; set; } = [];
-    public ICollection<ChannelUser> Channels { get; set; } = [];
+    public ICollection<UserChannel> Channels { get; set; } = [];
     public ICollection<ChannelRolePermission> ChannelPermissions { get; set; } = [];
 }

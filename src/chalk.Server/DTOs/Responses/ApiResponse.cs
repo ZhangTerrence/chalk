@@ -13,7 +13,8 @@ public record ApiResponse<T>(
     T? Data
 )
 {
-    public ApiResponse(IEnumerable<string> errors) : this(errors.Select(e => new ErrorDTO(e)), default)
+    public ApiResponse(IEnumerable<string> errors)
+        : this(errors.Select(e => new ErrorDTO(e)), default)
     {
     }
 }

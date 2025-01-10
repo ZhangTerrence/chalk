@@ -3,13 +3,14 @@ using chalk.Server.Shared;
 namespace chalk.Server.Entities;
 
 /// <summary>
-/// Represents the relationship between a user and a course, i.e. whether a user is enrolled in a course.
+/// Represents the relationship between a user and a course.
 /// </summary>
 public class UserCourse
 {
     // Properties
     public UserStatus Status { get; set; }
-    public required int Grade { get; set; }
+    public required bool Student { get; set; }
+    public int? Grade { get; set; }
     public DateTime? JoinedDate { get; set; }
 
     // Foreign Keys

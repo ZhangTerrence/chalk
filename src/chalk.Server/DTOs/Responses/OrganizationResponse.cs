@@ -31,7 +31,7 @@ public record OrganizationResponse(
     IEnumerable<UserDTO> Users,
     [property: JsonRequired]
     [property: JsonPropertyName("roles")]
-    IEnumerable<OrganizationRoleDTO> Roles,
+    IEnumerable<RoleDTO> Roles,
     [property: JsonRequired]
     [property: JsonPropertyName("channels")]
     IEnumerable<ChannelDTO> Channels,

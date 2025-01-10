@@ -7,7 +7,7 @@ import { SidebarFooter, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@
 
 import type { Dialog } from "@/components/DashboardSidebar/DashboardSidebar.tsx";
 
-import { useLogoutMutation } from "@/redux/services/auth.ts";
+import { useLogoutMutation } from "@/redux/services/base.ts";
 import { selectUser } from "@/redux/slices/user.ts";
 import { useTypedSelector } from "@/redux/store.ts";
 

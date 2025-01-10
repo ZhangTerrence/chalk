@@ -13,7 +13,8 @@ public class UserCourseConfiguration : IEntityTypeConfiguration<UserCourse>
         builder.HasKey(e => new { e.UserId, e.CourseId });
 
         builder.Property(e => e.Status).IsRequired();
-        builder.Property(e => e.Grade).IsRequired();
+        builder.Property(e => e.Student).IsRequired();
+        builder.Property(e => e.Grade);
         builder.Property(e => e.JoinedDate);
 
         builder

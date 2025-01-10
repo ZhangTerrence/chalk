@@ -18,11 +18,11 @@ public static class CourseMappings
             Public = request.Public!.Value,
             CreatedDate = DateTime.UtcNow,
             UpdatedDate = DateTime.UtcNow,
-            Organization = organization,
+            Organization = organization
         };
     }
 
-    public static CourseResponse ToDTO(this Course course)
+    public static CourseResponse ToResponse(this Course course)
     {
         return new CourseResponse(
             course.Id,
@@ -33,14 +33,15 @@ public static class CourseMappings
             course.Public,
             course.CreatedDate.ToString(CultureInfo.CurrentCulture),
             course.UpdatedDate.ToString(CultureInfo.CurrentCulture),
-            course.Organization is not null ? new OrganizationDTO(course.Organization) : null,
-            course.Users
-                .Select(e => new UserDTO(e.User, e.JoinedDate?.ToString(CultureInfo.CurrentCulture)))
-                .ToList(),
-            course.Roles
-                .Select(e => new CourseRoleDTO(e))
-                .ToList()
+            course.Organization?.ToDTO(),
+            course.Users.Select(e => e.User.ToDTO(e.JoinedDate?.ToString(CultureInfo.CurrentCulture))),
+            course.Roles.Select(e => e.ToDTO())
         );
+    }
+
+    public static CourseDTO ToDTO(this Course course)
+    {
+        return new CourseDTO(course.Id, course.Name, course.Name);
     }
 
     public static CourseRole ToEntity(this CreateRoleRequest request, Course course)
@@ -53,7 +54,7 @@ public static class CourseMappings
             Rank = request.Rank!.Value,
             CreatedDate = DateTime.UtcNow,
             UpdatedDate = DateTime.UtcNow,
-            Course = course,
+            Course = course
         };
     }
 
@@ -68,5 +69,10 @@ public static class CourseMappings
             courseRole.CreatedDate.ToString(CultureInfo.CurrentCulture),
             courseRole.UpdatedDate.ToString(CultureInfo.CurrentCulture)
         );
+    }
+
+    public static RoleDTO ToDTO(this CourseRole courseRole)
+    {
+        return new RoleDTO(courseRole.Id, courseRole.Name, courseRole.Permissions, courseRole.Rank);
     }
 }

@@ -1,17 +1,17 @@
 using chalk.Server.DTOs.Requests;
-using chalk.Server.DTOs.Responses;
+using chalk.Server.Entities;
 
 namespace chalk.Server.Services.Interfaces;
 
 public interface ICourseService
 {
-    public Task<IEnumerable<CourseResponse>> GetCoursesAsync();
+    public Task<IEnumerable<Course>> GetCoursesAsync();
 
-    public Task<CourseResponse> GetCourseAsync(long courseId);
+    public Task<Course> GetCourseAsync(long courseId);
 
-    public Task<CourseResponse> CreateCourseAsync(long userId, CreateCourseRequest request);
+    public Task<Course> CreateCourseAsync(long userId, CreateCourseRequest request);
 
-    public Task<CourseResponse> UpdateCourseAsync(long courseId, UpdateCourseRequest request);
+    public Task<Course> UpdateCourseAsync(long courseId, UpdateCourseRequest request);
 
     public Task DeleteCourseAsync(long courseId);
 }

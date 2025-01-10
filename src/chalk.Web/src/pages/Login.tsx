@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button.tsx";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form.tsx";
 import { Input } from "@/components/ui/input.tsx";
 
-import { useLoginMutation } from "@/redux/services/auth.ts";
+import { useLoginMutation } from "@/redux/services/base.ts";
 import { selectUser } from "@/redux/slices/user.ts";
 import { useTypedSelector } from "@/redux/store.ts";
 

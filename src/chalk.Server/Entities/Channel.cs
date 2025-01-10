@@ -19,7 +19,7 @@ public class Channel
     // Navigation Properties
     public Course? Course { get; set; }
     public Organization? Organization { get; set; }
-    public ICollection<ChannelUser> Users { get; set; } = [];
+    public ICollection<UserChannel> Users { get; set; } = [];
     public ICollection<ChannelRolePermission> RolePermissions { get; set; } = [];
     public ICollection<Message> Messages { get; set; } = [];
 }

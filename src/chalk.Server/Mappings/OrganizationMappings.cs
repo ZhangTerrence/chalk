@@ -3,7 +3,6 @@ using chalk.Server.DTOs;
 using chalk.Server.DTOs.Requests;
 using chalk.Server.DTOs.Responses;
 using chalk.Server.Entities;
-using chalk.Server.Shared;
 
 namespace chalk.Server.Mappings;
 
@@ -21,7 +20,7 @@ public static class OrganizationMappings
         };
     }
 
-    public static OrganizationResponse ToDTO(this Organization organization)
+    public static OrganizationResponse ToResponse(this Organization organization)
     {
         return new OrganizationResponse(
             organization.Id,
@@ -30,36 +29,17 @@ public static class OrganizationMappings
             organization.ProfilePicture,
             organization.CreatedDate.ToString(CultureInfo.CurrentCulture),
             organization.UpdatedDate.ToString(CultureInfo.CurrentCulture),
-            new UserDTO(organization.Owner, organization.CreatedDate.ToString(CultureInfo.CurrentCulture)),
-            organization.Users
-                .Select(e => new UserDTO(e.User, e.JoinedDate?.ToString(CultureInfo.CurrentCulture)))
-                .ToList(),
-            organization.Roles
-                .Select(e => new OrganizationRoleDTO(e))
-                .ToList(),
-            organization.Channels
-                .Select(e => new ChannelDTO(e))
-                .ToList(),
-            organization.Courses
-                .Select(e => new CourseDTO(e))
-                .ToList()
+            organization.Owner.ToDTO(organization.CreatedDate.ToString(CultureInfo.CurrentCulture)),
+            organization.Users.Select(e => e.User.ToDTO(e.JoinedDate?.ToString(CultureInfo.CurrentCulture))),
+            organization.Roles.Select(e => e.ToDTO()),
+            organization.Channels.Select(e => e.ToDTO()),
+            organization.Courses.Select(e => e.ToDTO())
         );
     }
 
-    public static UserOrganization ToEntity(
-        UserStatus userStatus,
-        Organization organization,
-        User user,
-        OrganizationRole organizationRole
-    )
+    public static OrganizationDTO ToDTO(this Organization organization)
     {
-        return new UserOrganization
-        {
-            Status = userStatus,
-            Organization = organization,
-            User = user,
-            Role = organizationRole,
-        };
+        return new OrganizationDTO(organization.Id, organization.Name);
     }
 
     public static OrganizationRole ToEntity(this CreateRoleRequest request)
@@ -71,11 +51,11 @@ public static class OrganizationMappings
             Permissions = request.Permissions!.Value,
             Rank = request.Rank!.Value,
             CreatedDate = DateTime.UtcNow,
-            UpdatedDate = DateTime.UtcNow,
+            UpdatedDate = DateTime.UtcNow
         };
     }
 
-    public static RoleResponse ToDTO(this OrganizationRole organizationRole)
+    public static RoleResponse ToResponse(this OrganizationRole organizationRole)
     {
         return new RoleResponse(
             organizationRole.Id,
@@ -86,5 +66,10 @@ public static class OrganizationMappings
             organizationRole.CreatedDate.ToString(CultureInfo.CurrentCulture),
             organizationRole.UpdatedDate.ToString(CultureInfo.CurrentCulture)
         );
+    }
+
+    public static RoleDTO ToDTO(this OrganizationRole organizationRole)
+    {
+        return new RoleDTO(organizationRole.Id, organizationRole.Name, organizationRole.Permissions, organizationRole.Rank);
     }
 }

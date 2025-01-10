@@ -20,6 +20,6 @@ public class CourseRole
     // Navigation Properties
     public Course Course { get; set; } = null!;
     public ICollection<UserCourse> Users { get; set; } = [];
-    public ICollection<ChannelUser> Channels { get; set; } = [];
+    public ICollection<UserChannel> Channels { get; set; } = [];
     public ICollection<ChannelRolePermission> ChannelPermissions { get; set; } = [];
 }

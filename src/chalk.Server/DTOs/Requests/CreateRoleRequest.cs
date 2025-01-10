@@ -17,9 +17,7 @@ public record CreateRoleRequest(
         return new CreateRoleRequest(Shared.Origin.Course, name, description, permissions, rank, courseId, null);
     }
 
-    public static CreateRoleRequest CreateOrganizationRole(
-        string name, string? description, long permissions, int rank, long organizationId
-    )
+    public static CreateRoleRequest CreateOrganizationRole(string name, string? description, long permissions, int rank, long organizationId)
     {
         return new CreateRoleRequest(Shared.Origin.Organization, name, description, permissions, rank, null, organizationId);
     }

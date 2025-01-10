@@ -1,7 +1,6 @@
 using chalk.Server.Configurations;
 using chalk.Server.Data;
 using chalk.Server.DTOs.Requests;
-using chalk.Server.DTOs.Responses;
 using chalk.Server.Entities;
 using chalk.Server.Mappings;
 using chalk.Server.Services.Interfaces;
@@ -20,18 +19,17 @@ public class OrganizationService : IOrganizationService
         _context = context;
     }
 
-    public async Task<IEnumerable<OrganizationResponse>> GetOrganizationsAsync()
+    public async Task<IEnumerable<Organization>> GetOrganizationsAsync()
     {
         return await _context.Organizations
             .Include(e => e.Owner).AsSplitQuery()
             .Include(e => e.Users).ThenInclude(e => e.User).AsSplitQuery()
             .Include(e => e.Roles).AsSplitQuery()
             .Include(e => e.Courses).AsSplitQuery()
-            .Select(e => e.ToDTO())
             .ToListAsync();
     }
 
-    public async Task<OrganizationResponse> GetOrganizationAsync(long organizationId)
+    public async Task<Organization> GetOrganizationAsync(long organizationId)
     {
         var organization = await _context.Organizations
             .Include(e => e.Owner).AsSplitQuery()
@@ -44,12 +42,12 @@ public class OrganizationService : IOrganizationService
             throw new ServiceException("Organization not found.", StatusCodes.Status404NotFound);
         }
 
-        return organization.ToDTO();
+        return organization;
     }
 
-    public async Task<OrganizationResponse> CreateOrganizationAsync(CreateOrganizationRequest request)
+    public async Task<Organization> CreateOrganizationAsync(long userId, CreateOrganizationRequest request)
     {
-        var user = await _context.Users.FindAsync(request.OwnerId);
+        var user = await _context.Users.FindAsync(userId);
         if (user is null)
         {
             throw new ServiceException("User not found.", StatusCodes.Status404NotFound);
@@ -61,7 +59,7 @@ public class OrganizationService : IOrganizationService
         }
 
         var organization = request.ToEntity(user);
-        var role = new OrganizationRole
+        var organizationRole = new OrganizationRole
         {
             Name = "Owner",
             Permissions = PermissionUtilities.All,
@@ -75,18 +73,18 @@ public class OrganizationService : IOrganizationService
             JoinedDate = DateTime.UtcNow,
             User = user,
             Organization = organization,
-            Role = role
+            Role = organizationRole
         };
 
         var createdOrganization = await _context.Organizations.AddAsync(organization);
         organization.Users.Add(organizationUser);
-        organization.Roles.Add(role);
+        organization.Roles.Add(organizationRole);
 
         await _context.SaveChangesAsync();
         return await GetOrganizationAsync(createdOrganization.Entity.Id);
     }
 
-    public async Task<OrganizationResponse> UpdateOrganizationAsync(long organizationId, UpdateOrganizationRequest request)
+    public async Task<Organization> UpdateOrganizationAsync(long organizationId, UpdateOrganizationRequest request)
     {
         var organization = await _context.Organizations.FindAsync(organizationId);
         if (organization is null)
@@ -133,7 +131,7 @@ public class OrganizationService : IOrganizationService
         await _context.SaveChangesAsync();
     }
 
-    public async Task<RoleResponse> CreateOrganizationRoleAsync(CreateRoleRequest request)
+    public async Task<OrganizationRole> CreateOrganizationRoleAsync(CreateRoleRequest request)
     {
         throw new NotImplementedException();
     }

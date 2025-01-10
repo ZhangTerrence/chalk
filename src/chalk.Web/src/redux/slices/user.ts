@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { authApi } from "@/redux/services/auth.ts";
+import baseApi from "@/redux/services/base.ts";
 import { courseApi } from "@/redux/services/course.ts";
 import type { RootState } from "@/redux/store.ts";
 
@@ -18,10 +18,10 @@ export const userSlice = createSlice({
   initialState: null as UserState,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addMatcher(authApi.endpoints.register.matchFulfilled, (_, { payload }) => payload.data.user);
-    builder.addMatcher(authApi.endpoints.login.matchFulfilled, (_, { payload }) => payload.data.user);
-    builder.addMatcher(authApi.endpoints.logout.matchFulfilled, () => null);
-    builder.addMatcher(authApi.endpoints.refresh.matchFulfilled, (_, { payload }) => payload.data.user);
+    builder.addMatcher(baseApi.endpoints.register.matchFulfilled, (_, { payload }) => payload.data.user);
+    builder.addMatcher(baseApi.endpoints.login.matchFulfilled, (_, { payload }) => payload.data.user);
+    builder.addMatcher(baseApi.endpoints.logout.matchFulfilled, () => null);
+    builder.addMatcher(baseApi.endpoints.refresh.matchFulfilled, (_, { payload }) => payload.data.user);
     builder.addMatcher(courseApi.endpoints.createCourse.matchFulfilled, (state, { payload }) => {
       if (state) {
         state.courses.push({
