@@ -1,22 +1,18 @@
 import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
-import { LogOutIcon, SettingsIcon, UserIcon } from "lucide-react";
+import { LogOutIcon, SettingsIcon } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar.tsx";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu.tsx";
 import { SidebarFooter, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/components/ui/sidebar.tsx";
 
-import type { Dialog } from "@/components/DashboardSidebar/DashboardSidebar.tsx";
-
 import { useLogoutMutation } from "@/redux/services/base.ts";
 import { selectUser } from "@/redux/slices/user.ts";
 import { useTypedSelector } from "@/redux/store.ts";
 
-type DashboardSidebarFooterProps = {
-  changeDialog: (dialog: Dialog) => void;
-};
-
-export const DashboardSidebarFooter = (props: DashboardSidebarFooterProps) => {
+export const DashboardSidebarFooter = () => {
   const user = useTypedSelector(selectUser)!;
+  const navigate = useNavigate();
   const { isMobile } = useSidebar();
   const [logout] = useLogoutMutation();
 
@@ -47,11 +43,7 @@ export const DashboardSidebarFooter = (props: DashboardSidebarFooterProps) => {
             align="end"
             sideOffset={isMobile ? 5 : 20}
           >
-            <DropdownMenuItem className="py-3" onClick={() => props.changeDialog("profile")}>
-              <UserIcon />
-              Profile
-            </DropdownMenuItem>
-            <DropdownMenuItem className="py-3" onClick={() => props.changeDialog("settings")}>
+            <DropdownMenuItem className="py-3" onClick={() => navigate("/settings")}>
               <SettingsIcon />
               Settings
             </DropdownMenuItem>

@@ -30,6 +30,7 @@ public static class UserMappings
             user.FirstName,
             user.LastName,
             user.DisplayName,
+            user.Description,
             user.ProfilePicture,
             user.CreatedDate.ToString(CultureInfo.CurrentCulture),
             user.UpdatedDate.ToString(CultureInfo.CurrentCulture),

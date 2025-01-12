@@ -76,8 +76,40 @@ public class UserService : IUserService
         return user;
     }
 
-    public async Task AddRefreshTokensAsync(long userId, string refreshToken)
+    public async Task<User> UpdateUserAsync(long userId, UpdateUserRequest request)
     {
-        throw new NotImplementedException();
+        var user = await _context.Users.FindAsync(userId);
+        if (user is null)
+        {
+            throw new ServiceException("User not found.", StatusCodes.Status404NotFound);
+        }
+
+        if (request.FirstName is not null)
+        {
+            user.FirstName = request.FirstName;
+        }
+
+        if (request.LastName is not null)
+        {
+            user.LastName = request.LastName;
+        }
+
+        if (request.DisplayName is not null)
+        {
+            user.DisplayName = request.DisplayName;
+        }
+
+        if (request.Description is not null)
+        {
+            user.Description = request.Description;
+        }
+
+        if (request.ProfilePicture is not null)
+        {
+            user.ProfilePicture = request.ProfilePicture;
+        }
+
+        await _context.SaveChangesAsync();
+        return await GetUserAsync(userId);
     }
 }

@@ -5,7 +5,5 @@ public record UpdateUserRequest(
     string? LastName,
     string? DisplayName,
     string? Description,
-    string? ProfilePicture,
-    string? Email,
-    string? Password
+    string? ProfilePicture
 );

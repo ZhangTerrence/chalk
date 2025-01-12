@@ -20,12 +20,5 @@ public class UpdateUserValidator : AbstractValidator<UpdateUserRequest>
             .MaximumLength(255)
             .WithMessage("The user's description must have at most 255 characters.");
         RuleFor(e => e.ProfilePicture);
-        RuleFor(e => e.Email)
-            .EmailAddress()
-            .WithMessage("The user's email is invalid.");
-        RuleFor(e => e.Password)
-            .Matches("^(?:(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[-._@+]).*).{8,}$")
-            .WithMessage(
-                "The user's password must have at least 8 characters with least one number, one lowercase letter, one upper case letter, one special character.");
     }
 }

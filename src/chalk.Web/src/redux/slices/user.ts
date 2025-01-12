@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 import baseApi from "@/redux/services/base.ts";
 import { courseApi } from "@/redux/services/course.ts";
+import { userApi } from "@/redux/services/user.ts";
 import type { RootState } from "@/redux/store.ts";
 
 import type { CourseDTO } from "@/lib/types/course.ts";
@@ -22,6 +23,7 @@ export const userSlice = createSlice({
     builder.addMatcher(baseApi.endpoints.login.matchFulfilled, (_, { payload }) => payload.data.user);
     builder.addMatcher(baseApi.endpoints.logout.matchFulfilled, () => null);
     builder.addMatcher(baseApi.endpoints.refresh.matchFulfilled, (_, { payload }) => payload.data.user);
+    builder.addMatcher(userApi.endpoints.updateUser.matchFulfilled, (_, { payload }) => payload.data);
     builder.addMatcher(courseApi.endpoints.createCourse.matchFulfilled, (state, { payload }) => {
       if (state) {
         state.courses.push({

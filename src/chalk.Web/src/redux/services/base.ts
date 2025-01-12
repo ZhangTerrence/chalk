@@ -1,22 +1,26 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 import type { ApiResponse } from "@/lib/types/_index.ts";
-import type { AuthenticationResponse, LoginRequest, RegisterRequest } from "@/lib/types/authentication.ts";
+import type { AuthResponse, LoginRequest, RegisterRequest } from "@/lib/types/auth.ts";
+
+const protocol = import.meta.env.DEV ? "http://" : "https://";
+const host = import.meta.env.VITE_API_HOST;
+const port = import.meta.env.VITE_API_PORT;
 
 const baseApi = createApi({
   baseQuery: fetchBaseQuery({
-    baseUrl: import.meta.env.VITE_SERVER_URL + "/api",
+    baseUrl: `${protocol}${host}:${port}/api`,
     credentials: "include",
   }),
   endpoints: (builder) => ({
-    register: builder.mutation<ApiResponse<AuthenticationResponse>, RegisterRequest>({
+    register: builder.mutation<ApiResponse<AuthResponse>, RegisterRequest>({
       query: (body) => ({
         url: "/register",
         method: "POST",
         body: body,
       }),
     }),
-    login: builder.mutation<ApiResponse<AuthenticationResponse>, LoginRequest>({
+    login: builder.mutation<ApiResponse<AuthResponse>, LoginRequest>({
       query: (body) => ({
         url: "/login",
         method: "POST",
@@ -29,7 +33,7 @@ const baseApi = createApi({
         method: "DELETE",
       }),
     }),
-    refresh: builder.mutation<ApiResponse<AuthenticationResponse>, null>({
+    refresh: builder.mutation<ApiResponse<AuthResponse>, null>({
       query: () => ({
         url: "/refresh",
         method: "PATCH",

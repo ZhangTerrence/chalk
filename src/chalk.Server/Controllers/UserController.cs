@@ -1,6 +1,9 @@
+using chalk.Server.DTOs.Requests;
 using chalk.Server.DTOs.Responses;
 using chalk.Server.Mappings;
 using chalk.Server.Services.Interfaces;
+using chalk.Server.Utilities;
+using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,9 +15,15 @@ public class UserController : ControllerBase
 {
     private readonly IUserService _userService;
 
-    public UserController(IUserService userService)
+    private readonly IValidator<UpdateUserRequest> _updateUserRequestValidator;
+
+    public UserController(
+        IUserService userService,
+        IValidator<UpdateUserRequest> updateUserRequestValidator
+    )
     {
         _userService = userService;
+        _updateUserRequestValidator = updateUserRequestValidator;
     }
 
     [HttpGet]
@@ -28,6 +37,32 @@ public class UserController : ControllerBase
     public async Task<IActionResult> GetUser([FromRoute] long userId)
     {
         var user = await _userService.GetUserAsync(userId);
+        return Ok(new ApiResponse<UserResponse>(null, user.ToResponse()));
+    }
+
+    [HttpPatch]
+    public async Task<IActionResult> UpdateUser([FromBody] UpdateUserRequest request)
+    {
+        var result = await _updateUserRequestValidator.ValidateAsync(request);
+        if (!result.IsValid)
+        {
+            return BadRequest(new ApiResponse<object>(result.GetErrorMessages()));
+        }
+
+        var user = await _userService.UpdateUserAsync(User.GetUserId(), request);
+        return Ok(new ApiResponse<UserResponse>(null, user.ToResponse()));
+    }
+
+    [HttpPatch("{userId:long}"), Authorize(Roles = "Admin")]
+    public async Task<IActionResult> UpdateUser([FromRoute] long userId, [FromBody] UpdateUserRequest request)
+    {
+        var result = await _updateUserRequestValidator.ValidateAsync(request);
+        if (!result.IsValid)
+        {
+            return BadRequest(new ApiResponse<object>(result.GetErrorMessages()));
+        }
+
+        var user = await _userService.UpdateUserAsync(userId, request);
         return Ok(new ApiResponse<UserResponse>(null, user.ToResponse()));
     }
 }

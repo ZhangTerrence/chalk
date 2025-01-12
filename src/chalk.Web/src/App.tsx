@@ -14,6 +14,7 @@ import Login from "@/pages/Login.tsx";
 import NotFound from "@/pages/NotFound.tsx";
 import Organizations from "@/pages/Organizations.tsx";
 import Register from "@/pages/Register.tsx";
+import Settings from "@/pages/Settings.tsx";
 
 import { store } from "@/redux/store.ts";
 
@@ -34,6 +35,7 @@ export default function App() {
               <Route path="/dashboard" element={<DashboardLayout />}>
                 <Route index element={<Dashboard />} />
               </Route>
+              <Route path="/settings" element={<Settings />} />
               <Route path="/courses" element={<Courses />} />
               <Route path="/organizations" element={<Organizations />} />
             </Route>

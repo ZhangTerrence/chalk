@@ -13,7 +13,7 @@ export type LoginRequest = {
   password: string;
 };
 
-export type AuthenticationResponse = {
+export type AuthResponse = {
   user: UserResponse;
   accessToken: string;
   refreshToken: string;

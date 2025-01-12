@@ -21,6 +21,9 @@ public record UserResponse(
     [property: JsonPropertyName("displayName")]
     string DisplayName,
     [property: JsonRequired]
+    [property: JsonPropertyName("description")]
+    string? Description,
+    [property: JsonRequired]
     [property: JsonPropertyName("profilePicture")]
     string? ProfilePicture,
     [property: JsonRequired]
