@@ -15,18 +15,18 @@ public class CourseController : ControllerBase
 {
     private readonly ICourseService _courseService;
 
-    private readonly IValidator<CreateCourseRequest> _createCourseValidator;
-    private readonly IValidator<UpdateCourseRequest> _updateCourseValidator;
+    private readonly IValidator<CreateCourseRequest> _createCourseRequestValidator;
+    private readonly IValidator<UpdateCourseRequest> _updateCourseRequestValidator;
 
     public CourseController(
         ICourseService courseService,
-        IValidator<CreateCourseRequest> createCourseValidator,
-        IValidator<UpdateCourseRequest> updateCourseValidator
+        IValidator<CreateCourseRequest> createCourseRequestValidator,
+        IValidator<UpdateCourseRequest> updateCourseRequestValidator
     )
     {
         _courseService = courseService;
-        _createCourseValidator = createCourseValidator;
-        _updateCourseValidator = updateCourseValidator;
+        _createCourseRequestValidator = createCourseRequestValidator;
+        _updateCourseRequestValidator = updateCourseRequestValidator;
     }
 
     [HttpGet]
@@ -46,10 +46,10 @@ public class CourseController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateCourse([FromBody] CreateCourseRequest request)
     {
-        var result = await _createCourseValidator.ValidateAsync(request);
-        if (!result.IsValid)
+        var validationResult = await _createCourseRequestValidator.ValidateAsync(request);
+        if (!validationResult.IsValid)
         {
-            return BadRequest(new ApiResponse<object>(result.GetErrorMessages()));
+            return BadRequest(new ApiResponse<object>(validationResult.GetErrorMessages()));
         }
 
         var course = await _courseService.CreateCourseAsync(User.GetUserId(), request);
@@ -59,10 +59,10 @@ public class CourseController : ControllerBase
     [HttpPatch("{courseId:long}")]
     public async Task<IActionResult> UpdateCourse([FromRoute] long courseId, [FromBody] UpdateCourseRequest request)
     {
-        var result = await _updateCourseValidator.ValidateAsync(request);
-        if (!result.IsValid)
+        var validationResult = await _updateCourseRequestValidator.ValidateAsync(request);
+        if (!validationResult.IsValid)
         {
-            return BadRequest(new ApiResponse<object>(result.GetErrorMessages()));
+            return BadRequest(new ApiResponse<object>(validationResult.GetErrorMessages()));
         }
 
         var course = await _courseService.UpdateCourseAsync(courseId, request);

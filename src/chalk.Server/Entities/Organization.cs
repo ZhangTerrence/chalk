@@ -19,7 +19,7 @@ public class Organization
     // Navigation Properties
     public User Owner { get; set; } = null!;
     public ICollection<UserOrganization> Users { get; set; } = [];
-    public ICollection<OrganizationRole> Roles { get; set; } = [];
+    public ICollection<Role> Roles { get; set; } = [];
     public ICollection<Channel> Channels { get; set; } = [];
     public ICollection<Course> Courses { get; set; } = [];
     public ICollection<Tag> Tags { get; set; } = [];

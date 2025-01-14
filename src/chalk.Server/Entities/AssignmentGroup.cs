@@ -13,6 +13,5 @@ public class AssignmentGroup
     public long CourseId { get; set; }
 
     // Navigation Properties
-    public Course Course { get; set; } = null!;
     public ICollection<Assignment> Assignments { get; set; } = [];
 }

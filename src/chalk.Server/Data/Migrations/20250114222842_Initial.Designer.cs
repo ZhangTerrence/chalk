@@ -12,8 +12,8 @@ using chalk.Server.Data;
 namespace chalk.Server.Data.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20250110172752_FixedExistingEntities")]
-    partial class FixedExistingEntities
+    [Migration("20250114222842_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -50,13 +50,13 @@ namespace chalk.Server.Data.Migrations
                         .HasColumnName("normalized_name");
 
                     b.HasKey("Id")
-                        .HasName("pk_roles");
+                        .HasName("pk_system_roles");
 
                     b.HasIndex("NormalizedName")
                         .IsUnique()
                         .HasDatabaseName("RoleNameIndex");
 
-                    b.ToTable("roles", (string)null);
+                    b.ToTable("system_roles", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<long>", b =>
@@ -81,12 +81,12 @@ namespace chalk.Server.Data.Migrations
                         .HasColumnName("role_id");
 
                     b.HasKey("Id")
-                        .HasName("pk_role_claims");
+                        .HasName("pk_system_role_claims");
 
                     b.HasIndex("RoleId")
-                        .HasDatabaseName("ix_role_claims_role_id");
+                        .HasDatabaseName("ix_system_role_claims_role_id");
 
-                    b.ToTable("role_claims", (string)null);
+                    b.ToTable("system_role_claims", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<long>", b =>
@@ -157,12 +157,12 @@ namespace chalk.Server.Data.Migrations
                         .HasColumnName("role_id");
 
                     b.HasKey("UserId", "RoleId")
-                        .HasName("pk_user_roles");
+                        .HasName("pk_user_system_roles");
 
                     b.HasIndex("RoleId")
-                        .HasDatabaseName("ix_user_roles_role_id");
+                        .HasDatabaseName("ix_user_system_roles_role_id");
 
-                    b.ToTable("user_roles", (string)null);
+                    b.ToTable("user_system_roles", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<long>", b =>
@@ -219,15 +219,15 @@ namespace chalk.Server.Data.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("due_date");
 
+                    b.Property<bool>("IsOpen")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_open");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(31)
                         .HasColumnType("character varying(31)")
                         .HasColumnName("name");
-
-                    b.Property<bool>("Open")
-                        .HasColumnType("boolean")
-                        .HasColumnName("open");
 
                     b.Property<DateTime>("UpdatedDate")
                         .HasColumnType("timestamp with time zone")
@@ -377,6 +377,13 @@ namespace chalk.Server.Data.Migrations
 
             modelBuilder.Entity("chalk.Server.Entities.ChannelRolePermission", b =>
                 {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
                     b.Property<long>("ChannelId")
                         .HasColumnType("bigint")
                         .HasColumnName("channel_id");
@@ -393,14 +400,11 @@ namespace chalk.Server.Data.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("permissions");
 
-                    b.HasKey("ChannelId", "CourseRoleId")
+                    b.HasKey("Id")
                         .HasName("pk_channel_role_permissions");
 
-                    b.HasIndex("CourseRoleId")
-                        .HasDatabaseName("ix_channel_role_permissions_course_role_id");
-
-                    b.HasIndex("OrganizationRoleId")
-                        .HasDatabaseName("ix_channel_role_permissions_organization_role_id");
+                    b.HasIndex("ChannelId")
+                        .HasDatabaseName("ix_channel_role_permissions_channel_id");
 
                     b.ToTable("channel_role_permissions", (string)null);
                 });
@@ -428,6 +432,14 @@ namespace chalk.Server.Data.Migrations
                         .HasColumnType("character varying(255)")
                         .HasColumnName("description");
 
+                    b.Property<string>("Image")
+                        .HasColumnType("text")
+                        .HasColumnName("image");
+
+                    b.Property<bool>("IsPublic")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_public");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(31)
@@ -437,14 +449,6 @@ namespace chalk.Server.Data.Migrations
                     b.Property<long?>("OrganizationId")
                         .HasColumnType("bigint")
                         .HasColumnName("organization_id");
-
-                    b.Property<string>("PreviewImage")
-                        .HasColumnType("text")
-                        .HasColumnName("preview_image");
-
-                    b.Property<bool>("Public")
-                        .HasColumnType("boolean")
-                        .HasColumnName("public");
 
                     b.Property<DateTime>("UpdatedDate")
                         .HasColumnType("timestamp with time zone")
@@ -487,9 +491,9 @@ namespace chalk.Server.Data.Migrations
                         .HasColumnType("character varying(31)")
                         .HasColumnName("name");
 
-                    b.Property<int>("Order")
+                    b.Property<int>("RelativeOrder")
                         .HasColumnType("integer")
-                        .HasColumnName("order");
+                        .HasColumnName("relative_order");
 
                     b.Property<DateTime>("UpdatedDate")
                         .HasColumnType("timestamp with time zone")
@@ -502,55 +506,6 @@ namespace chalk.Server.Data.Migrations
                         .HasDatabaseName("ix_course_modules_course_id");
 
                     b.ToTable("course_modules", (string)null);
-                });
-
-            modelBuilder.Entity("chalk.Server.Entities.CourseRole", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasColumnName("id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<long>("CourseId")
-                        .HasColumnType("bigint")
-                        .HasColumnName("course_id");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_date");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
-                        .HasColumnName("description");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(31)
-                        .HasColumnType("character varying(31)")
-                        .HasColumnName("name");
-
-                    b.Property<long>("Permissions")
-                        .HasColumnType("bigint")
-                        .HasColumnName("permissions");
-
-                    b.Property<int>("Rank")
-                        .HasColumnType("integer")
-                        .HasColumnName("rank");
-
-                    b.Property<DateTime>("UpdatedDate")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_date");
-
-                    b.HasKey("Id")
-                        .HasName("pk_course_roles");
-
-                    b.HasIndex("CourseId")
-                        .HasDatabaseName("ix_course_roles_course_id");
-
-                    b.ToTable("course_roles", (string)null);
                 });
 
             modelBuilder.Entity("chalk.Server.Entities.Message", b =>
@@ -641,7 +596,7 @@ namespace chalk.Server.Data.Migrations
                     b.ToTable("organizations", (string)null);
                 });
 
-            modelBuilder.Entity("chalk.Server.Entities.OrganizationRole", b =>
+            modelBuilder.Entity("chalk.Server.Entities.Role", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -649,6 +604,10 @@ namespace chalk.Server.Data.Migrations
                         .HasColumnName("id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<long?>("CourseId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("course_id");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("timestamp with time zone")
@@ -665,7 +624,7 @@ namespace chalk.Server.Data.Migrations
                         .HasColumnType("character varying(31)")
                         .HasColumnName("name");
 
-                    b.Property<long>("OrganizationId")
+                    b.Property<long?>("OrganizationId")
                         .HasColumnType("bigint")
                         .HasColumnName("organization_id");
 
@@ -673,21 +632,24 @@ namespace chalk.Server.Data.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("permissions");
 
-                    b.Property<int>("Rank")
+                    b.Property<int>("RelativeRank")
                         .HasColumnType("integer")
-                        .HasColumnName("rank");
+                        .HasColumnName("relative_rank");
 
                     b.Property<DateTime>("UpdatedDate")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_date");
 
                     b.HasKey("Id")
-                        .HasName("pk_organization_roles");
+                        .HasName("pk_roles");
+
+                    b.HasIndex("CourseId")
+                        .HasDatabaseName("ix_roles_course_id");
 
                     b.HasIndex("OrganizationId")
-                        .HasDatabaseName("ix_organization_roles_organization_id");
+                        .HasDatabaseName("ix_roles_organization_id");
 
-                    b.ToTable("organization_roles", (string)null);
+                    b.ToTable("roles", (string)null);
                 });
 
             modelBuilder.Entity("chalk.Server.Entities.Submission", b =>
@@ -729,9 +691,6 @@ namespace chalk.Server.Data.Migrations
 
                     b.HasIndex("AssignmentId")
                         .HasDatabaseName("ix_submissions_assignment_id");
-
-                    b.HasIndex("UserId")
-                        .HasDatabaseName("ix_submissions_user_id");
 
                     b.ToTable("submissions", (string)null);
                 });
@@ -907,30 +866,11 @@ namespace chalk.Server.Data.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("channel_id");
 
-                    b.Property<long?>("CourseRoleId")
-                        .IsRequired()
-                        .HasColumnType("bigint")
-                        .HasColumnName("course_role_id");
-
-                    b.Property<DateTime>("JoinedDate")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("joined_date");
-
-                    b.Property<long?>("OrganizationRoleId")
-                        .HasColumnType("bigint")
-                        .HasColumnName("organization_role_id");
-
                     b.HasKey("UserId", "ChannelId")
                         .HasName("pk_user_channels");
 
-                    b.HasIndex("CourseRoleId")
-                        .HasDatabaseName("ix_user_channels_course_role_id");
-
-                    b.HasIndex("OrganizationRoleId")
-                        .HasDatabaseName("ix_user_channels_organization_role_id");
-
-                    b.HasIndex("ChannelId", "CourseRoleId")
-                        .HasDatabaseName("ix_user_channels_channel_id_course_role_id");
+                    b.HasIndex("ChannelId")
+                        .HasDatabaseName("ix_user_channels_channel_id");
 
                     b.ToTable("user_channels", (string)null);
                 });
@@ -945,10 +885,6 @@ namespace chalk.Server.Data.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("course_id");
 
-                    b.Property<long>("CourseRoleId")
-                        .HasColumnType("bigint")
-                        .HasColumnName("course_role_id");
-
                     b.Property<int?>("Grade")
                         .HasColumnType("integer")
                         .HasColumnName("grade");
@@ -961,18 +897,11 @@ namespace chalk.Server.Data.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("status");
 
-                    b.Property<bool>("Student")
-                        .HasColumnType("boolean")
-                        .HasColumnName("student");
-
                     b.HasKey("UserId", "CourseId")
                         .HasName("pk_user_courses");
 
                     b.HasIndex("CourseId")
                         .HasDatabaseName("ix_user_courses_course_id");
-
-                    b.HasIndex("CourseRoleId")
-                        .HasDatabaseName("ix_user_courses_course_role_id");
 
                     b.ToTable("user_courses", (string)null);
                 });
@@ -991,10 +920,6 @@ namespace chalk.Server.Data.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("joined_date");
 
-                    b.Property<long>("OrganizationRoleId")
-                        .HasColumnType("bigint")
-                        .HasColumnName("organization_role_id");
-
                     b.Property<int>("Status")
                         .HasColumnType("integer")
                         .HasColumnName("status");
@@ -1005,10 +930,40 @@ namespace chalk.Server.Data.Migrations
                     b.HasIndex("OrganizationId")
                         .HasDatabaseName("ix_user_organizations_organization_id");
 
-                    b.HasIndex("OrganizationRoleId")
-                        .HasDatabaseName("ix_user_organizations_organization_role_id");
-
                     b.ToTable("user_organizations", (string)null);
+                });
+
+            modelBuilder.Entity("chalk.Server.Entities.UserRole", b =>
+                {
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("user_id");
+
+                    b.Property<long>("RoleId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("role_id");
+
+                    b.Property<long?>("CourseId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("course_id");
+
+                    b.Property<long?>("OrganizationId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("organization_id");
+
+                    b.HasKey("UserId", "RoleId")
+                        .HasName("pk_user_roles");
+
+                    b.HasIndex("RoleId")
+                        .HasDatabaseName("ix_user_roles_role_id");
+
+                    b.HasIndex("UserId", "CourseId")
+                        .HasDatabaseName("ix_user_roles_user_id_course_id");
+
+                    b.HasIndex("UserId", "OrganizationId")
+                        .HasDatabaseName("ix_user_roles_user_id_organization_id");
+
+                    b.ToTable("user_roles", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<long>", b =>
@@ -1018,7 +973,7 @@ namespace chalk.Server.Data.Migrations
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_role_claims_roles_role_id");
+                        .HasConstraintName("fk_system_role_claims_system_roles_role_id");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<long>", b =>
@@ -1048,14 +1003,14 @@ namespace chalk.Server.Data.Migrations
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_user_roles_roles_role_id");
+                        .HasConstraintName("fk_user_system_roles_system_roles_role_id");
 
                     b.HasOne("chalk.Server.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_user_roles_users_user_id");
+                        .HasConstraintName("fk_user_system_roles_users_user_id");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<long>", b =>
@@ -1070,95 +1025,68 @@ namespace chalk.Server.Data.Migrations
 
             modelBuilder.Entity("chalk.Server.Entities.Assignment", b =>
                 {
-                    b.HasOne("chalk.Server.Entities.AssignmentGroup", "AssignmentGroup")
+                    b.HasOne("chalk.Server.Entities.AssignmentGroup", null)
                         .WithMany("Assignments")
                         .HasForeignKey("AssignmentGroupId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_assignments_assignment_groups_assignment_group_id");
-
-                    b.Navigation("AssignmentGroup");
                 });
 
             modelBuilder.Entity("chalk.Server.Entities.AssignmentGroup", b =>
                 {
-                    b.HasOne("chalk.Server.Entities.Course", "Course")
+                    b.HasOne("chalk.Server.Entities.Course", null)
                         .WithMany("AssignmentGroups")
                         .HasForeignKey("CourseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_assignment_groups_courses_course_id");
-
-                    b.Navigation("Course");
                 });
 
             modelBuilder.Entity("chalk.Server.Entities.Attachment", b =>
                 {
-                    b.HasOne("chalk.Server.Entities.Assignment", "Assignment")
+                    b.HasOne("chalk.Server.Entities.Assignment", null)
                         .WithMany("Attachments")
                         .HasForeignKey("AssignmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .HasConstraintName("fk_attachments_assignments_assignment_id");
 
-                    b.HasOne("chalk.Server.Entities.CourseModule", "CourseModule")
+                    b.HasOne("chalk.Server.Entities.CourseModule", null)
                         .WithMany("Attachments")
                         .HasForeignKey("CourseModuleId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .HasConstraintName("fk_attachments_course_modules_course_module_id");
 
-                    b.HasOne("chalk.Server.Entities.Submission", "Submission")
+                    b.HasOne("chalk.Server.Entities.Submission", null)
                         .WithMany("Attachments")
                         .HasForeignKey("SubmissionId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .HasConstraintName("fk_attachments_submissions_submission_id");
-
-                    b.Navigation("Assignment");
-
-                    b.Navigation("CourseModule");
-
-                    b.Navigation("Submission");
                 });
 
             modelBuilder.Entity("chalk.Server.Entities.Channel", b =>
                 {
-                    b.HasOne("chalk.Server.Entities.Course", "Course")
+                    b.HasOne("chalk.Server.Entities.Course", null)
                         .WithMany("Channels")
                         .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .HasConstraintName("fk_channels_courses_course_id");
 
-                    b.HasOne("chalk.Server.Entities.Organization", "Organization")
+                    b.HasOne("chalk.Server.Entities.Organization", null)
                         .WithMany("Channels")
                         .HasForeignKey("OrganizationId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .HasConstraintName("fk_channels_organizations_organization_id");
-
-                    b.Navigation("Course");
-
-                    b.Navigation("Organization");
                 });
 
             modelBuilder.Entity("chalk.Server.Entities.ChannelRolePermission", b =>
                 {
-                    b.HasOne("chalk.Server.Entities.Channel", "Channel")
+                    b.HasOne("chalk.Server.Entities.Channel", null)
                         .WithMany("RolePermissions")
                         .HasForeignKey("ChannelId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_channel_role_permissions_channels_channel_id");
-
-                    b.HasOne("chalk.Server.Entities.CourseRole", "CourseRole")
-                        .WithMany("ChannelPermissions")
-                        .HasForeignKey("CourseRoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_channel_role_permissions_course_roles_course_role_id");
-
-                    b.HasOne("chalk.Server.Entities.OrganizationRole", "OrganizationRole")
-                        .WithMany("ChannelPermissions")
-                        .HasForeignKey("OrganizationRoleId")
-                        .HasConstraintName("fk_channel_role_permissions_organization_roles_organization_ro");
-
-                    b.Navigation("Channel");
-
-                    b.Navigation("CourseRole");
-
-                    b.Navigation("OrganizationRole");
                 });
 
             modelBuilder.Entity("chalk.Server.Entities.Course", b =>
@@ -1166,6 +1094,7 @@ namespace chalk.Server.Data.Migrations
                     b.HasOne("chalk.Server.Entities.Organization", "Organization")
                         .WithMany("Courses")
                         .HasForeignKey("OrganizationId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .HasConstraintName("fk_courses_organizations_organization_id");
 
                     b.Navigation("Organization");
@@ -1173,47 +1102,29 @@ namespace chalk.Server.Data.Migrations
 
             modelBuilder.Entity("chalk.Server.Entities.CourseModule", b =>
                 {
-                    b.HasOne("chalk.Server.Entities.Course", "Course")
+                    b.HasOne("chalk.Server.Entities.Course", null)
                         .WithMany("Modules")
                         .HasForeignKey("CourseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_course_modules_courses_course_id");
-
-                    b.Navigation("Course");
-                });
-
-            modelBuilder.Entity("chalk.Server.Entities.CourseRole", b =>
-                {
-                    b.HasOne("chalk.Server.Entities.Course", "Course")
-                        .WithMany("Roles")
-                        .HasForeignKey("CourseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_course_roles_courses_course_id");
-
-                    b.Navigation("Course");
                 });
 
             modelBuilder.Entity("chalk.Server.Entities.Message", b =>
                 {
-                    b.HasOne("chalk.Server.Entities.Channel", "Channel")
+                    b.HasOne("chalk.Server.Entities.Channel", null)
                         .WithMany("Messages")
                         .HasForeignKey("ChannelId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_messages_channels_channel_id");
 
-                    b.HasOne("chalk.Server.Entities.UserChannel", "User")
+                    b.HasOne("chalk.Server.Entities.UserChannel", null)
                         .WithMany("Messages")
                         .HasForeignKey("UserId", "ChannelId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_messages_user_channels_user_id_channel_id");
-
-                    b.Navigation("Channel");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("chalk.Server.Entities.Organization", b =>
@@ -1228,37 +1139,29 @@ namespace chalk.Server.Data.Migrations
                     b.Navigation("Owner");
                 });
 
-            modelBuilder.Entity("chalk.Server.Entities.OrganizationRole", b =>
+            modelBuilder.Entity("chalk.Server.Entities.Role", b =>
                 {
-                    b.HasOne("chalk.Server.Entities.Organization", "Organization")
+                    b.HasOne("chalk.Server.Entities.Course", null)
+                        .WithMany("Roles")
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasConstraintName("fk_roles_courses_course_id");
+
+                    b.HasOne("chalk.Server.Entities.Organization", null)
                         .WithMany("Roles")
                         .HasForeignKey("OrganizationId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_organization_roles_organizations_organization_id");
-
-                    b.Navigation("Organization");
+                        .HasConstraintName("fk_roles_organizations_organization_id");
                 });
 
             modelBuilder.Entity("chalk.Server.Entities.Submission", b =>
                 {
-                    b.HasOne("chalk.Server.Entities.Assignment", "Assignment")
+                    b.HasOne("chalk.Server.Entities.Assignment", null)
                         .WithMany("Submissions")
                         .HasForeignKey("AssignmentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_submissions_assignments_assignment_id");
-
-                    b.HasOne("chalk.Server.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_submissions_users_user_id");
-
-                    b.Navigation("Assignment");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("chalk.Server.Entities.Tag", b =>
@@ -1266,11 +1169,13 @@ namespace chalk.Server.Data.Migrations
                     b.HasOne("chalk.Server.Entities.Course", null)
                         .WithMany("Tags")
                         .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .HasConstraintName("fk_tags_courses_course_id");
 
                     b.HasOne("chalk.Server.Entities.Organization", null)
                         .WithMany("Tags")
                         .HasForeignKey("OrganizationId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .HasConstraintName("fk_tags_organizations_organization_id");
                 });
 
@@ -1283,18 +1188,6 @@ namespace chalk.Server.Data.Migrations
                         .IsRequired()
                         .HasConstraintName("fk_user_channels_channels_channel_id");
 
-                    b.HasOne("chalk.Server.Entities.CourseRole", "CourseRole")
-                        .WithMany("Channels")
-                        .HasForeignKey("CourseRoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_user_channels_course_roles_course_role_id");
-
-                    b.HasOne("chalk.Server.Entities.OrganizationRole", "OrganizationRole")
-                        .WithMany("Channels")
-                        .HasForeignKey("OrganizationRoleId")
-                        .HasConstraintName("fk_user_channels_organization_roles_organization_role_id");
-
                     b.HasOne("chalk.Server.Entities.User", "User")
                         .WithMany("DirectMessages")
                         .HasForeignKey("UserId")
@@ -1302,20 +1195,7 @@ namespace chalk.Server.Data.Migrations
                         .IsRequired()
                         .HasConstraintName("fk_user_channels_users_user_id");
 
-                    b.HasOne("chalk.Server.Entities.ChannelRolePermission", "RolePermission")
-                        .WithMany("Users")
-                        .HasForeignKey("ChannelId", "CourseRoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_user_channels_channel_role_permissions_channel_id_course_ro");
-
                     b.Navigation("Channel");
-
-                    b.Navigation("CourseRole");
-
-                    b.Navigation("OrganizationRole");
-
-                    b.Navigation("RolePermission");
 
                     b.Navigation("User");
                 });
@@ -1329,13 +1209,6 @@ namespace chalk.Server.Data.Migrations
                         .IsRequired()
                         .HasConstraintName("fk_user_courses_courses_course_id");
 
-                    b.HasOne("chalk.Server.Entities.CourseRole", "Role")
-                        .WithMany("Users")
-                        .HasForeignKey("CourseRoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_user_courses_course_roles_course_role_id");
-
                     b.HasOne("chalk.Server.Entities.User", "User")
                         .WithMany("Courses")
                         .HasForeignKey("UserId")
@@ -1344,8 +1217,6 @@ namespace chalk.Server.Data.Migrations
                         .HasConstraintName("fk_user_courses_users_user_id");
 
                     b.Navigation("Course");
-
-                    b.Navigation("Role");
 
                     b.Navigation("User");
                 });
@@ -1359,13 +1230,6 @@ namespace chalk.Server.Data.Migrations
                         .IsRequired()
                         .HasConstraintName("fk_user_organizations_organizations_organization_id");
 
-                    b.HasOne("chalk.Server.Entities.OrganizationRole", "Role")
-                        .WithMany("Users")
-                        .HasForeignKey("OrganizationRoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_user_organizations_organization_roles_organization_role_id");
-
                     b.HasOne("chalk.Server.Entities.User", "User")
                         .WithMany("Organizations")
                         .HasForeignKey("UserId")
@@ -1375,9 +1239,35 @@ namespace chalk.Server.Data.Migrations
 
                     b.Navigation("Organization");
 
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("chalk.Server.Entities.UserRole", b =>
+                {
+                    b.HasOne("chalk.Server.Entities.Role", "Role")
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_user_roles_roles_role_id");
+
+                    b.HasOne("chalk.Server.Entities.UserCourse", "UserCourse")
+                        .WithMany("Roles")
+                        .HasForeignKey("UserId", "CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasConstraintName("fk_user_roles_user_courses_user_id_course_id");
+
+                    b.HasOne("chalk.Server.Entities.UserOrganization", "UserOrganization")
+                        .WithMany("Roles")
+                        .HasForeignKey("UserId", "OrganizationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasConstraintName("fk_user_roles_user_organizations_user_id_organization_id");
+
                     b.Navigation("Role");
 
-                    b.Navigation("User");
+                    b.Navigation("UserCourse");
+
+                    b.Navigation("UserOrganization");
                 });
 
             modelBuilder.Entity("chalk.Server.Entities.Assignment", b =>
@@ -1401,11 +1291,6 @@ namespace chalk.Server.Data.Migrations
                     b.Navigation("Users");
                 });
 
-            modelBuilder.Entity("chalk.Server.Entities.ChannelRolePermission", b =>
-                {
-                    b.Navigation("Users");
-                });
-
             modelBuilder.Entity("chalk.Server.Entities.Course", b =>
                 {
                     b.Navigation("AssignmentGroups");
@@ -1426,15 +1311,6 @@ namespace chalk.Server.Data.Migrations
                     b.Navigation("Attachments");
                 });
 
-            modelBuilder.Entity("chalk.Server.Entities.CourseRole", b =>
-                {
-                    b.Navigation("ChannelPermissions");
-
-                    b.Navigation("Channels");
-
-                    b.Navigation("Users");
-                });
-
             modelBuilder.Entity("chalk.Server.Entities.Organization", b =>
                 {
                     b.Navigation("Channels");
@@ -1444,15 +1320,6 @@ namespace chalk.Server.Data.Migrations
                     b.Navigation("Roles");
 
                     b.Navigation("Tags");
-
-                    b.Navigation("Users");
-                });
-
-            modelBuilder.Entity("chalk.Server.Entities.OrganizationRole", b =>
-                {
-                    b.Navigation("ChannelPermissions");
-
-                    b.Navigation("Channels");
 
                     b.Navigation("Users");
                 });
@@ -1474,6 +1341,16 @@ namespace chalk.Server.Data.Migrations
             modelBuilder.Entity("chalk.Server.Entities.UserChannel", b =>
                 {
                     b.Navigation("Messages");
+                });
+
+            modelBuilder.Entity("chalk.Server.Entities.UserCourse", b =>
+                {
+                    b.Navigation("Roles");
+                });
+
+            modelBuilder.Entity("chalk.Server.Entities.UserOrganization", b =>
+                {
+                    b.Navigation("Roles");
                 });
 #pragma warning restore 612, 618
         }

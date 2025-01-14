@@ -10,26 +10,9 @@ public class ChannelRolePermissionConfiguration : IEntityTypeConfiguration<Chann
     {
         builder.ToTable("channel_role_permissions");
 
-        builder.HasKey(e => new { e.ChannelId, e.CourseRoleId });
+        builder.HasKey(e => e.Id);
 
+        builder.Property(e => e.Id).ValueGeneratedOnAdd();
         builder.Property(e => e.Permissions).IsRequired();
-
-        builder
-            .HasOne(e => e.Channel)
-            .WithMany(e => e.RolePermissions)
-            .HasForeignKey(e => e.ChannelId)
-            .IsRequired();
-        builder
-            .HasOne(e => e.CourseRole)
-            .WithMany(e => e.ChannelPermissions)
-            .HasForeignKey(e => e.CourseRoleId);
-        builder
-            .HasOne(e => e.OrganizationRole)
-            .WithMany(e => e.ChannelPermissions)
-            .HasForeignKey(e => e.OrganizationRoleId);
-        builder
-            .HasMany(e => e.Users)
-            .WithOne(e => e.RolePermission)
-            .HasForeignKey(e => new { e.ChannelId, e.CourseRoleId });
     }
 }

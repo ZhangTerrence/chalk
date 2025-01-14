@@ -9,7 +9,7 @@ public class Assignment
     public long Id { get; set; }
     public required string Name { get; set; }
     public string? Description { get; set; }
-    public required bool Open { get; set; }
+    public required bool IsOpen { get; set; }
     public DateTime? DueDate { get; set; }
     public int? AllowedAttempts { get; set; }
     public required DateTime CreatedDate { get; set; }
@@ -19,7 +19,6 @@ public class Assignment
     public long AssignmentGroupId { get; set; }
 
     // Navigation Properties
-    public AssignmentGroup AssignmentGroup { get; set; } = null!;
     public ICollection<Attachment> Attachments { get; set; } = [];
     public ICollection<Submission> Submissions { get; set; } = [];
 }

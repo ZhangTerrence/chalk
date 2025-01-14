@@ -4,13 +4,13 @@ using FluentValidation;
 
 namespace chalk.Server.Validators;
 
-public class CreateRoleValidator : AbstractValidator<CreateRoleRequest>
+public class CreateRoleRequestValidator : AbstractValidator<CreateRoleRequest>
 {
-    public CreateRoleValidator()
+    public CreateRoleRequestValidator()
     {
         RuleFor(e => e.Origin)
             .NotNull()
-            .WithMessage("Must specify the role's origin (course or organization).")
+            .WithMessage("Must specify whether the role is for a course or an organization.")
             .IsInEnum()
             .WithMessage("The origin is invalid.");
         RuleFor(e => e.Name)
@@ -24,9 +24,11 @@ public class CreateRoleValidator : AbstractValidator<CreateRoleRequest>
         RuleFor(e => e.Permissions)
             .NotNull()
             .WithMessage("Must specify the role's permissions.");
-        RuleFor(e => e.Rank)
+        RuleFor(e => e.RelativeRank)
             .NotNull()
-            .WithMessage("Must specify the role's rank.");
+            .WithMessage("Must specify the role's rank.")
+            .Must(e => e!.Value >= 0)
+            .WithMessage("The role's relative rank must be zero or positive.");
         RuleFor(e => e.CourseId)
             .NotNull().When(e => e.Origin == Origin.Course)
             .WithMessage("Must specify the course which the role belongs to.");

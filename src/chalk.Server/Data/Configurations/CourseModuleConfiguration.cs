@@ -15,17 +15,14 @@ public class CourseModuleConfiguration : IEntityTypeConfiguration<CourseModule>
         builder.Property(e => e.Id).ValueGeneratedOnAdd();
         builder.Property(e => e.Name).HasMaxLength(31).IsRequired();
         builder.Property(e => e.Description).HasMaxLength(255);
-        builder.Property(e => e.Order).IsRequired();
+        builder.Property(e => e.RelativeOrder).IsRequired();
         builder.Property(e => e.CreatedDate).IsRequired();
         builder.Property(e => e.UpdatedDate).IsRequired();
 
         builder
-            .HasOne(e => e.Course)
-            .WithMany(e => e.Modules)
-            .HasForeignKey(e => e.CourseId)
-            .IsRequired();
-        builder
             .HasMany(e => e.Attachments)
-            .WithOne(e => e.CourseModule);
+            .WithOne()
+            .HasForeignKey(e => e.CourseModuleId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

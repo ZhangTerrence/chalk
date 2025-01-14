@@ -3,9 +3,9 @@ using FluentValidation;
 
 namespace chalk.Server.Validators;
 
-public class UpdateOrganizationValidator : AbstractValidator<UpdateOrganizationRequest>
+public class UpdateOrganizationRequestValidator : AbstractValidator<UpdateOrganizationRequest>
 {
-    public UpdateOrganizationValidator()
+    public UpdateOrganizationRequestValidator()
     {
         RuleFor(e => e.Name)
             .Length(3, 31)

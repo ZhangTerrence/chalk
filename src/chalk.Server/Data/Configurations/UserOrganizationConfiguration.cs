@@ -26,9 +26,9 @@ public class UserOrganizationConfiguration : IEntityTypeConfiguration<UserOrgani
             .HasForeignKey(e => e.OrganizationId)
             .IsRequired();
         builder
-            .HasOne(e => e.Role)
-            .WithMany(e => e.Users)
-            .HasForeignKey(e => e.OrganizationRoleId)
-            .IsRequired();
+            .HasMany(e => e.Roles)
+            .WithOne(e => e.UserOrganization)
+            .HasForeignKey(e => new { e.UserId, OrganizationId = (long)e.OrganizationId! })
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

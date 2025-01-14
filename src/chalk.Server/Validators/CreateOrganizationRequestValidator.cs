@@ -3,9 +3,9 @@ using FluentValidation;
 
 namespace chalk.Server.Validators;
 
-public class CreateOrganizationValidator : AbstractValidator<CreateOrganizationRequest>
+public class CreateOrganizationRequestValidator : AbstractValidator<CreateOrganizationRequest>
 {
-    public CreateOrganizationValidator()
+    public CreateOrganizationRequestValidator()
     {
         RuleFor(e => e.Name)
             .NotEmpty()

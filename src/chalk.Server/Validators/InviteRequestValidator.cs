@@ -4,13 +4,13 @@ using FluentValidation;
 
 namespace chalk.Server.Validators;
 
-public class InviteResponseValidator : AbstractValidator<InviteResponseRequest>
+public class InviteRequestValidator : AbstractValidator<InviteRequest>
 {
-    public InviteResponseValidator()
+    public InviteRequestValidator()
     {
         RuleFor(e => e.Origin)
             .NotNull()
-            .WithMessage("Must specify the invite's origin (course or organization).")
+            .WithMessage("Must specify whether the invite is from a course or an organization.")
             .IsInEnum()
             .WithMessage("The origin is invalid.");
         RuleFor(e => e.UserId)
@@ -22,8 +22,8 @@ public class InviteResponseValidator : AbstractValidator<InviteResponseRequest>
         RuleFor(e => e.OrganizationId)
             .NotNull().When(e => e.Origin == Origin.Organization)
             .WithMessage("Must specify the organization the invite is addressed from.");
-        RuleFor(e => e.AcceptInvite)
+        RuleFor(e => e.RoleId)
             .NotNull()
-            .WithMessage("Must specify whether the invite is accepted.");
+            .WithMessage("Must specify the role the user will be assigned if they accept.");
     }
 }

@@ -19,13 +19,9 @@ public class SubmissionConfiguration : IEntityTypeConfiguration<Submission>
         builder.Property(e => e.UpdatedDate).IsRequired();
 
         builder
-            .HasOne(e => e.Assignment)
-            .WithMany(e => e.Submissions)
-            .HasForeignKey(e => e.AssignmentId)
-            .IsRequired();
-        builder
             .HasMany(e => e.Attachments)
-            .WithOne(e => e.Submission)
-            .HasForeignKey(e => e.SubmissionId);
+            .WithOne()
+            .HasForeignKey(e => e.SubmissionId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

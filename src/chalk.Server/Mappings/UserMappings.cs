@@ -12,11 +12,11 @@ public static class UserMappings
     {
         return new User
         {
-            Email = registerRequest.Email!,
-            FirstName = registerRequest.FirstName!,
-            LastName = registerRequest.LastName!,
-            DisplayName = registerRequest.DisplayName!,
-            UserName = registerRequest.Email!,
+            Email = registerRequest.Email,
+            FirstName = registerRequest.FirstName,
+            LastName = registerRequest.LastName,
+            DisplayName = registerRequest.DisplayName,
+            UserName = registerRequest.Email,
             CreatedDate = DateTime.UtcNow,
             UpdatedDate = DateTime.UtcNow
         };
@@ -33,7 +33,6 @@ public static class UserMappings
             user.Description,
             user.ProfilePicture,
             user.CreatedDate.ToString(CultureInfo.CurrentCulture),
-            user.UpdatedDate.ToString(CultureInfo.CurrentCulture),
             user.DirectMessages.Select(e => e.Channel.ToDTO()),
             user.Organizations.Select(e => e.Organization.ToDTO()),
             user.Courses.Select(e => e.Course.ToDTO())
@@ -42,6 +41,15 @@ public static class UserMappings
 
     public static UserDTO ToDTO(this User user, string? joinedDate)
     {
-        return new UserDTO(user.Id, user.FirstName, user.LastName, user.DisplayName, joinedDate);
+        return new UserDTO(
+            user.Id,
+            user.FirstName,
+            user.LastName,
+            user.DisplayName,
+            user.Description,
+            user.ProfilePicture,
+            user.CreatedDate.ToString(CultureInfo.CurrentCulture),
+            joinedDate
+        );
     }
 }

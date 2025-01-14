@@ -21,9 +21,6 @@ public record OrganizationResponse(
     [property: JsonPropertyName("createdDate")]
     string CreatedDate,
     [property: JsonRequired]
-    [property: JsonPropertyName("updatedDate")]
-    string UpdatedDate,
-    [property: JsonRequired]
     [property: JsonPropertyName("owner")]
     UserDTO Owner,
     [property: JsonRequired]

@@ -12,10 +12,10 @@ public static class CourseMappings
     {
         return new Course
         {
-            Name = request.Name!,
-            Description = request.Description,
+            Name = request.Name,
             Code = request.Code,
-            Public = request.Public!.Value,
+            Description = request.Description,
+            IsPublic = request.IsPublic!.Value,
             CreatedDate = DateTime.UtcNow,
             UpdatedDate = DateTime.UtcNow,
             Organization = organization
@@ -27,12 +27,11 @@ public static class CourseMappings
         return new CourseResponse(
             course.Id,
             course.Name,
-            course.Description,
-            course.PreviewImage,
             course.Code,
-            course.Public,
+            course.Description,
+            course.Image,
+            course.IsPublic,
             course.CreatedDate.ToString(CultureInfo.CurrentCulture),
-            course.UpdatedDate.ToString(CultureInfo.CurrentCulture),
             course.Organization?.ToDTO(),
             course.Users.Select(e => e.User.ToDTO(e.JoinedDate?.ToString(CultureInfo.CurrentCulture))),
             course.Roles.Select(e => e.ToDTO())
@@ -41,38 +40,13 @@ public static class CourseMappings
 
     public static CourseDTO ToDTO(this Course course)
     {
-        return new CourseDTO(course.Id, course.Name, course.Name);
-    }
-
-    public static CourseRole ToEntity(this CreateRoleRequest request, Course course)
-    {
-        return new CourseRole
-        {
-            Name = request.Name!,
-            Description = request.Description,
-            Permissions = request.Permissions!.Value,
-            Rank = request.Rank!.Value,
-            CreatedDate = DateTime.UtcNow,
-            UpdatedDate = DateTime.UtcNow,
-            Course = course
-        };
-    }
-
-    public static RoleResponse ToResponse(this CourseRole courseRole)
-    {
-        return new RoleResponse(
-            courseRole.Id,
-            courseRole.Name,
-            courseRole.Description,
-            courseRole.Permissions,
-            courseRole.Rank,
-            courseRole.CreatedDate.ToString(CultureInfo.CurrentCulture),
-            courseRole.UpdatedDate.ToString(CultureInfo.CurrentCulture)
+        return new CourseDTO(
+            course.Id,
+            course.Name,
+            course.Code,
+            course.Description,
+            course.Image,
+            course.CreatedDate.ToString(CultureInfo.CurrentCulture)
         );
-    }
-
-    public static RoleDTO ToDTO(this CourseRole courseRole)
-    {
-        return new RoleDTO(courseRole.Id, courseRole.Name, courseRole.Permissions, courseRole.Rank);
     }
 }

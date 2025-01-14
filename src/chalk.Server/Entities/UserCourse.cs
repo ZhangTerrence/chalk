@@ -9,17 +9,15 @@ public class UserCourse
 {
     // Properties
     public UserStatus Status { get; set; }
-    public required bool Student { get; set; }
     public int? Grade { get; set; }
     public DateTime? JoinedDate { get; set; }
 
     // Foreign Keys
     public long UserId { get; set; }
     public long CourseId { get; set; }
-    public long CourseRoleId { get; set; }
 
     // Navigation Properties
     public User User { get; set; } = null!;
     public Course Course { get; set; } = null!;
-    public CourseRole Role { get; set; } = null!;
+    public ICollection<UserRole> Roles { get; set; } = [];
 }

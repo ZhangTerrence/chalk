@@ -19,26 +19,18 @@ public class ChannelConfiguration : IEntityTypeConfiguration<Channel>
         builder.Property(e => e.UpdatedDate).IsRequired();
 
         builder
-            .HasOne(e => e.Course)
-            .WithMany(e => e.Channels)
-            .HasForeignKey(e => e.CourseId);
-        builder
-            .HasOne(e => e.Organization)
-            .WithMany(e => e.Channels)
-            .HasForeignKey(e => e.OrganizationId);
-        builder
             .HasMany(e => e.Users)
             .WithOne(e => e.Channel)
             .HasForeignKey(e => e.ChannelId)
             .IsRequired();
         builder
-            .HasMany(e => e.RolePermissions)
-            .WithOne(e => e.Channel)
+            .HasMany(e => e.Messages)
+            .WithOne()
             .HasForeignKey(e => e.ChannelId)
             .IsRequired();
         builder
-            .HasMany(e => e.Messages)
-            .WithOne(e => e.Channel)
+            .HasMany(e => e.RolePermissions)
+            .WithOne()
             .HasForeignKey(e => e.ChannelId)
             .IsRequired();
     }

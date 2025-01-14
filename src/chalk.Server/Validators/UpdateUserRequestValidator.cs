@@ -3,9 +3,9 @@ using FluentValidation;
 
 namespace chalk.Server.Validators;
 
-public class UpdateUserValidator : AbstractValidator<UpdateUserRequest>
+public class UpdateUserRequestValidator : AbstractValidator<UpdateUserRequest>
 {
-    public UpdateUserValidator()
+    public UpdateUserRequestValidator()
     {
         RuleFor(e => e.FirstName)
             .Length(1, 31)

@@ -13,7 +13,7 @@ namespace chalk.Server.Data.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "roles",
+                name: "system_roles",
                 columns: table => new
                 {
                     id = table.Column<long>(type: "bigint", nullable: false)
@@ -24,7 +24,7 @@ namespace chalk.Server.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_roles", x => x.id);
+                    table.PrimaryKey("pk_system_roles", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -36,8 +36,8 @@ namespace chalk.Server.Data.Migrations
                     first_name = table.Column<string>(type: "character varying(31)", maxLength: 31, nullable: false),
                     last_name = table.Column<string>(type: "character varying(31)", maxLength: 31, nullable: false),
                     display_name = table.Column<string>(type: "character varying(31)", maxLength: 31, nullable: false),
-                    profile_picture_uri = table.Column<string>(type: "text", nullable: true),
                     description = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    profile_picture = table.Column<string>(type: "text", nullable: true),
                     refresh_token = table.Column<string>(type: "text", nullable: true),
                     refresh_token_expiry_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     created_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
@@ -63,7 +63,7 @@ namespace chalk.Server.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "role_claims",
+                name: "system_role_claims",
                 columns: table => new
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
@@ -74,11 +74,11 @@ namespace chalk.Server.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_role_claims", x => x.id);
+                    table.PrimaryKey("pk_system_role_claims", x => x.id);
                     table.ForeignKey(
-                        name: "fk_role_claims_roles_role_id",
+                        name: "fk_system_role_claims_system_roles_role_id",
                         column: x => x.role_id,
-                        principalTable: "roles",
+                        principalTable: "system_roles",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -90,8 +90,8 @@ namespace chalk.Server.Data.Migrations
                     id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     name = table.Column<string>(type: "character varying(31)", maxLength: 31, nullable: false),
-                    profile_picture_uri = table.Column<string>(type: "text", nullable: true),
                     description = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    profile_picture = table.Column<string>(type: "text", nullable: true),
                     created_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     updated_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     owner_id = table.Column<long>(type: "bigint", nullable: false)
@@ -149,7 +149,7 @@ namespace chalk.Server.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "user_roles",
+                name: "user_system_roles",
                 columns: table => new
                 {
                     user_id = table.Column<long>(type: "bigint", nullable: false),
@@ -157,15 +157,15 @@ namespace chalk.Server.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_user_roles", x => new { x.user_id, x.role_id });
+                    table.PrimaryKey("pk_user_system_roles", x => new { x.user_id, x.role_id });
                     table.ForeignKey(
-                        name: "fk_user_roles_roles_role_id",
+                        name: "fk_user_system_roles_system_roles_role_id",
                         column: x => x.role_id,
-                        principalTable: "roles",
+                        principalTable: "system_roles",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "fk_user_roles_users_user_id",
+                        name: "fk_user_system_roles_users_user_id",
                         column: x => x.user_id,
                         principalTable: "users",
                         principalColumn: "id",
@@ -201,9 +201,11 @@ namespace chalk.Server.Data.Migrations
                     name = table.Column<string>(type: "character varying(31)", maxLength: 31, nullable: false),
                     code = table.Column<string>(type: "character varying(31)", maxLength: 31, nullable: true),
                     description = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    image = table.Column<string>(type: "text", nullable: true),
+                    is_public = table.Column<bool>(type: "boolean", nullable: false),
                     created_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     updated_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    organization_id = table.Column<long>(type: "bigint", nullable: false)
+                    organization_id = table.Column<long>(type: "bigint", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -217,50 +219,45 @@ namespace chalk.Server.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "organization_roles",
+                name: "user_organizations",
                 columns: table => new
                 {
-                    id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    name = table.Column<string>(type: "character varying(31)", maxLength: 31, nullable: false),
-                    description = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
-                    permissions = table.Column<long>(type: "bigint", nullable: false),
-                    created_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    updated_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    organization_id = table.Column<long>(type: "bigint", nullable: false)
+                    user_id = table.Column<long>(type: "bigint", nullable: false),
+                    organization_id = table.Column<long>(type: "bigint", nullable: false),
+                    status = table.Column<int>(type: "integer", nullable: false),
+                    joined_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_organization_roles", x => x.id);
+                    table.PrimaryKey("pk_user_organizations", x => new { x.user_id, x.organization_id });
                     table.ForeignKey(
-                        name: "fk_organization_roles_organizations_organization_id",
+                        name: "fk_user_organizations_organizations_organization_id",
                         column: x => x.organization_id,
                         principalTable: "organizations",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "fk_user_organizations_users_user_id",
+                        column: x => x.user_id,
+                        principalTable: "users",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "assignments",
+                name: "assignment_groups",
                 columns: table => new
                 {
                     id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    name = table.Column<string>(type: "character varying(31)", maxLength: 31, nullable: false),
-                    description = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
-                    open = table.Column<bool>(type: "boolean", nullable: false),
-                    max_grade = table.Column<int>(type: "integer", nullable: true),
-                    due_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    allowed_attempts = table.Column<int>(type: "integer", nullable: true),
-                    created_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    updated_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    weight = table.Column<int>(type: "integer", nullable: false),
                     course_id = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_assignments", x => x.id);
+                    table.PrimaryKey("pk_assignment_groups", x => x.id);
                     table.ForeignKey(
-                        name: "fk_assignments_courses_course_id",
+                        name: "fk_assignment_groups_courses_course_id",
                         column: x => x.course_id,
                         principalTable: "courses",
                         principalColumn: "id",
@@ -277,7 +274,8 @@ namespace chalk.Server.Data.Migrations
                     description = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
                     created_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     updated_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    course_id = table.Column<long>(type: "bigint", nullable: true)
+                    course_id = table.Column<long>(type: "bigint", nullable: true),
+                    organization_id = table.Column<long>(type: "bigint", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -286,7 +284,14 @@ namespace chalk.Server.Data.Migrations
                         name: "fk_channels_courses_course_id",
                         column: x => x.course_id,
                         principalTable: "courses",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "fk_channels_organizations_organization_id",
+                        column: x => x.organization_id,
+                        principalTable: "organizations",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -297,6 +302,7 @@ namespace chalk.Server.Data.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     name = table.Column<string>(type: "character varying(31)", maxLength: 31, nullable: false),
                     description = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    relative_order = table.Column<int>(type: "integer", nullable: false),
                     created_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     updated_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     course_id = table.Column<long>(type: "bigint", nullable: false)
@@ -313,7 +319,7 @@ namespace chalk.Server.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "course_roles",
+                name: "roles",
                 columns: table => new
                 {
                     id = table.Column<long>(type: "bigint", nullable: false)
@@ -321,51 +327,184 @@ namespace chalk.Server.Data.Migrations
                     name = table.Column<string>(type: "character varying(31)", maxLength: 31, nullable: false),
                     description = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
                     permissions = table.Column<long>(type: "bigint", nullable: false),
+                    relative_rank = table.Column<int>(type: "integer", nullable: false),
                     created_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     updated_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    course_id = table.Column<long>(type: "bigint", nullable: false)
+                    course_id = table.Column<long>(type: "bigint", nullable: true),
+                    organization_id = table.Column<long>(type: "bigint", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_course_roles", x => x.id);
+                    table.PrimaryKey("pk_roles", x => x.id);
                     table.ForeignKey(
-                        name: "fk_course_roles_courses_course_id",
+                        name: "fk_roles_courses_course_id",
                         column: x => x.course_id,
                         principalTable: "courses",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "fk_roles_organizations_organization_id",
+                        column: x => x.organization_id,
+                        principalTable: "organizations",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "user_organizations",
+                name: "tags",
                 columns: table => new
                 {
-                    user_id = table.Column<long>(type: "bigint", nullable: false),
-                    organization_id = table.Column<long>(type: "bigint", nullable: false),
-                    status = table.Column<int>(type: "integer", nullable: false),
-                    joined_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    organization_role_id = table.Column<long>(type: "bigint", nullable: false)
+                    id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    name = table.Column<string>(type: "character varying(31)", maxLength: 31, nullable: false),
+                    course_id = table.Column<long>(type: "bigint", nullable: true),
+                    organization_id = table.Column<long>(type: "bigint", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_user_organizations", x => new { x.user_id, x.organization_id });
+                    table.PrimaryKey("pk_tags", x => x.id);
                     table.ForeignKey(
-                        name: "fk_user_organizations_organization_roles_organization_role_id",
-                        column: x => x.organization_role_id,
-                        principalTable: "organization_roles",
+                        name: "fk_tags_courses_course_id",
+                        column: x => x.course_id,
+                        principalTable: "courses",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "fk_user_organizations_organizations_organization_id",
+                        name: "fk_tags_organizations_organization_id",
                         column: x => x.organization_id,
                         principalTable: "organizations",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "user_courses",
+                columns: table => new
+                {
+                    user_id = table.Column<long>(type: "bigint", nullable: false),
+                    course_id = table.Column<long>(type: "bigint", nullable: false),
+                    status = table.Column<int>(type: "integer", nullable: false),
+                    grade = table.Column<int>(type: "integer", nullable: true),
+                    joined_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_user_courses", x => new { x.user_id, x.course_id });
                     table.ForeignKey(
-                        name: "fk_user_organizations_users_user_id",
+                        name: "fk_user_courses_courses_course_id",
+                        column: x => x.course_id,
+                        principalTable: "courses",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "fk_user_courses_users_user_id",
                         column: x => x.user_id,
                         principalTable: "users",
                         principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "assignments",
+                columns: table => new
+                {
+                    id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    name = table.Column<string>(type: "character varying(31)", maxLength: 31, nullable: false),
+                    description = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    is_open = table.Column<bool>(type: "boolean", nullable: false),
+                    due_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    allowed_attempts = table.Column<int>(type: "integer", nullable: true),
+                    created_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    updated_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    assignment_group_id = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_assignments", x => x.id);
+                    table.ForeignKey(
+                        name: "fk_assignments_assignment_groups_assignment_group_id",
+                        column: x => x.assignment_group_id,
+                        principalTable: "assignment_groups",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "channel_role_permissions",
+                columns: table => new
+                {
+                    id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    permissions = table.Column<long>(type: "bigint", nullable: false),
+                    channel_id = table.Column<long>(type: "bigint", nullable: false),
+                    course_role_id = table.Column<long>(type: "bigint", nullable: true),
+                    organization_role_id = table.Column<long>(type: "bigint", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_channel_role_permissions", x => x.id);
+                    table.ForeignKey(
+                        name: "fk_channel_role_permissions_channels_channel_id",
+                        column: x => x.channel_id,
+                        principalTable: "channels",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "user_channels",
+                columns: table => new
+                {
+                    user_id = table.Column<long>(type: "bigint", nullable: false),
+                    channel_id = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_user_channels", x => new { x.user_id, x.channel_id });
+                    table.ForeignKey(
+                        name: "fk_user_channels_channels_channel_id",
+                        column: x => x.channel_id,
+                        principalTable: "channels",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "fk_user_channels_users_user_id",
+                        column: x => x.user_id,
+                        principalTable: "users",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "user_roles",
+                columns: table => new
+                {
+                    user_id = table.Column<long>(type: "bigint", nullable: false),
+                    role_id = table.Column<long>(type: "bigint", nullable: false),
+                    course_id = table.Column<long>(type: "bigint", nullable: true),
+                    organization_id = table.Column<long>(type: "bigint", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_user_roles", x => new { x.user_id, x.role_id });
+                    table.ForeignKey(
+                        name: "fk_user_roles_roles_role_id",
+                        column: x => x.role_id,
+                        principalTable: "roles",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "fk_user_roles_user_courses_user_id_course_id",
+                        columns: x => new { x.user_id, x.course_id },
+                        principalTable: "user_courses",
+                        principalColumns: new[] { "user_id", "course_id" },
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "fk_user_roles_user_organizations_user_id_organization_id",
+                        columns: x => new { x.user_id, x.organization_id },
+                        principalTable: "user_organizations",
+                        principalColumns: new[] { "user_id", "organization_id" },
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -391,69 +530,34 @@ namespace chalk.Server.Data.Migrations
                         principalTable: "assignments",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "fk_submissions_users_user_id",
-                        column: x => x.user_id,
-                        principalTable: "users",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "channel_role_permissions",
+                name: "messages",
                 columns: table => new
                 {
-                    channel_id = table.Column<long>(type: "bigint", nullable: false),
-                    course_role_id = table.Column<long>(type: "bigint", nullable: false),
-                    permissions = table.Column<long>(type: "bigint", nullable: false)
+                    id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    text = table.Column<string>(type: "character varying(1023)", maxLength: 1023, nullable: false),
+                    created_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    updated_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    user_id = table.Column<long>(type: "bigint", nullable: false),
+                    channel_id = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_channel_role_permissions", x => new { x.channel_id, x.course_role_id });
+                    table.PrimaryKey("pk_messages", x => x.id);
                     table.ForeignKey(
-                        name: "fk_channel_role_permissions_channels_channel_id",
+                        name: "fk_messages_channels_channel_id",
                         column: x => x.channel_id,
                         principalTable: "channels",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "fk_channel_role_permissions_course_roles_course_role_id",
-                        column: x => x.course_role_id,
-                        principalTable: "course_roles",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "user_courses",
-                columns: table => new
-                {
-                    user_id = table.Column<long>(type: "bigint", nullable: false),
-                    course_id = table.Column<long>(type: "bigint", nullable: false),
-                    status = table.Column<int>(type: "integer", nullable: false),
-                    joined_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    course_role_id = table.Column<long>(type: "bigint", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_user_courses", x => new { x.user_id, x.course_id });
-                    table.ForeignKey(
-                        name: "fk_user_courses_course_roles_course_role_id",
-                        column: x => x.course_role_id,
-                        principalTable: "course_roles",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "fk_user_courses_courses_course_id",
-                        column: x => x.course_id,
-                        principalTable: "courses",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "fk_user_courses_users_user_id",
-                        column: x => x.user_id,
-                        principalTable: "users",
-                        principalColumn: "id",
+                        name: "fk_messages_user_channels_user_id_channel_id",
+                        columns: x => new { x.user_id, x.channel_id },
+                        principalTable: "user_channels",
+                        principalColumns: new[] { "user_id", "channel_id" },
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -464,7 +568,8 @@ namespace chalk.Server.Data.Migrations
                     id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     name = table.Column<string>(type: "character varying(31)", maxLength: 31, nullable: false),
-                    uri = table.Column<string>(type: "text", nullable: false),
+                    description = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    resource = table.Column<string>(type: "text", nullable: false),
                     created_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     updated_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     assignment_id = table.Column<long>(type: "bigint", nullable: true),
@@ -478,90 +583,31 @@ namespace chalk.Server.Data.Migrations
                         name: "fk_attachments_assignments_assignment_id",
                         column: x => x.assignment_id,
                         principalTable: "assignments",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "fk_attachments_course_modules_course_module_id",
                         column: x => x.course_module_id,
                         principalTable: "course_modules",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "fk_attachments_submissions_submission_id",
                         column: x => x.submission_id,
                         principalTable: "submissions",
-                        principalColumn: "id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "channel_participants",
-                columns: table => new
-                {
-                    user_id = table.Column<long>(type: "bigint", nullable: false),
-                    channel_id = table.Column<long>(type: "bigint", nullable: false),
-                    joined_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    course_role_id = table.Column<long>(type: "bigint", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_channel_participants", x => new { x.user_id, x.channel_id });
-                    table.ForeignKey(
-                        name: "fk_channel_participants_channel_role_permissions_channel_id_co",
-                        columns: x => new { x.channel_id, x.course_role_id },
-                        principalTable: "channel_role_permissions",
-                        principalColumns: new[] { "channel_id", "course_role_id" },
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "fk_channel_participants_channels_channel_id",
-                        column: x => x.channel_id,
-                        principalTable: "channels",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "fk_channel_participants_course_roles_course_role_id",
-                        column: x => x.course_role_id,
-                        principalTable: "course_roles",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "fk_channel_participants_users_user_id",
-                        column: x => x.user_id,
-                        principalTable: "users",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "messages",
-                columns: table => new
-                {
-                    id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    text = table.Column<string>(type: "character varying(1023)", maxLength: 1023, nullable: false),
-                    created_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    updated_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    channel_id = table.Column<long>(type: "bigint", nullable: false),
-                    user_id = table.Column<long>(type: "bigint", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_messages", x => x.id);
-                    table.ForeignKey(
-                        name: "fk_messages_channel_participants_channel_id_user_id",
-                        columns: x => new { x.channel_id, x.user_id },
-                        principalTable: "channel_participants",
-                        principalColumns: new[] { "user_id", "channel_id" },
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "fk_messages_channels_channel_id",
-                        column: x => x.channel_id,
-                        principalTable: "channels",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "ix_assignments_course_id",
-                table: "assignments",
+                name: "ix_assignment_groups_course_id",
+                table: "assignment_groups",
                 column: "course_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_assignments_assignment_group_id",
+                table: "assignments",
+                column: "assignment_group_id");
 
             migrationBuilder.CreateIndex(
                 name: "ix_attachments_assignment_id",
@@ -579,19 +625,9 @@ namespace chalk.Server.Data.Migrations
                 column: "submission_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_channel_participants_channel_id_course_role_id",
-                table: "channel_participants",
-                columns: new[] { "channel_id", "course_role_id" });
-
-            migrationBuilder.CreateIndex(
-                name: "ix_channel_participants_course_role_id",
-                table: "channel_participants",
-                column: "course_role_id");
-
-            migrationBuilder.CreateIndex(
-                name: "ix_channel_role_permissions_course_role_id",
+                name: "ix_channel_role_permissions_channel_id",
                 table: "channel_role_permissions",
-                column: "course_role_id");
+                column: "channel_id");
 
             migrationBuilder.CreateIndex(
                 name: "ix_channels_course_id",
@@ -599,13 +635,13 @@ namespace chalk.Server.Data.Migrations
                 column: "course_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_course_modules_course_id",
-                table: "course_modules",
-                column: "course_id");
+                name: "ix_channels_organization_id",
+                table: "channels",
+                column: "organization_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_course_roles_course_id",
-                table: "course_roles",
+                name: "ix_course_modules_course_id",
+                table: "course_modules",
                 column: "course_id");
 
             migrationBuilder.CreateIndex(
@@ -614,14 +650,14 @@ namespace chalk.Server.Data.Migrations
                 column: "organization_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_messages_channel_id_user_id",
+                name: "ix_messages_channel_id",
                 table: "messages",
-                columns: new[] { "channel_id", "user_id" });
+                column: "channel_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_organization_roles_organization_id",
-                table: "organization_roles",
-                column: "organization_id");
+                name: "ix_messages_user_id_channel_id",
+                table: "messages",
+                columns: new[] { "user_id", "channel_id" });
 
             migrationBuilder.CreateIndex(
                 name: "ix_organizations_owner_id",
@@ -629,15 +665,14 @@ namespace chalk.Server.Data.Migrations
                 column: "owner_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_role_claims_role_id",
-                table: "role_claims",
-                column: "role_id");
+                name: "ix_roles_course_id",
+                table: "roles",
+                column: "course_id");
 
             migrationBuilder.CreateIndex(
-                name: "RoleNameIndex",
+                name: "ix_roles_organization_id",
                 table: "roles",
-                column: "normalized_name",
-                unique: true);
+                column: "organization_id");
 
             migrationBuilder.CreateIndex(
                 name: "ix_submissions_assignment_id",
@@ -645,9 +680,30 @@ namespace chalk.Server.Data.Migrations
                 column: "assignment_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_submissions_user_id",
-                table: "submissions",
-                column: "user_id");
+                name: "ix_system_role_claims_role_id",
+                table: "system_role_claims",
+                column: "role_id");
+
+            migrationBuilder.CreateIndex(
+                name: "RoleNameIndex",
+                table: "system_roles",
+                column: "normalized_name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "ix_tags_course_id",
+                table: "tags",
+                column: "course_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_tags_organization_id",
+                table: "tags",
+                column: "organization_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_user_channels_channel_id",
+                table: "user_channels",
+                column: "channel_id");
 
             migrationBuilder.CreateIndex(
                 name: "ix_user_claims_user_id",
@@ -660,11 +716,6 @@ namespace chalk.Server.Data.Migrations
                 column: "course_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_user_courses_course_role_id",
-                table: "user_courses",
-                column: "course_role_id");
-
-            migrationBuilder.CreateIndex(
                 name: "ix_user_logins_user_id",
                 table: "user_logins",
                 column: "user_id");
@@ -675,13 +726,23 @@ namespace chalk.Server.Data.Migrations
                 column: "organization_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_user_organizations_organization_role_id",
-                table: "user_organizations",
-                column: "organization_role_id");
-
-            migrationBuilder.CreateIndex(
                 name: "ix_user_roles_role_id",
                 table: "user_roles",
+                column: "role_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_user_roles_user_id_course_id",
+                table: "user_roles",
+                columns: new[] { "user_id", "course_id" });
+
+            migrationBuilder.CreateIndex(
+                name: "ix_user_roles_user_id_organization_id",
+                table: "user_roles",
+                columns: new[] { "user_id", "organization_id" });
+
+            migrationBuilder.CreateIndex(
+                name: "ix_user_system_roles_role_id",
+                table: "user_system_roles",
                 column: "role_id");
 
             migrationBuilder.CreateIndex(
@@ -703,25 +764,28 @@ namespace chalk.Server.Data.Migrations
                 name: "attachments");
 
             migrationBuilder.DropTable(
+                name: "channel_role_permissions");
+
+            migrationBuilder.DropTable(
                 name: "messages");
 
             migrationBuilder.DropTable(
-                name: "role_claims");
+                name: "system_role_claims");
+
+            migrationBuilder.DropTable(
+                name: "tags");
 
             migrationBuilder.DropTable(
                 name: "user_claims");
 
             migrationBuilder.DropTable(
-                name: "user_courses");
-
-            migrationBuilder.DropTable(
                 name: "user_logins");
 
             migrationBuilder.DropTable(
-                name: "user_organizations");
+                name: "user_roles");
 
             migrationBuilder.DropTable(
-                name: "user_roles");
+                name: "user_system_roles");
 
             migrationBuilder.DropTable(
                 name: "user_tokens");
@@ -733,25 +797,28 @@ namespace chalk.Server.Data.Migrations
                 name: "submissions");
 
             migrationBuilder.DropTable(
-                name: "channel_participants");
-
-            migrationBuilder.DropTable(
-                name: "organization_roles");
+                name: "user_channels");
 
             migrationBuilder.DropTable(
                 name: "roles");
 
             migrationBuilder.DropTable(
-                name: "assignments");
+                name: "user_courses");
 
             migrationBuilder.DropTable(
-                name: "channel_role_permissions");
+                name: "user_organizations");
+
+            migrationBuilder.DropTable(
+                name: "system_roles");
+
+            migrationBuilder.DropTable(
+                name: "assignments");
 
             migrationBuilder.DropTable(
                 name: "channels");
 
             migrationBuilder.DropTable(
-                name: "course_roles");
+                name: "assignment_groups");
 
             migrationBuilder.DropTable(
                 name: "courses");

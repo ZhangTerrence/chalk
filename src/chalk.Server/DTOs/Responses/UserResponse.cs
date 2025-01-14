@@ -30,9 +30,6 @@ public record UserResponse(
     [property: JsonPropertyName("createdDate")]
     string CreatedDate,
     [property: JsonRequired]
-    [property: JsonPropertyName("updatedDate")]
-    string UpdatedDate,
-    [property: JsonRequired]
     [property: JsonPropertyName("directMessages")]
     IEnumerable<ChannelDTO> DirectMessages,
     [property: JsonRequired]

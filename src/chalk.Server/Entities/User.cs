@@ -20,6 +20,6 @@ public class User : IdentityUser<long>
 
     // Navigation Properties
     public ICollection<UserChannel> DirectMessages { get; set; } = [];
-    public ICollection<UserOrganization> Organizations { get; set; } = [];
     public ICollection<UserCourse> Courses { get; set; } = [];
+    public ICollection<UserOrganization> Organizations { get; set; } = [];
 }

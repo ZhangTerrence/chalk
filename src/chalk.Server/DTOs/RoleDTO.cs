@@ -12,9 +12,12 @@ public sealed record RoleDTO(
     [property: JsonPropertyName("name")]
     string Name,
     [property: JsonRequired]
+    [property: JsonPropertyName("description")]
+    string? Description,
+    [property: JsonRequired]
     [property: JsonPropertyName("permissions")]
     long Permissions,
     [property: JsonRequired]
-    [property: JsonPropertyName("rank")]
-    int Rank
+    [property: JsonPropertyName("relativeRank")]
+    int RelativeRank
 );

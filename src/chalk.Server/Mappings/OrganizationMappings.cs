@@ -12,7 +12,7 @@ public static class OrganizationMappings
     {
         return new Organization
         {
-            Name = request.Name!,
+            Name = request.Name,
             Description = request.Description,
             CreatedDate = DateTime.UtcNow,
             UpdatedDate = DateTime.UtcNow,
@@ -28,7 +28,6 @@ public static class OrganizationMappings
             organization.Description,
             organization.ProfilePicture,
             organization.CreatedDate.ToString(CultureInfo.CurrentCulture),
-            organization.UpdatedDate.ToString(CultureInfo.CurrentCulture),
             organization.Owner.ToDTO(organization.CreatedDate.ToString(CultureInfo.CurrentCulture)),
             organization.Users.Select(e => e.User.ToDTO(e.JoinedDate?.ToString(CultureInfo.CurrentCulture))),
             organization.Roles.Select(e => e.ToDTO()),
@@ -39,37 +38,12 @@ public static class OrganizationMappings
 
     public static OrganizationDTO ToDTO(this Organization organization)
     {
-        return new OrganizationDTO(organization.Id, organization.Name);
-    }
-
-    public static OrganizationRole ToEntity(this CreateRoleRequest request)
-    {
-        return new OrganizationRole
-        {
-            Name = request.Name!,
-            Description = request.Description,
-            Permissions = request.Permissions!.Value,
-            Rank = request.Rank!.Value,
-            CreatedDate = DateTime.UtcNow,
-            UpdatedDate = DateTime.UtcNow
-        };
-    }
-
-    public static RoleResponse ToResponse(this OrganizationRole organizationRole)
-    {
-        return new RoleResponse(
-            organizationRole.Id,
-            organizationRole.Name,
-            organizationRole.Description,
-            organizationRole.Permissions,
-            organizationRole.Rank,
-            organizationRole.CreatedDate.ToString(CultureInfo.CurrentCulture),
-            organizationRole.UpdatedDate.ToString(CultureInfo.CurrentCulture)
+        return new OrganizationDTO(
+            organization.Id,
+            organization.Name,
+            organization.Description,
+            organization.ProfilePicture,
+            organization.CreatedDate.ToString(CultureInfo.CurrentCulture)
         );
-    }
-
-    public static RoleDTO ToDTO(this OrganizationRole organizationRole)
-    {
-        return new RoleDTO(organizationRole.Id, organizationRole.Name, organizationRole.Permissions, organizationRole.Rank);
     }
 }

@@ -10,7 +10,7 @@ public class OrganizationConfiguration : IEntityTypeConfiguration<Organization>
     {
         builder.ToTable("organizations");
 
-        builder.HasKey(x => x.Id);
+        builder.HasKey(e => e.Id);
 
         builder.Property(e => e.Id).ValueGeneratedOnAdd();
         builder.Property(e => e.Name).HasMaxLength(31).IsRequired();
@@ -31,20 +31,23 @@ public class OrganizationConfiguration : IEntityTypeConfiguration<Organization>
             .IsRequired();
         builder
             .HasMany(e => e.Roles)
+            .WithOne()
+            .HasForeignKey(e => e.OrganizationId)
+            .OnDelete(DeleteBehavior.Cascade);
+        builder
+            .HasMany(e => e.Channels)
+            .WithOne()
+            .HasForeignKey(e => e.OrganizationId)
+            .OnDelete(DeleteBehavior.Cascade);
+        builder
+            .HasMany(e => e.Courses)
             .WithOne(e => e.Organization)
             .HasForeignKey(e => e.OrganizationId)
-            .IsRequired();
-        builder
-            .HasMany(e => e.Courses)
-            .WithOne(e => e.Organization)
-            .HasForeignKey(e => e.OrganizationId);
-        builder
-            .HasMany(e => e.Courses)
-            .WithOne(e => e.Organization)
-            .HasForeignKey(e => e.OrganizationId);
+            .OnDelete(DeleteBehavior.Cascade);
         builder
             .HasMany(e => e.Tags)
             .WithOne()
-            .HasForeignKey(e => e.OrganizationId);
+            .HasForeignKey(e => e.OrganizationId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

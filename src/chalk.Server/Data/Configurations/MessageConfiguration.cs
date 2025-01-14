@@ -16,16 +16,5 @@ public class MessageConfiguration : IEntityTypeConfiguration<Message>
         builder.Property(e => e.Text).HasMaxLength(1023).IsRequired();
         builder.Property(e => e.CreatedDate).IsRequired();
         builder.Property(e => e.UpdatedDate).IsRequired();
-
-        builder
-            .HasOne(e => e.Channel)
-            .WithMany(e => e.Messages)
-            .HasForeignKey(e => e.ChannelId)
-            .IsRequired();
-        builder
-            .HasOne(e => e.User)
-            .WithMany(e => e.Messages)
-            .HasForeignKey(e => new { e.ChannelId, e.UserId })
-            .IsRequired();
     }
 }

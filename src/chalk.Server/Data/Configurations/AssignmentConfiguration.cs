@@ -15,24 +15,20 @@ public class AssignmentConfiguration : IEntityTypeConfiguration<Assignment>
         builder.Property(e => e.Id).ValueGeneratedOnAdd();
         builder.Property(e => e.Name).HasMaxLength(31).IsRequired();
         builder.Property(e => e.Description).HasMaxLength(255);
-        builder.Property(e => e.Open).IsRequired();
+        builder.Property(e => e.IsOpen).IsRequired();
         builder.Property(e => e.DueDate);
         builder.Property(e => e.AllowedAttempts);
         builder.Property(e => e.CreatedDate).IsRequired();
         builder.Property(e => e.UpdatedDate).IsRequired();
 
         builder
-            .HasOne(e => e.AssignmentGroup)
-            .WithMany(e => e.Assignments)
-            .HasForeignKey(e => e.AssignmentGroupId)
-            .IsRequired();
-        builder
             .HasMany(e => e.Attachments)
-            .WithOne(e => e.Assignment)
-            .HasForeignKey(e => e.AssignmentId);
+            .WithOne()
+            .HasForeignKey(e => e.AssignmentId)
+            .OnDelete(DeleteBehavior.Cascade);
         builder
             .HasMany(e => e.Submissions)
-            .WithOne(e => e.Assignment)
+            .WithOne()
             .HasForeignKey(e => e.AssignmentId)
             .IsRequired();
     }

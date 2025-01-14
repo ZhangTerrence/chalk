@@ -17,9 +17,7 @@ public class Channel
     public long? OrganizationId { get; set; }
 
     // Navigation Properties
-    public Course? Course { get; set; }
-    public Organization? Organization { get; set; }
     public ICollection<UserChannel> Users { get; set; } = [];
-    public ICollection<ChannelRolePermission> RolePermissions { get; set; } = [];
     public ICollection<Message> Messages { get; set; } = [];
+    public ICollection<ChannelRolePermission> RolePermissions { get; set; } = [];
 }

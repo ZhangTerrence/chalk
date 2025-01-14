@@ -17,7 +17,5 @@ public class Submission
     public long AssignmentId { get; set; }
 
     // Navigation Properties
-    public User User { get; set; } = null!;
-    public Assignment Assignment { get; set; } = null!;
     public ICollection<Attachment> Attachments { get; set; } = [];
 }

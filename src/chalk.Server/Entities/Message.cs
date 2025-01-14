@@ -12,10 +12,6 @@ public class Message
     public required DateTime UpdatedDate { get; set; }
 
     // Foreign Keys
-    public long ChannelId { get; set; }
     public long UserId { get; set; }
-
-    // Navigation Properties
-    public Channel Channel { get; set; } = null!;
-    public UserChannel User { get; set; } = null!;
+    public long ChannelId { get; set; }
 }

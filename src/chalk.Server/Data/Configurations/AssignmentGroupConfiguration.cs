@@ -16,13 +16,8 @@ public class AssignmentGroupConfiguration : IEntityTypeConfiguration<AssignmentG
         builder.Property(e => e.Weight).IsRequired();
 
         builder
-            .HasOne(e => e.Course)
-            .WithMany(c => c.AssignmentGroups)
-            .HasForeignKey(e => e.CourseId)
-            .IsRequired();
-        builder
             .HasMany(e => e.Assignments)
-            .WithOne(e => e.AssignmentGroup)
+            .WithOne()
             .HasForeignKey(e => e.AssignmentGroupId)
             .IsRequired();
     }

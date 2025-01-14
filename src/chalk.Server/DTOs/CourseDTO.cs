@@ -13,5 +13,14 @@ public record CourseDTO(
     string Name,
     [property: JsonRequired]
     [property: JsonPropertyName("code")]
-    string? Code
+    string? Code,
+    [property: JsonRequired]
+    [property: JsonPropertyName("description")]
+    string? Description,
+    [property: JsonRequired]
+    [property: JsonPropertyName("image")]
+    string? Image,
+    [property: JsonRequired]
+    [property: JsonPropertyName("createdDate")]
+    string CreatedDate
 );

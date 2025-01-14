@@ -10,5 +10,11 @@ public record ChannelDTO(
     long Id,
     [property: JsonRequired]
     [property: JsonPropertyName("name")]
-    string? Name
+    string? Name,
+    [property: JsonRequired]
+    [property: JsonPropertyName("description")]
+    string? Description,
+    [property: JsonRequired]
+    [property: JsonPropertyName("createdDate")]
+    string CreatedDate
 );

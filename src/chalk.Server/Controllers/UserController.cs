@@ -43,10 +43,10 @@ public class UserController : ControllerBase
     [HttpPatch]
     public async Task<IActionResult> UpdateUser([FromBody] UpdateUserRequest request)
     {
-        var result = await _updateUserRequestValidator.ValidateAsync(request);
-        if (!result.IsValid)
+        var validationResult = await _updateUserRequestValidator.ValidateAsync(request);
+        if (!validationResult.IsValid)
         {
-            return BadRequest(new ApiResponse<object>(result.GetErrorMessages()));
+            return BadRequest(new ApiResponse<object>(validationResult.GetErrorMessages()));
         }
 
         var user = await _userService.UpdateUserAsync(User.GetUserId(), request);
@@ -56,10 +56,10 @@ public class UserController : ControllerBase
     [HttpPatch("{userId:long}"), Authorize(Roles = "Admin")]
     public async Task<IActionResult> UpdateUser([FromRoute] long userId, [FromBody] UpdateUserRequest request)
     {
-        var result = await _updateUserRequestValidator.ValidateAsync(request);
-        if (!result.IsValid)
+        var validationResult = await _updateUserRequestValidator.ValidateAsync(request);
+        if (!validationResult.IsValid)
         {
-            return BadRequest(new ApiResponse<object>(result.GetErrorMessages()));
+            return BadRequest(new ApiResponse<object>(validationResult.GetErrorMessages()));
         }
 
         var user = await _userService.UpdateUserAsync(userId, request);

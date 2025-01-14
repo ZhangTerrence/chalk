@@ -12,23 +12,20 @@ public record CourseResponse(
     [property: JsonPropertyName("name")]
     string Name,
     [property: JsonRequired]
-    [property: JsonPropertyName("description")]
-    string? Description,
-    [property: JsonRequired]
-    [property: JsonPropertyName("previewImage")]
-    string? PreviewImage,
-    [property: JsonRequired]
     [property: JsonPropertyName("code")]
     string? Code,
     [property: JsonRequired]
-    [property: JsonPropertyName("public")]
-    bool Public,
+    [property: JsonPropertyName("description")]
+    string? Description,
+    [property: JsonRequired]
+    [property: JsonPropertyName("image")]
+    string? Image,
+    [property: JsonRequired]
+    [property: JsonPropertyName("isPublic")]
+    bool IsPublic,
     [property: JsonRequired]
     [property: JsonPropertyName("createdDate")]
     string CreatedDate,
-    [property: JsonRequired]
-    [property: JsonPropertyName("updatedDate")]
-    string UpdatedDate,
     [property: JsonRequired]
     [property: JsonPropertyName("organization")]
     OrganizationDTO? Organization,

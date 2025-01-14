@@ -18,6 +18,15 @@ public record UserDTO(
     [property: JsonPropertyName("displayName")]
     string DisplayName,
     [property: JsonRequired]
+    [property: JsonPropertyName("description")]
+    string? Description,
+    [property: JsonRequired]
+    [property: JsonPropertyName("profilePicture")]
+    string? ProfilePicture,
+    [property: JsonRequired]
+    [property: JsonPropertyName("createdDate")]
+    string CreatedDate,
+    [property: JsonRequired]
     [property: JsonPropertyName("joinedDate")]
     string? JoinedDate
 );

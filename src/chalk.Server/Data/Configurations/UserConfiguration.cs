@@ -24,12 +24,12 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .HasForeignKey(e => e.UserId)
             .IsRequired();
         builder
-            .HasMany(e => e.Organizations)
+            .HasMany(e => e.Courses)
             .WithOne(e => e.User)
             .HasForeignKey(e => e.UserId)
             .IsRequired();
         builder
-            .HasMany(e => e.Courses)
+            .HasMany(e => e.Organizations)
             .WithOne(e => e.User)
             .HasForeignKey(e => e.UserId)
             .IsRequired();

@@ -13,7 +13,6 @@ public class UserCourseConfiguration : IEntityTypeConfiguration<UserCourse>
         builder.HasKey(e => new { e.UserId, e.CourseId });
 
         builder.Property(e => e.Status).IsRequired();
-        builder.Property(e => e.Student).IsRequired();
         builder.Property(e => e.Grade);
         builder.Property(e => e.JoinedDate);
 
@@ -28,9 +27,9 @@ public class UserCourseConfiguration : IEntityTypeConfiguration<UserCourse>
             .HasForeignKey(e => e.CourseId)
             .IsRequired();
         builder
-            .HasOne(e => e.Role)
-            .WithMany(e => e.Users)
-            .HasForeignKey(e => e.CourseRoleId)
-            .IsRequired();
+            .HasMany(e => e.Roles)
+            .WithOne(e => e.UserCourse)
+            .HasForeignKey(e => new { e.UserId, CourseId = (long)e.CourseId! })
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

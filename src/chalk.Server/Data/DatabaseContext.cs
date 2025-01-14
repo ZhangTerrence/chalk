@@ -20,28 +20,27 @@ public class DatabaseContext : IdentityDbContext<User, IdentityRole<long>, long>
     public DbSet<ChannelRolePermission> ChannelRolePermissions { get; set; }
     public DbSet<Course> Courses { get; set; }
     public DbSet<CourseModule> CourseModules { get; set; }
-    public DbSet<CourseRole> CourseRoles { get; set; }
     public DbSet<Message> Messages { get; set; }
     public DbSet<Organization> Organizations { get; set; }
-    public DbSet<OrganizationRole> OrganizationRoles { get; set; }
+    public DbSet<Role> AppRoles { get; set; }
     public DbSet<Submission> Submissions { get; set; }
     public DbSet<Tag> Tags { get; set; }
     public DbSet<UserChannel> UserChannels { get; set; }
     public DbSet<UserCourse> UserCourses { get; set; }
     public DbSet<UserOrganization> UserOrganizations { get; set; }
+    public DbSet<UserRole> UserAppRoles { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
 
         builder.Entity<User>(e => e.ToTable("users"));
-        builder.Entity<IdentityRole<long>>(e => e.ToTable("roles"));
+        builder.Entity<IdentityRole<long>>(e => e.ToTable("system_roles"));
         builder.Entity<IdentityUserClaim<long>>(e => e.ToTable("user_claims"));
         builder.Entity<IdentityUserToken<long>>(e => e.ToTable("user_tokens"));
         builder.Entity<IdentityUserLogin<long>>(e => e.ToTable("user_logins"));
-        builder.Entity<IdentityRoleClaim<long>>(e => e.ToTable("role_claims"));
-        builder.Entity<IdentityUserRole<long>>(e => e.ToTable("user_roles"));
-
+        builder.Entity<IdentityRoleClaim<long>>(e => e.ToTable("system_role_claims"));
+        builder.Entity<IdentityUserRole<long>>(e => e.ToTable("user_system_roles"));
 
         new AssignmentConfiguration().Configure(builder.Entity<Assignment>());
         new AssignmentGroupConfiguration().Configure(builder.Entity<AssignmentGroup>());
@@ -50,15 +49,15 @@ public class DatabaseContext : IdentityDbContext<User, IdentityRole<long>, long>
         new ChannelRolePermissionConfiguration().Configure(builder.Entity<ChannelRolePermission>());
         new CourseConfiguration().Configure(builder.Entity<Course>());
         new CourseModuleConfiguration().Configure(builder.Entity<CourseModule>());
-        new CourseRoleConfiguration().Configure(builder.Entity<CourseRole>());
         new MessageConfiguration().Configure(builder.Entity<Message>());
         new OrganizationConfiguration().Configure(builder.Entity<Organization>());
-        new OrganizationRoleConfiguration().Configure(builder.Entity<OrganizationRole>());
+        new RoleConfiguration().Configure(builder.Entity<Role>());
         new SubmissionConfiguration().Configure(builder.Entity<Submission>());
         new TagConfiguration().Configure(builder.Entity<Tag>());
         new UserConfiguration().Configure(builder.Entity<User>());
         new UserChannelConfiguration().Configure(builder.Entity<UserChannel>());
         new UserCourseConfiguration().Configure(builder.Entity<UserCourse>());
         new UserOrganizationConfiguration().Configure(builder.Entity<UserOrganization>());
+        new UserRoleConfiguration().Configure(builder.Entity<UserRole>());
     }
 }

@@ -14,10 +14,9 @@ public class UserOrganization
     // Foreign Keys
     public long UserId { get; set; }
     public long OrganizationId { get; set; }
-    public long OrganizationRoleId { get; set; }
 
     // Navigation Properties
     public User User { get; set; } = null!;
     public Organization Organization { get; set; } = null!;
-    public OrganizationRole Role { get; set; } = null!;
+    public ICollection<UserRole> Roles { get; set; } = [];
 }

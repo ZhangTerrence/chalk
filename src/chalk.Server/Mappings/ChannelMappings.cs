@@ -1,3 +1,4 @@
+using System.Globalization;
 using chalk.Server.DTOs;
 using chalk.Server.Entities;
 
@@ -7,6 +8,11 @@ public static class ChannelMappings
 {
     public static ChannelDTO ToDTO(this Channel channel)
     {
-        return new ChannelDTO(channel.Id, channel.Name);
+        return new ChannelDTO(
+            channel.Id,
+            channel.Name,
+            channel.Description,
+            channel.CreatedDate.ToString(CultureInfo.CurrentCulture)
+        );
     }
 }

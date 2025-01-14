@@ -3,9 +3,9 @@ using FluentValidation;
 
 namespace chalk.Server.Validators;
 
-public class LoginValidator : AbstractValidator<LoginRequest>
+public class LoginRequestValidator : AbstractValidator<LoginRequest>
 {
-    public LoginValidator()
+    public LoginRequestValidator()
     {
         RuleFor(e => e.Email)
             .NotEmpty()

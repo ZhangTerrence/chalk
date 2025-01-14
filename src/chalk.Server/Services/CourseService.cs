@@ -52,22 +52,27 @@ public class CourseService : ICourseService
         }
 
         var course = request.ToEntity(null);
-        var courseRole = CreateRoleRequest
+        var role = CreateRoleRequest
             .CreateCourseRole("Instructor", null, PermissionUtilities.All, 0, course.Id)
-            .ToEntity(course);
-        var courseUser = new UserCourse
+            .ToEntity();
+
+        var userCourse = new UserCourse
         {
             Status = UserStatus.Joined,
-            Student = false,
             JoinedDate = DateTime.UtcNow,
             User = user,
-            Course = course,
-            Role = courseRole
+            Course = course
         };
+        var userRole = new UserRole
+        {
+            UserCourse = userCourse,
+            Role = role
+        };
+        userCourse.Roles.Add(userRole);
 
         var createdCourse = await _context.Courses.AddAsync(course);
-        course.Users.Add(courseUser);
-        course.Roles.Add(courseRole);
+        course.Users.Add(userCourse);
+        course.Roles.Add(role);
 
         await _context.SaveChangesAsync();
         return await GetCourseAsync(createdCourse.Entity.Id);
@@ -86,24 +91,24 @@ public class CourseService : ICourseService
             course.Name = request.Name;
         }
 
-        if (request.Description is not null)
-        {
-            course.Description = request.Description;
-        }
-
-        if (request.PreviewImage is not null)
-        {
-            course.PreviewImage = request.PreviewImage;
-        }
-
         if (request.Code is not null)
         {
             course.Code = request.Code;
         }
 
-        if (request.Public is not null)
+        if (request.Description is not null)
         {
-            course.Public = request.Public!.Value;
+            course.Description = request.Description;
+        }
+
+        if (request.Image is not null)
+        {
+            course.Image = request.Image;
+        }
+
+        if (request.IsPublic is not null)
+        {
+            course.IsPublic = request.IsPublic!.Value;
         }
 
         await _context.SaveChangesAsync();

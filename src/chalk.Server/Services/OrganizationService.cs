@@ -59,26 +59,27 @@ public class OrganizationService : IOrganizationService
         }
 
         var organization = request.ToEntity(user);
-        var organizationRole = new OrganizationRole
+        var role = CreateRoleRequest
+            .CreateOrganizationRole("Owner", null, PermissionUtilities.All, 0, organization.Id)
+            .ToEntity();
+
+        var userRole = new UserRole
         {
-            Name = "Owner",
-            Permissions = PermissionUtilities.All,
-            Rank = 0,
-            CreatedDate = DateTime.UtcNow,
-            UpdatedDate = DateTime.UtcNow,
+            UserId = user.Id,
+            Role = role
         };
-        var organizationUser = new UserOrganization
+        var userOrganization = new UserOrganization
         {
             Status = UserStatus.Joined,
             JoinedDate = DateTime.UtcNow,
             User = user,
             Organization = organization,
-            Role = organizationRole
         };
+        userOrganization.Roles.Add(userRole);
 
         var createdOrganization = await _context.Organizations.AddAsync(organization);
-        organization.Users.Add(organizationUser);
-        organization.Roles.Add(organizationRole);
+        organization.Users.Add(userOrganization);
+        organization.Roles.Add(role);
 
         await _context.SaveChangesAsync();
         return await GetOrganizationAsync(createdOrganization.Entity.Id);
@@ -129,10 +130,5 @@ public class OrganizationService : IOrganizationService
         _context.Organizations.Remove(organization);
 
         await _context.SaveChangesAsync();
-    }
-
-    public async Task<OrganizationRole> CreateOrganizationRoleAsync(CreateRoleRequest request)
-    {
-        throw new NotImplementedException();
     }
 }

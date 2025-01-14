@@ -12,8 +12,6 @@ public class UserChannelConfiguration : IEntityTypeConfiguration<UserChannel>
 
         builder.HasKey(e => new { e.UserId, e.ChannelId });
 
-        builder.Property(e => e.JoinedDate).IsRequired();
-
         builder
             .HasOne(e => e.User)
             .WithMany(e => e.DirectMessages)
@@ -25,20 +23,8 @@ public class UserChannelConfiguration : IEntityTypeConfiguration<UserChannel>
             .HasForeignKey(e => e.ChannelId)
             .IsRequired();
         builder
-            .HasOne(e => e.CourseRole)
-            .WithMany(e => e.Channels)
-            .HasForeignKey(e => e.CourseRoleId);
-        builder
-            .HasOne(e => e.OrganizationRole)
-            .WithMany(e => e.Channels)
-            .HasForeignKey(e => e.OrganizationRoleId);
-        builder
-            .HasOne(e => e.RolePermission)
-            .WithMany(e => e.Users)
-            .HasForeignKey(e => new { e.ChannelId, e.CourseRoleId });
-        builder
             .HasMany(e => e.Messages)
-            .WithOne(e => e.User)
+            .WithOne()
             .HasForeignKey(e => new { e.UserId, e.ChannelId })
             .IsRequired();
     }

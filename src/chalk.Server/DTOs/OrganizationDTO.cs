@@ -10,5 +10,14 @@ public record OrganizationDTO(
     long Id,
     [property: JsonRequired]
     [property: JsonPropertyName("name")]
-    string Name
+    string Name,
+    [property: JsonRequired]
+    [property: JsonPropertyName("description")]
+    string? Description,
+    [property: JsonRequired]
+    [property: JsonPropertyName("profilePicture")]
+    string? ProfilePicture,
+    [property: JsonRequired]
+    [property: JsonPropertyName("createdDate")]
+    string CreatedDate
 );

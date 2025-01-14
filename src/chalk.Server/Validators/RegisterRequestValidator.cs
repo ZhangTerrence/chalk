@@ -3,9 +3,9 @@ using FluentValidation;
 
 namespace chalk.Server.Validators;
 
-public class RegisterValidator : AbstractValidator<RegisterRequest>
+public class RegisterRequestValidator : AbstractValidator<RegisterRequest>
 {
-    public RegisterValidator()
+    public RegisterRequestValidator()
     {
         RuleFor(e => e.FirstName)
             .NotEmpty()
