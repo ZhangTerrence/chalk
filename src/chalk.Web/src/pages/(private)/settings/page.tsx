@@ -3,11 +3,10 @@ import React from "react";
 import { Helmet } from "react-helmet-async";
 import { NavLink } from "react-router-dom";
 
-import { Button } from "@/components/ui/button.tsx";
 import { Separator } from "@/components/ui/separator.tsx";
 
-import { ProfileSection } from "@/components/Settings/ProfileSection.tsx";
-import { ThemeSection } from "@/components/Settings/ThemeSection.tsx";
+import { ProfileSection } from "@/components/SettingsSections/ProfileSection.tsx";
+import { ThemeSection } from "@/components/SettingsSections/ThemeSection.tsx";
 
 export type SettingsSection = "Profile" | "Theme";
 
@@ -31,11 +30,9 @@ export default function SettingsPage() {
         <title>Chalk - Settings</title>
       </Helmet>
       <main className="relative w-screen h-screen flex">
-        <Button variant="link" className="text-xl px-2" asChild>
-          <NavLink to="/dashboard" className="fixed top-0 left-0 m-4">
-            Back
-          </NavLink>
-        </Button>
+        <NavLink to="/dashboard" className="fixed top-0 left-0 m-4 hover:underline">
+          Back
+        </NavLink>
         <ul className="flex flex-col gap-y-4 text-xl min-w-80 pr-4 items-end pt-20">
           <li onClick={() => setSection("Profile")} className="hover:cursor-pointer">
             Profile
