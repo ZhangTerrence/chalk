@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import React from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -21,34 +21,25 @@ export type CreateCourseDialogProps = {
 };
 
 export const CreateCourseDialog = (props: CreateCourseDialogProps) => {
-  const form = useForm<CreateCourseType>({
-    resolver: zodResolver(CreateCourseSchema),
-    defaultValues: {
-      name: "",
-      description: "",
-      code: "",
-      public: false,
-    },
-  });
-
   const [createCourse, { isLoading, isSuccess }] = useCreateCourseMutation();
 
-  const onSubmit = async (data: CreateCourseType) => {
-    await createCourse({
-      name: data.name,
-      description: data.description ?? null,
-      code: data.code ?? null,
-      public: data.public,
-    }).unwrap();
-  };
-
-  useEffect(() => {
+  React.useEffect(() => {
     if (!isLoading && isSuccess) {
       props.close();
       form.reset();
       toast.success("Successfully created course.");
     }
   }, [isLoading, isSuccess]);
+
+  const form = useForm<CreateCourseType>({
+    resolver: zodResolver(CreateCourseSchema),
+    defaultValues: {
+      name: "",
+      code: "",
+      description: "",
+      isPublic: false,
+    },
+  });
 
   return (
     <>
@@ -58,7 +49,10 @@ export const CreateCourseDialog = (props: CreateCourseDialogProps) => {
         </DialogHeader>
         <Separator />
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-y-4 min-w-80">
+          <form
+            onSubmit={form.handleSubmit(async (data) => await createCourse(data).unwrap())}
+            className="flex flex-col gap-y-4 min-w-80"
+          >
             <FormField
               control={form.control}
               name="name"
@@ -79,7 +73,7 @@ export const CreateCourseDialog = (props: CreateCourseDialogProps) => {
                 <FormItem>
                   <FormLabel>Description</FormLabel>
                   <FormControl>
-                    <Textarea className="max-h-40" {...field} />
+                    <Textarea {...field} className="max-h-40" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -100,7 +94,7 @@ export const CreateCourseDialog = (props: CreateCourseDialogProps) => {
             />
             <FormField
               control={form.control}
-              name="public"
+              name="isPublic"
               render={({ field }) => (
                 <FormItem className="w-full">
                   <FormLabel>Type</FormLabel>

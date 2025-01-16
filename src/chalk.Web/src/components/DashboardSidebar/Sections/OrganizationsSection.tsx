@@ -23,12 +23,12 @@ export const OrganizationsSection = () => {
             </SidebarGroupAction>
           </DropdownMenuTrigger>
           <DropdownMenuContent
-            className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
             side={isMobile ? "bottom" : "right"}
             align="start"
             sideOffset={isMobile ? 5 : 20}
+            className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
           >
-            <DropdownMenuItem className="py-3" onClick={() => navigate("/organizations")}>
+            <DropdownMenuItem onClick={() => navigate("/organizations")} className="py-3">
               <div className="flex space-x-2 items-center">
                 <UsersIcon />
                 <span>Find Organizations</span>

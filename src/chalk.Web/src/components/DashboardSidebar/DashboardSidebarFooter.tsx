@@ -12,9 +12,9 @@ import { useTypedSelector } from "@/redux/store.ts";
 
 export const DashboardSidebarFooter = () => {
   const user = useTypedSelector(selectUser)!;
-  const navigate = useNavigate();
-  const { isMobile } = useSidebar();
   const [logout] = useLogoutMutation();
+  const { isMobile } = useSidebar();
+  const navigate = useNavigate();
 
   const fullName = `${user.firstName} ${user.lastName}`;
 
@@ -28,7 +28,7 @@ export const DashboardSidebarFooter = () => {
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage src={user.profilePicture ?? undefined} alt={fullName} className="object-contain" />
+                <AvatarImage src={user.profilePicture} alt={fullName} className="object-contain" />
                 <AvatarFallback className="rounded-lg">{fullName.charAt(0).toUpperCase()}</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
@@ -38,16 +38,16 @@ export const DashboardSidebarFooter = () => {
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
-            className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
             side={isMobile ? "bottom" : "right"}
             align="end"
             sideOffset={isMobile ? 5 : 20}
+            className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
           >
-            <DropdownMenuItem className="py-3" onClick={() => navigate("/settings")}>
+            <DropdownMenuItem onClick={() => navigate("/settings")} className="py-3">
               <SettingsIcon />
               Settings
             </DropdownMenuItem>
-            <DropdownMenuItem className="py-3" onClick={() => logout(null)}>
+            <DropdownMenuItem onClick={() => logout(null)} className="py-3">
               <LogOutIcon />
               Logout
             </DropdownMenuItem>

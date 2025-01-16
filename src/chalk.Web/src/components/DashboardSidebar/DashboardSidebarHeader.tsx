@@ -1,11 +1,11 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select.tsx";
 import { SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar.tsx";
 
-import type { Section } from "@/components/DashboardSidebar/DashboardSidebar.tsx";
+import type { DashboardSection } from "@/components/DashboardSidebar/DashboardSidebar.tsx";
 
 type DashboardSidebarHeaderProps = {
-  section: Section;
-  changeSection: (section: Section) => void;
+  section: DashboardSection;
+  changeSection: (section: DashboardSection) => void;
 };
 
 export const DashboardSidebarHeader = (props: DashboardSidebarHeaderProps) => {
@@ -13,7 +13,10 @@ export const DashboardSidebarHeader = (props: DashboardSidebarHeaderProps) => {
     <SidebarHeader className="mt-2">
       <SidebarMenu>
         <SidebarMenuItem>
-          <Select defaultValue={props.section} onValueChange={(section) => props.changeSection(section as Section)}>
+          <Select
+            defaultValue={props.section}
+            onValueChange={(section) => props.changeSection(section as DashboardSection)}
+          >
             <SidebarMenuButton asChild>
               <SelectTrigger>
                 <SelectValue />

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React from "react";
 
 import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 import { PlusIcon, UsersIcon } from "lucide-react";
@@ -23,10 +23,11 @@ import { selectUserCourses } from "@/redux/slices/user.ts";
 import { useTypedSelector } from "@/redux/store.ts";
 
 export const CoursesSection = () => {
-  const [open, setOpen] = useState(false);
   const courses = useTypedSelector(selectUserCourses) ?? [];
   const { isMobile } = useSidebar();
   const navigate = useNavigate();
+
+  const [open, setOpen] = React.useState(false);
 
   const close = () => {
     setOpen(false);
@@ -43,12 +44,12 @@ export const CoursesSection = () => {
             </SidebarGroupAction>
           </DropdownMenuTrigger>
           <DropdownMenuContent
-            className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
             side={isMobile ? "bottom" : "right"}
             align="start"
             sideOffset={isMobile ? 5 : 20}
+            className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
           >
-            <DropdownMenuItem className="py-3" onClick={() => navigate("/courses")}>
+            <DropdownMenuItem onClick={() => navigate("/courses")} className="py-3">
               <UsersIcon />
               <span>Find Courses</span>
             </DropdownMenuItem>

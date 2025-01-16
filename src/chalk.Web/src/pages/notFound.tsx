@@ -1,4 +1,4 @@
-export default function NotFound() {
+export default function NotFoundPage() {
   return (
     <main className="min-h-screen w-screen flex flex-col justify-center items-center gap-y-4">
       <p className="text-4xl">404</p>

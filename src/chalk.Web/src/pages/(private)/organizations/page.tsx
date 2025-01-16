@@ -1,6 +1,6 @@
 import { Helmet } from "react-helmet-async";
 
-export default function Organizations() {
+export default function OrganizationsPage() {
   return (
     <>
       <Helmet>

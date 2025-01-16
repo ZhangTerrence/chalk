@@ -3,18 +3,17 @@ import { Provider } from "react-redux";
 import { BrowserRouter, Route, Routes } from "react-router";
 import { Toaster } from "sonner";
 
-import DashboardLayout from "@/pages/layouts/DashboardLayout.tsx";
-import Layout from "@/pages/layouts/Layout.tsx";
-import PrivateLayout from "@/pages/layouts/PrivateLayout.tsx";
-
-import Courses from "@/pages/Courses.tsx";
-import Dashboard from "@/pages/Dashboard.tsx";
-import Landing from "@/pages/Landing.tsx";
-import Login from "@/pages/Login.tsx";
-import NotFound from "@/pages/NotFound.tsx";
-import Organizations from "@/pages/Organizations.tsx";
-import Register from "@/pages/Register.tsx";
-import Settings from "@/pages/Settings.tsx";
+import CoursesPage from "@/pages/(private)/courses/page.tsx";
+import DashboardLayout from "@/pages/(private)/dashboard/layout.tsx";
+import DashboardPage from "@/pages/(private)/dashboard/page.tsx";
+import PrivateLayout from "@/pages/(private)/layout.tsx";
+import OrganizationsPage from "@/pages/(private)/organizations/page.tsx";
+import SettingsPage from "@/pages/(private)/settings/page.tsx";
+import RootLayout from "@/pages/layout.tsx";
+import LoginPage from "@/pages/login/page.tsx";
+import NotFoundPage from "@/pages/notFound";
+import LandingPage from "@/pages/page.tsx";
+import RegisterPage from "@/pages/register/page.tsx";
 
 import { store } from "@/redux/store.ts";
 
@@ -26,20 +25,20 @@ export default function App() {
       <HelmetProvider context={context}>
         <BrowserRouter>
           <Routes>
-            <Route element={<Layout />}>
-              <Route index element={<Landing />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
+            <Route element={<RootLayout />}>
+              <Route index element={<LandingPage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
             </Route>
             <Route element={<PrivateLayout />}>
               <Route path="/dashboard" element={<DashboardLayout />}>
-                <Route index element={<Dashboard />} />
+                <Route index element={<DashboardPage />} />
               </Route>
-              <Route path="/settings" element={<Settings />} />
-              <Route path="/courses" element={<Courses />} />
-              <Route path="/organizations" element={<Organizations />} />
+              <Route path="/settings" element={<SettingsPage />} />
+              <Route path="/courses" element={<CoursesPage />} />
+              <Route path="/organizations" element={<OrganizationsPage />} />
             </Route>
-            <Route path="*" element={<NotFound />} />
+            <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </BrowserRouter>
         <Toaster />

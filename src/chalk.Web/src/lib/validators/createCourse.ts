@@ -22,7 +22,7 @@ export const CreateCourseSchema = z.object({
       message: "The course's code must have at most 31 characters.",
     })
     .optional(),
-  public: z.boolean({
+  isPublic: z.boolean({
     message: "Must specify whether the course is public.",
   }),
 });

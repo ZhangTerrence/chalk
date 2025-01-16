@@ -1,29 +1,21 @@
-import { useState } from "react";
+import React from "react";
 
-import { PlusIcon } from "lucide-react";
-import { NavLink } from "react-router-dom";
-
-import { Button } from "@/components/ui/button.tsx";
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupAction,
-  SidebarGroupLabel,
-  SidebarRail,
-} from "@/components/ui/sidebar.tsx";
+import { Sidebar, SidebarContent, SidebarRail } from "@/components/ui/sidebar.tsx";
 
 import { DashboardSidebarFooter } from "@/components/DashboardSidebar/DashboardSidebarFooter.tsx";
 import { DashboardSidebarHeader } from "@/components/DashboardSidebar/DashboardSidebarHeader.tsx";
 import { CoursesSection } from "@/components/DashboardSidebar/Sections/CoursesSection.tsx";
+import { DirectMessagesSection } from "@/components/DashboardSidebar/Sections/DirectMessagesSection.tsx";
 import { OrganizationsSection } from "@/components/DashboardSidebar/Sections/OrganizationsSection.tsx";
 
-export type Section = "direct-messages" | "courses" | "organizations";
+export type DashboardSection = "direct-messages" | "courses" | "organizations";
 
 export const DashboardSidebar = () => {
-  const [section, setSection] = useState<Section>((localStorage.getItem("section") as Section) ?? "direct-messages");
+  const [section, setSection] = React.useState<DashboardSection>(
+    (localStorage.getItem("section") as DashboardSection) ?? "direct-messages",
+  );
 
-  const changeSection = (section: Section) => {
+  const changeSection = (section: DashboardSection) => {
     localStorage.setItem("section", section);
     return setSection(section);
   };
@@ -31,18 +23,7 @@ export const DashboardSidebar = () => {
   const renderSection = () => {
     switch (section) {
       case "direct-messages":
-        return (
-          <SidebarGroup>
-            <SidebarGroupLabel>Direct Messages</SidebarGroupLabel>
-            <SidebarGroupAction>
-              <Button variant="ghost" size="icon" asChild>
-                <NavLink className="h-fit w-fit" to="/dashboard">
-                  <PlusIcon />
-                </NavLink>
-              </Button>
-            </SidebarGroupAction>
-          </SidebarGroup>
-        );
+        return <DirectMessagesSection />;
       case "courses":
         return <CoursesSection />;
       case "organizations":

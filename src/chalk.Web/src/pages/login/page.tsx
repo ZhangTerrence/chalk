@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import React from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoaderIcon } from "lucide-react";
@@ -16,11 +16,12 @@ import { useTypedSelector } from "@/redux/store.ts";
 
 import { LoginSchema, type LoginSchemaType } from "@/lib/validators/login.ts";
 
-export default function Login() {
+export default function LoginPage() {
   const user = useTypedSelector(selectUser);
+  const [login, { isLoading }] = useLoginMutation();
   const navigate = useNavigate();
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (user) {
       navigate("/dashboard");
     }
@@ -33,8 +34,6 @@ export default function Login() {
       password: "",
     },
   });
-
-  const [login, { isLoading }] = useLoginMutation();
 
   return (
     <>
@@ -82,7 +81,7 @@ export default function Login() {
         </Form>
         <p className="self-center">
           Don't have an account? Register{" "}
-          <NavLink className="hover:underline" to="/register">
+          <NavLink to="/register" className="hover:underline">
             here
           </NavLink>
           .

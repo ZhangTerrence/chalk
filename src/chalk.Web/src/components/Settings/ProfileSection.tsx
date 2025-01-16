@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -19,8 +19,18 @@ import { UpdateUserSchema, type UpdateUserType } from "@/lib/validators/updateUs
 
 export const ProfileSection = () => {
   const user = useTypedSelector(selectUser)!;
-  const [imageUrl, setImageUrl] = useState<string | null>(user.profilePicture);
-  const [file, setFile] = useState<FileList | null>(null);
+  const [updateUser, { isLoading, isSuccess }] = useUpdateUserMutation();
+
+  const [profilePicture, setProfilePicture] = React.useState<string | undefined>(user.profilePicture);
+  const [uploadedProfilePicture, setUploadedProfilePicture] = React.useState<File | null>();
+
+  const fullName = `${user.firstName} ${user.lastName}`;
+
+  React.useEffect(() => {
+    if (!isLoading && isSuccess) {
+      toast.success("Successfully updated profile.");
+    }
+  }, [isLoading, isSuccess]);
 
   const form = useForm<UpdateUserType>({
     resolver: zodResolver(UpdateUserSchema),
@@ -28,29 +38,30 @@ export const ProfileSection = () => {
       firstName: user.firstName,
       lastName: user.lastName,
       displayName: user.displayName,
-      description: user.description ?? undefined,
+      description: user.description,
     },
   });
 
-  const fullName = `${user.firstName} ${user.lastName}`;
-
-  const [updateUser] = useUpdateUserMutation();
-
-  const onSubmit = async (data: UpdateUserType) => {
-    if (!file || file.length !== 1) {
-      toast.error("Bad request.", {
-        description: "Only one file can be submitted.",
-      });
+  const onFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { files, displayUrl } = getImageData(event);
+    if (files.length !== 1) {
+      toast.error("Only one file can be uploaded.");
       return;
     }
 
-    const profilePicture = file.item(0)!;
+    setProfilePicture(displayUrl);
+    setUploadedProfilePicture(files.item(0)!);
+  };
+
+  const onSubmit = async (data: UpdateUserType) => {
     const formData = new FormData();
 
     for (const [key, value] of Object.entries(data)) {
       formData.append(key, value);
     }
-    formData.append("profilePicture", profilePicture);
+    if (uploadedProfilePicture) {
+      formData.append("profilePicture", uploadedProfilePicture);
+    }
 
     await updateUser(formData).unwrap();
   };
@@ -63,7 +74,7 @@ export const ProfileSection = () => {
             <div className="relative h-full aspect-square">
               <Avatar className="h-full w-full rounded-full">
                 <AvatarImage
-                  src={imageUrl ?? undefined}
+                  src={profilePicture}
                   alt={fullName}
                   className="object-center object-contain max-w-40 h-auto"
                 />
@@ -72,11 +83,7 @@ export const ProfileSection = () => {
               <Input
                 type="file"
                 accept="image/*"
-                onChange={(event) => {
-                  const { files, displayUrl } = getImageData(event);
-                  setImageUrl(displayUrl);
-                  setFile(files);
-                }}
+                onChange={onFileUpload}
                 className="absolute h-full w-full top-0 opacity-0 hover:cursor-pointer"
               />
             </div>

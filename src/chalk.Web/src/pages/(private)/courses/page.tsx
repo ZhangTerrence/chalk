@@ -1,6 +1,6 @@
 import { Helmet } from "react-helmet-async";
 
-export default function Courses() {
+export default function CoursesPage() {
   return (
     <>
       <Helmet>

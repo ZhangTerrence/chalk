@@ -16,8 +16,10 @@ import { useTypedSelector } from "@/redux/store.ts";
 
 import { RegisterSchema, type RegisterSchemaType } from "@/lib/validators/register.ts";
 
-export default function Register() {
+export default function RegisterPage() {
   const user = useTypedSelector(selectUser);
+
+  const [register, { isLoading }] = useRegisterMutation();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -36,8 +38,6 @@ export default function Register() {
       password: "",
     },
   });
-
-  const [register, { isLoading }] = useRegisterMutation();
 
   return (
     <>
@@ -126,7 +126,7 @@ export default function Register() {
         </Form>
         <p className="self-center">
           Already have an account? Login{" "}
-          <NavLink className="hover:underline" to="/login">
+          <NavLink to="/login" className="hover:underline">
             here
           </NavLink>
           .

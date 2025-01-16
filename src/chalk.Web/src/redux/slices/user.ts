@@ -5,14 +5,9 @@ import { courseApi } from "@/redux/services/course.ts";
 import { userApi } from "@/redux/services/user.ts";
 import type { RootState } from "@/redux/store.ts";
 
-import type { CourseDTO } from "@/lib/types/course.ts";
 import type { UserResponse } from "@/lib/types/user.ts";
 
-export type UserState =
-  | (UserResponse & {
-      courses: CourseDTO[];
-    })
-  | null;
+export type UserState = UserResponse | null;
 
 export const userSlice = createSlice({
   name: "user",
@@ -30,6 +25,9 @@ export const userSlice = createSlice({
           id: payload.data.id,
           name: payload.data.name,
           code: payload.data.code,
+          description: payload.data.description,
+          image: payload.data.image,
+          createdDate: payload.data.createdDate,
         });
       }
     });

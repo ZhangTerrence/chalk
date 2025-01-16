@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 
 import { Navigate, useNavigate } from "react-router-dom";
 
@@ -8,8 +8,8 @@ import { useTypedSelector } from "@/redux/store.ts";
 
 export const AuthenticationGuard = ({ children }: { children: React.ReactNode }) => {
   const user = useTypedSelector(selectUser);
-  const navigate = useNavigate();
   const [refresh] = useRefreshMutation();
+  const navigate = useNavigate();
 
   const tryRefresh = async () => {
     try {
