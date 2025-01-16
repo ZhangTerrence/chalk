@@ -56,7 +56,7 @@ public class OrganizationController : ControllerBase
         return Created(nameof(CreateOrganization), new ApiResponse<OrganizationResponse>(null, organization.ToResponse()));
     }
 
-    [HttpPatch("{organizationId:long}")]
+    [HttpPut("{organizationId:long}")]
     public async Task<IActionResult> UpdateOrganization([FromRoute] long organizationId, [FromBody] UpdateOrganizationRequest request)
     {
         var validationResult = await _updateOrganizationRequestValidator.ValidateAsync(request);

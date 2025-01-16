@@ -6,9 +6,9 @@ namespace chalk.Server.DTOs.Requests;
 /// <param name="Name">The organization's name.</param>
 /// <param name="Description">The organization's description.</param>
 /// <param name="ProfilePicture">The organization's profile picture.</param>
-/// <remarks>All properties are optional.</remarks>
+/// <remarks><paramref name="Name"/> is required.</remarks>
 public record UpdateOrganizationRequest(
-    string? Name,
+    string Name,
     string? Description,
     IFormFile? ProfilePicture
 );

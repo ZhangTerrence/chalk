@@ -21,7 +21,7 @@ export const ProfileSection = () => {
   const user = useTypedSelector(selectUser)!;
   const [updateUser, { isLoading, isSuccess }] = useUpdateUserMutation();
 
-  const [profilePicture, setProfilePicture] = React.useState<string | undefined>(user.profilePicture);
+  const [profilePicture, setProfilePicture] = React.useState<string | undefined>(user.profilePicture ?? undefined);
   const [uploadedProfilePicture, setUploadedProfilePicture] = React.useState<File | null>();
 
   const fullName = `${user.firstName} ${user.lastName}`;
@@ -38,7 +38,7 @@ export const ProfileSection = () => {
       firstName: user.firstName,
       lastName: user.lastName,
       displayName: user.displayName,
-      description: user.description,
+      description: user.description ?? "",
     },
   });
 

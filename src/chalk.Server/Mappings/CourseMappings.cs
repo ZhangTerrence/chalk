@@ -15,7 +15,7 @@ public static class CourseMappings
             Name = request.Name,
             Code = request.Code,
             Description = request.Description,
-            IsPublic = request.IsPublic!.Value,
+            IsPublic = request.IsPublic,
             CreatedDate = DateTime.UtcNow,
             UpdatedDate = DateTime.UtcNow,
             Organization = organization

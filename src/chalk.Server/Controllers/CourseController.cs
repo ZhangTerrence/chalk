@@ -56,7 +56,7 @@ public class CourseController : ControllerBase
         return Created(nameof(CreateCourse), new ApiResponse<CourseResponse>(null, course.ToResponse()));
     }
 
-    [HttpPatch("{courseId:long}")]
+    [HttpPut("{courseId:long}")]
     public async Task<IActionResult> UpdateCourse([FromRoute] long courseId, [FromBody] UpdateCourseRequest request)
     {
         var validationResult = await _updateCourseRequestValidator.ValidateAsync(request);

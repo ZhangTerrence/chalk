@@ -7,10 +7,10 @@ export type UserDTO = {
   firstName: string;
   lastName: string;
   displayName: string;
-  description?: string;
-  profilePicture?: string;
+  description: string | null;
+  profilePicture: string | null;
   createdDate: string;
-  joinedDate?: string;
+  joinedDate: string | null;
 };
 
 export type UserResponse = {
@@ -19,8 +19,8 @@ export type UserResponse = {
   firstName: string;
   lastName: string;
   displayName: string;
-  description?: string;
-  profilePicture?: string;
+  description: string | null;
+  profilePicture: string | null;
   createdDate: string;
   organizations: OrganizationDTO[];
   courses: CourseDTO[];

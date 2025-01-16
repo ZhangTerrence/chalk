@@ -8,6 +8,8 @@ public class UpdateOrganizationRequestValidator : AbstractValidator<UpdateOrgani
     public UpdateOrganizationRequestValidator()
     {
         RuleFor(e => e.Name)
+            .NotEmpty()
+            .WithMessage("The organization's name is required.")
             .Length(3, 31)
             .WithMessage("The organization's name must have between 3 and 31 characters.");
         RuleFor(e => e.Description)

@@ -15,8 +15,7 @@ export const LoginSchema = z.object({
     .regex(/^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[-._@+]).*.{8,}$/, {
       message:
         "The user's password must have at least 8 characters with least one number, one lowercase letter, one upper case letter, one special character.",
-    })
-    .transform((e) => e ?? null),
+    }),
 });
 
 export type LoginSchemaType = z.infer<typeof LoginSchema>;

@@ -40,7 +40,7 @@ public class UserController : ControllerBase
         return Ok(new ApiResponse<UserResponse>(null, user.ToResponse()));
     }
 
-    [HttpPatch]
+    [HttpPut]
     public async Task<IActionResult> UpdateUser([FromForm] UpdateUserRequest request)
     {
         var validationResult = await _updateUserRequestValidator.ValidateAsync(request);
@@ -53,7 +53,7 @@ public class UserController : ControllerBase
         return Ok(new ApiResponse<UserResponse>(null, user.ToResponse()));
     }
 
-    [HttpPatch("{userId:long}"), Authorize(Roles = "Admin")]
+    [HttpPut("{userId:long}"), Authorize(Roles = "Admin")]
     public async Task<IActionResult> UpdateUser([FromRoute] long userId, [FromBody] UpdateUserRequest request)
     {
         var validationResult = await _updateUserRequestValidator.ValidateAsync(request);

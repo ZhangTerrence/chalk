@@ -87,32 +87,22 @@ public class UserService : IUserService
             throw new ServiceException("User not found.", StatusCodes.Status404NotFound);
         }
 
-        if (request.FirstName is not null)
-        {
-            user.FirstName = request.FirstName;
-        }
-
-        if (request.LastName is not null)
-        {
-            user.LastName = request.LastName;
-        }
-
-        if (request.DisplayName is not null)
-        {
-            user.DisplayName = request.DisplayName;
-        }
-
-        if (request.Description is not null)
-        {
-            user.Description = request.Description;
-        }
-
+        user.FirstName = request.FirstName;
+        user.LastName = request.LastName;
+        user.DisplayName = request.DisplayName;
+        user.Description = request.Description;
         if (request.ProfilePicture is not null)
         {
             var hash = FileUtilities.S3ObjectHash("user-profile-picture", user.Id.ToString());
             var uri = await _fileUploadService.UploadAsync(hash, request.ProfilePicture);
             user.ProfilePicture = uri;
         }
+        else
+        {
+            user.ProfilePicture = null;
+        }
+
+        user.UpdatedDate = DateTime.UtcNow;
 
         await _context.SaveChangesAsync();
         return await GetUserAsync(userId);

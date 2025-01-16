@@ -1,6 +1,6 @@
 export type ChannelDTO = {
   id: number;
-  name?: string;
-  description?: string;
+  name: string | null;
+  description: string | null;
   createdDate: Date;
 };

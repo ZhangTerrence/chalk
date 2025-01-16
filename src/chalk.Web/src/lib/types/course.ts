@@ -12,18 +12,18 @@ export type CreateCourseRequest = {
 export type CourseDTO = {
   id: number;
   name: string;
-  code?: string;
-  description?: string;
-  image?: string;
+  code: string | null;
+  description: string | null;
+  image: string | null;
   createdDate: string;
 };
 
 export type CourseResponse = {
   id: number;
   name: string;
-  code?: string;
-  description?: string;
-  image?: string;
+  code: string | null;
+  description: string | null;
+  image: string | null;
   isPublic: boolean;
   createdDate: string;
   organization?: OrganizationDTO;

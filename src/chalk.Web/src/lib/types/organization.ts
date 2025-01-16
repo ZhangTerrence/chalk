@@ -6,16 +6,16 @@ import type { UserDTO } from "@/lib/types/user.ts";
 export type OrganizationDTO = {
   id: number;
   name: string;
-  description?: string;
-  profilePicture?: string;
+  description: string | null;
+  profilePicture: string | null;
   createdDate: string;
 };
 
 export type OrganizationResponse = {
   id: number;
   name: string;
-  description?: string;
-  profilePicture?: string;
+  description: string | null;
+  profilePicture: string | null;
   createdDate: string;
   owner: UserDTO;
   users: UserDTO[];

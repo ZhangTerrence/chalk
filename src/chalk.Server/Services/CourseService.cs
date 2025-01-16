@@ -88,32 +88,23 @@ public class CourseService : ICourseService
             throw new ServiceException("Course not found.", StatusCodes.Status404NotFound);
         }
 
-        if (request.Name is not null)
-        {
-            course.Name = request.Name;
-        }
-
-        if (request.Code is not null)
-        {
-            course.Code = request.Code;
-        }
-
-        if (request.Description is not null)
-        {
-            course.Description = request.Description;
-        }
-
+        course.Name = request.Name;
+        course.Code = request.Code;
+        course.Description = request.Description;
         if (request.Image is not null)
         {
             var hash = FileUtilities.S3ObjectHash("course-image", course.Id.ToString());
             var uri = await _fileUploadService.UploadAsync(hash, request.Image);
             course.Image = uri;
         }
-
-        if (request.IsPublic is not null)
+        else
         {
-            course.IsPublic = request.IsPublic!.Value;
+            course.Image = null;
         }
+
+        course.IsPublic = request.IsPublic;
+
+        course.UpdatedDate = DateTime.UtcNow;
 
         await _context.SaveChangesAsync();
         return await GetCourseAsync(courseId);

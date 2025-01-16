@@ -95,26 +95,22 @@ public class OrganizationService : IOrganizationService
             throw new ServiceException("Organization not found.", StatusCodes.Status404NotFound);
         }
 
-        if (request.Name is not null)
+        if (await _context.Organizations.AnyAsync(e => e.Name == request.Name))
         {
-            if (await _context.Organizations.AnyAsync(e => e.Name == request.Name))
-            {
-                throw new ServiceException("Organization already exists.", StatusCodes.Status409Conflict);
-            }
-
-            organization.Name = request.Name;
+            throw new ServiceException("Organization already exists.", StatusCodes.Status409Conflict);
         }
 
-        if (request.Description is not null)
-        {
-            organization.Description = request.Description;
-        }
-
+        organization.Name = request.Name;
+        organization.Description = request.Description;
         if (request.ProfilePicture is not null)
         {
             var hash = FileUtilities.S3ObjectHash("organization-profile-picture", organization.Id.ToString());
             var uri = await _fileUploadService.UploadAsync(hash, request.ProfilePicture);
             organization.ProfilePicture = uri;
+        }
+        else
+        {
+            organization.ProfilePicture = null;
         }
 
         organization.UpdatedDate = DateTime.UtcNow;
