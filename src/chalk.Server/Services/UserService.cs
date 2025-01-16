@@ -4,6 +4,7 @@ using chalk.Server.DTOs.Requests;
 using chalk.Server.Entities;
 using chalk.Server.Mappings;
 using chalk.Server.Services.Interfaces;
+using chalk.Server.Utilities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,12 +15,14 @@ public class UserService : IUserService
     private readonly DatabaseContext _context;
     private readonly UserManager<User> _userManager;
     private readonly RoleManager<IdentityRole<long>> _roleManager;
+    private readonly IFileUploadService _fileUploadService;
 
-    public UserService(DatabaseContext context, UserManager<User> userManager, RoleManager<IdentityRole<long>> roleManager)
+    public UserService(DatabaseContext context, UserManager<User> userManager, RoleManager<IdentityRole<long>> roleManager, IFileUploadService fileUploadService)
     {
         _context = context;
         _userManager = userManager;
         _roleManager = roleManager;
+        _fileUploadService = fileUploadService;
     }
 
     public async Task<IEnumerable<User>> GetUsersAsync()
@@ -106,7 +109,9 @@ public class UserService : IUserService
 
         if (request.ProfilePicture is not null)
         {
-            user.ProfilePicture = request.ProfilePicture;
+            var hash = FileUtilities.S3ObjectHash("user-profile-picture", user.Id.ToString());
+            var uri = await _fileUploadService.UploadAsync(hash, request.ProfilePicture);
+            user.ProfilePicture = uri;
         }
 
         await _context.SaveChangesAsync();

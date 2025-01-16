@@ -41,7 +41,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPatch]
-    public async Task<IActionResult> UpdateUser([FromBody] UpdateUserRequest request)
+    public async Task<IActionResult> UpdateUser([FromForm] UpdateUserRequest request)
     {
         var validationResult = await _updateUserRequestValidator.ValidateAsync(request);
         if (!validationResult.IsValid)

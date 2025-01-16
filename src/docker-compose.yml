@@ -1,16 +1,4 @@
 ﻿services:
-  chalk.s3:
-    image: quay.io/minio/minio
-    command: "minio server /data --console-address ':9001'"
-    environment:
-      - MINIO_USER=${MINIO_USER}
-      - MINIO_PASSWORD=${MINIO_PASSWORD}
-    ports:
-      - "9000:9000"
-      - "9001:9001"
-    volumes:
-      - chalk_s3:/data
-  
   chalk.database:
     image: postgres
     environment:
@@ -34,12 +22,11 @@
       - Jwt__Issuer=${JWT_ISSUER}
       - Jwt__Audience=${JWT_AUDIENCE}
       - Jwt__Key=${JWT_KEY}
-      - MINIO_HOST=${MINIO_HOST}
-      - MINIO_PORT=${MINIO_PORT}
-      - MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY}
-      - MINIO_SECRET_KEY=${MINIO_SECRET_KEY}
+      - AWS_SDK__Profile=${AWS_SDK_PROFILE}
     ports:
       - "8080:8080"
+    volumes:
+      - ~/.aws:/root/.aws
     depends_on:
       - chalk.database
   
@@ -54,9 +41,8 @@
     ports:
       - "3000:3000"
     depends_on:
-      - chalk.server
       - chalk.database
-      - chalk.s3
+      - chalk.server
 
 volumes:
   chalk_s3:

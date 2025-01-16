@@ -13,10 +13,12 @@ namespace chalk.Server.Services;
 public class OrganizationService : IOrganizationService
 {
     private readonly DatabaseContext _context;
+    private readonly IFileUploadService _fileUploadService;
 
-    public OrganizationService(DatabaseContext context)
+    public OrganizationService(DatabaseContext context, IFileUploadService fileUploadService)
     {
         _context = context;
+        _fileUploadService = fileUploadService;
     }
 
     public async Task<IEnumerable<Organization>> GetOrganizationsAsync()
@@ -63,17 +65,17 @@ public class OrganizationService : IOrganizationService
             .CreateOrganizationRole("Owner", null, PermissionUtilities.All, 0, organization.Id)
             .ToEntity();
 
-        var userRole = new UserRole
-        {
-            UserId = user.Id,
-            Role = role
-        };
         var userOrganization = new UserOrganization
         {
             Status = UserStatus.Joined,
             JoinedDate = DateTime.UtcNow,
             User = user,
             Organization = organization,
+        };
+        var userRole = new UserRole
+        {
+            UserOrganization = userOrganization,
+            Role = role
         };
         userOrganization.Roles.Add(userRole);
 
@@ -110,7 +112,9 @@ public class OrganizationService : IOrganizationService
 
         if (request.ProfilePicture is not null)
         {
-            organization.ProfilePicture = request.ProfilePicture;
+            var hash = FileUtilities.S3ObjectHash("organization-profile-picture", organization.Id.ToString());
+            var uri = await _fileUploadService.UploadAsync(hash, request.ProfilePicture);
+            organization.ProfilePicture = uri;
         }
 
         organization.UpdatedDate = DateTime.UtcNow;

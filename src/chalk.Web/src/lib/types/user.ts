@@ -2,14 +2,6 @@ import type { ChannelDTO } from "@/lib/types/channel.ts";
 import type { CourseDTO } from "@/lib/types/course.ts";
 import type { OrganizationDTO } from "@/lib/types/organization.ts";
 
-export type UpdateUserRequest = {
-  firstName: string | null;
-  lastName: string | null;
-  displayName: string | null;
-  description: string | null;
-  profilePicture: string | null;
-};
-
 export type UserDTO = {
   id: number;
   firstName: string;

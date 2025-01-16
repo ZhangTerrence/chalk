@@ -13,6 +13,6 @@ public record UpdateCourseRequest(
     string? Name,
     string? Code,
     string? Description,
-    string? Image,
+    IFormFile? Image,
     bool? IsPublic
 );

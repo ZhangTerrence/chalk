@@ -13,10 +13,12 @@ namespace chalk.Server.Services;
 public class CourseService : ICourseService
 {
     private readonly DatabaseContext _context;
+    private readonly IFileUploadService _fileUploadService;
 
-    public CourseService(DatabaseContext context)
+    public CourseService(DatabaseContext context, IFileUploadService fileUploadService)
     {
         _context = context;
+        _fileUploadService = fileUploadService;
     }
 
     public async Task<IEnumerable<Course>> GetCoursesAsync()
@@ -103,7 +105,9 @@ public class CourseService : ICourseService
 
         if (request.Image is not null)
         {
-            course.Image = request.Image;
+            var hash = FileUtilities.S3ObjectHash("course-image", course.Id.ToString());
+            var uri = await _fileUploadService.UploadAsync(hash, request.Image);
+            course.Image = uri;
         }
 
         if (request.IsPublic is not null)

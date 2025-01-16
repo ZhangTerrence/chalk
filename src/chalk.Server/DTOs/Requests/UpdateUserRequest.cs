@@ -14,5 +14,5 @@ public record UpdateUserRequest(
     string? LastName,
     string? DisplayName,
     string? Description,
-    string? ProfilePicture
+    IFormFile? ProfilePicture
 );

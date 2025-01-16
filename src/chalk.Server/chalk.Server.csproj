@@ -8,6 +8,10 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="AWSSDK.S3" Version="3.7.411.7"/>
+        <PackageReference Include="AWSSDK.SecurityToken" Version="3.7.401.28"/>
+        <PackageReference Include="AWSSDK.SSO" Version="3.7.400.79"/>
+        <PackageReference Include="AWSSDK.SSOOIDC" Version="3.7.400.79"/>
         <PackageReference Include="EFCore.NamingConventions" Version="8.0.3"/>
         <PackageReference Include="FluentValidation" Version="11.11.0"/>
         <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0"/>

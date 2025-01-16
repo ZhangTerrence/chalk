@@ -27,7 +27,6 @@ export const UpdateUserSchema = z.object({
       message: "The user's description must have at most 255 characters.",
     })
     .optional(),
-  profilePicture: z.string().optional(),
 });
 
 export type UpdateUserType = z.infer<typeof UpdateUserSchema>;
