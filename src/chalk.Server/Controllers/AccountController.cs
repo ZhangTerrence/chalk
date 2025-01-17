@@ -90,14 +90,14 @@ public class AccountController : ControllerBase
 
         await _userManager.AddToRoleAsync(user, "User");
 
-        var clientHost = _configuration["Client:Host"];
-        var clientPort = _configuration["Client:Port"];
-        if (clientHost is null || clientPort is null)
+        var webHost = _configuration["Web:Host"];
+        var webPort = _configuration["Web:Port"];
+        if (webHost is null || webPort is null)
         {
             return NoContent();
         }
 
-        return Redirect(Request.Scheme + "://" + clientHost + ":" + clientPort + "/login");
+        return Redirect(Request.Scheme + "://" + webHost + ":" + webPort + "/login");
     }
 
     [HttpPost("login")]

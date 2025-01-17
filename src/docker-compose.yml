@@ -19,8 +19,8 @@
     environment:
       - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
       - ConnectionStrings__DefaultConnection=${CONNECTION_STRING}
-      - Client__Host=${CLIENT_HOST}
-      - Client__Port=${CLIENT_PORT}
+      - Web__Host=${WEB_HOST}
+      - Web__Port=${WEB_PORT}
       - AWS_SDK__Profile=${AWS_SDK_PROFILE}
       - SMTP__Email=${SMTP_EMAIL}
       - SMTP__Password=${SMTP_PASSWORD}
