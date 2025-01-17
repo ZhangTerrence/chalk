@@ -15,5 +15,8 @@ public class CreateOrganizationRequestValidator : AbstractValidator<CreateOrgani
         RuleFor(e => e.Description)
             .MaximumLength(255)
             .WithMessage("The organization's description must have at most 255 characters.");
+        RuleFor(e => e.IsPublic)
+            .NotNull()
+            .WithMessage("Must specify whether the course is public.");
     }
 }

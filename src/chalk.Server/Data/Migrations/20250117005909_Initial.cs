@@ -92,6 +92,7 @@ namespace chalk.Server.Data.Migrations
                     name = table.Column<string>(type: "character varying(31)", maxLength: 31, nullable: false),
                     description = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
                     profile_picture = table.Column<string>(type: "text", nullable: true),
+                    is_public = table.Column<bool>(type: "boolean", nullable: false),
                     created_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     updated_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     owner_id = table.Column<long>(type: "bigint", nullable: false)

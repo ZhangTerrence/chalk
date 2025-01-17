@@ -8,6 +8,7 @@ export type OrganizationDTO = {
   name: string;
   description: string | null;
   profilePicture: string | null;
+  isPublic: boolean;
   createdDate: string;
 };
 
@@ -16,6 +17,7 @@ export type OrganizationResponse = {
   name: string;
   description: string | null;
   profilePicture: string | null;
+  isPublic: boolean;
   createdDate: string;
   owner: UserDTO;
   users: UserDTO[];

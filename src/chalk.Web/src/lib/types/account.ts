@@ -1,5 +1,3 @@
-import type { UserResponse } from "@/lib/types/user.ts";
-
 export type RegisterRequest = {
   firstName: string;
   lastName: string;
@@ -11,10 +9,4 @@ export type RegisterRequest = {
 export type LoginRequest = {
   email: string;
   password: string;
-};
-
-export type AuthResponse = {
-  user: UserResponse;
-  accessToken: string;
-  refreshToken: string;
 };

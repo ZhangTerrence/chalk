@@ -59,5 +59,20 @@ public class DatabaseContext : IdentityDbContext<User, IdentityRole<long>, long>
         new UserCourseConfiguration().Configure(builder.Entity<UserCourse>());
         new UserOrganizationConfiguration().Configure(builder.Entity<UserOrganization>());
         new UserRoleConfiguration().Configure(builder.Entity<UserRole>());
+
+        builder.Entity<IdentityRole<long>>().HasData(
+            new IdentityRole<long>
+            {
+                Id = 1,
+                Name = "Admin",
+                NormalizedName = "ADMIN"
+            },
+            new IdentityRole<long>
+            {
+                Id = 2,
+                Name = "User",
+                NormalizedName = "USER"
+            }
+        );
     }
 }

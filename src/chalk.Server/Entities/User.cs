@@ -13,8 +13,6 @@ public class User : IdentityUser<long>
     public required string DisplayName { get; set; }
     public string? Description { get; set; }
     public string? ProfilePicture { get; set; }
-    public string? RefreshToken { get; set; }
-    public DateTime? RefreshTokenExpiryDate { get; set; }
     public required DateTime CreatedDate { get; set; }
     public required DateTime UpdatedDate { get; set; }
 

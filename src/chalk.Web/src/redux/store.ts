@@ -6,9 +6,7 @@ import { toast } from "sonner";
 import baseApi from "@/redux/services/base.ts";
 
 import type { ApiResponse } from "@/lib/types/_index.ts";
-import type { AuthResponse } from "@/lib/types/auth.ts";
 
-import authReducer from "./slices/auth.ts";
 import themeReducer from "./slices/theme.ts";
 import userReducer from "./slices/user.ts";
 
@@ -20,7 +18,7 @@ const queryErrorLogger: Middleware = (_: MiddlewareAPI) => (next) => (action) =>
     }
 
     const response = action.payload as FetchBaseQueryError;
-    const errors = (response.data as ApiResponse<AuthResponse>).errors;
+    const errors = (response.data as ApiResponse<unknown>).errors;
     for (const error of errors) {
       toast.error("Oops! Something went wrong.", {
         description: error.description,
@@ -34,7 +32,6 @@ const queryErrorLogger: Middleware = (_: MiddlewareAPI) => (next) => (action) =>
 export const store = configureStore({
   reducer: {
     [baseApi.reducerPath]: baseApi.reducer,
-    auth: authReducer,
     user: userReducer,
     theme: themeReducer,
   },

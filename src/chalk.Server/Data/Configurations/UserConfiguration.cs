@@ -13,8 +13,6 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(e => e.DisplayName).HasMaxLength(31).IsRequired();
         builder.Property(e => e.ProfilePicture);
         builder.Property(e => e.Description).HasMaxLength(255);
-        builder.Property(e => e.RefreshToken);
-        builder.Property(e => e.RefreshTokenExpiryDate);
         builder.Property(e => e.CreatedDate).IsRequired();
         builder.Property(e => e.UpdatedDate).IsRequired();
 

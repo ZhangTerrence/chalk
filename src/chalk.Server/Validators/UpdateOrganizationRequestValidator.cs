@@ -16,5 +16,8 @@ public class UpdateOrganizationRequestValidator : AbstractValidator<UpdateOrgani
             .MaximumLength(255)
             .WithMessage("The organization's description must have at most 255 characters.");
         RuleFor(e => e.ProfilePicture);
+        RuleFor(e => e.IsPublic)
+            .NotNull()
+            .WithMessage("Must specify whether the course is public.");
     }
 }

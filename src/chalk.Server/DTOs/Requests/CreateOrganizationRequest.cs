@@ -5,8 +5,10 @@ namespace chalk.Server.DTOs.Requests;
 /// </summary>
 /// <param name="Name">The organization's name.</param>
 /// <param name="Description">The organization's description.</param>
-/// <remarks><paramref name="Name"/> is required.</remarks>
+/// <param name="IsPublic">Whether the organization is public.</param>
+/// <remarks><paramref name="Name"/> and <paramref name="IsPublic"/> are required.</remarks>
 public record CreateOrganizationRequest(
     string Name,
-    string? Description
+    string? Description,
+    bool IsPublic
 );

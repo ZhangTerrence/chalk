@@ -10,6 +10,7 @@ public class Organization
     public required string Name { get; set; }
     public string? Description { get; set; }
     public string? ProfilePicture { get; set; }
+    public required bool IsPublic { get; set; }
     public required DateTime CreatedDate { get; set; }
     public required DateTime UpdatedDate { get; set; }
 

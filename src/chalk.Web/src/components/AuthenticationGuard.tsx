@@ -2,13 +2,13 @@ import React from "react";
 
 import { Navigate, useNavigate } from "react-router-dom";
 
-import { useRefreshMutation } from "@/redux/services/base.ts";
+import { useLazyRefreshQuery } from "@/redux/services/account.ts";
 import { selectUser } from "@/redux/slices/user.ts";
 import { useTypedSelector } from "@/redux/store.ts";
 
 export const AuthenticationGuard = ({ children }: { children: React.ReactNode }) => {
   const user = useTypedSelector(selectUser);
-  const [refresh] = useRefreshMutation();
+  const [refresh] = useLazyRefreshQuery();
   const navigate = useNavigate();
 
   const tryRefresh = async () => {

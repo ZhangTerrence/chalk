@@ -18,6 +18,9 @@ public record OrganizationDTO(
     [property: JsonPropertyName("profilePicture")]
     string? ProfilePicture,
     [property: JsonRequired]
+    [property: JsonPropertyName("isPublic")]
+    bool IsPublic,
+    [property: JsonRequired]
     [property: JsonPropertyName("createdDate")]
     string CreatedDate
 );

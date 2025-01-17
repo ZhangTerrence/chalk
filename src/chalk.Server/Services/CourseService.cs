@@ -97,10 +97,6 @@ public class CourseService : ICourseService
             var uri = await _fileUploadService.UploadAsync(hash, request.Image);
             course.Image = uri;
         }
-        else
-        {
-            course.Image = null;
-        }
 
         course.IsPublic = request.IsPublic;
 

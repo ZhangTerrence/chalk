@@ -108,10 +108,6 @@ public class OrganizationService : IOrganizationService
             var uri = await _fileUploadService.UploadAsync(hash, request.ProfilePicture);
             organization.ProfilePicture = uri;
         }
-        else
-        {
-            organization.ProfilePicture = null;
-        }
 
         organization.UpdatedDate = DateTime.UtcNow;
 

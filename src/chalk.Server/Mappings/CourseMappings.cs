@@ -46,6 +46,7 @@ public static class CourseMappings
             course.Code,
             course.Description,
             course.Image,
+            course.IsPublic,
             course.CreatedDate.ToString(CultureInfo.CurrentCulture)
         );
     }

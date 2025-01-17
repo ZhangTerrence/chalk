@@ -14,6 +14,7 @@ public static class OrganizationMappings
         {
             Name = request.Name,
             Description = request.Description,
+            IsPublic = request.IsPublic,
             CreatedDate = DateTime.UtcNow,
             UpdatedDate = DateTime.UtcNow,
             Owner = owner
@@ -27,6 +28,7 @@ public static class OrganizationMappings
             organization.Name,
             organization.Description,
             organization.ProfilePicture,
+            organization.IsPublic,
             organization.CreatedDate.ToString(CultureInfo.CurrentCulture),
             organization.Owner.ToDTO(organization.CreatedDate.ToString(CultureInfo.CurrentCulture)),
             organization.Users.Select(e => e.User.ToDTO(e.JoinedDate?.ToString(CultureInfo.CurrentCulture))),
@@ -43,6 +45,7 @@ public static class OrganizationMappings
             organization.Name,
             organization.Description,
             organization.ProfilePicture,
+            organization.IsPublic,
             organization.CreatedDate.ToString(CultureInfo.CurrentCulture)
         );
     }

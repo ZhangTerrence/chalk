@@ -16,6 +16,7 @@ public class OrganizationConfiguration : IEntityTypeConfiguration<Organization>
         builder.Property(e => e.Name).HasMaxLength(31).IsRequired();
         builder.Property(e => e.Description).HasMaxLength(255);
         builder.Property(e => e.ProfilePicture);
+        builder.Property(e => e.IsPublic).IsRequired();
         builder.Property(e => e.CreatedDate).IsRequired();
         builder.Property(e => e.UpdatedDate).IsRequired();
 

@@ -21,6 +21,9 @@ public record CourseDTO(
     [property: JsonPropertyName("image")]
     string? Image,
     [property: JsonRequired]
+    [property: JsonPropertyName("isPublic")]
+    bool IsPublic,
+    [property: JsonRequired]
     [property: JsonPropertyName("createdDate")]
     string CreatedDate
 );

@@ -23,6 +23,8 @@
       - Jwt__Audience=${JWT_AUDIENCE}
       - Jwt__Key=${JWT_KEY}
       - AWS_SDK__Profile=${AWS_SDK_PROFILE}
+      - SMTP__Email=${SMTP_EMAIL}
+      - SMTP__Password=${SMTP_PASSWORD}
     ports:
       - "8080:8080"
     volumes:

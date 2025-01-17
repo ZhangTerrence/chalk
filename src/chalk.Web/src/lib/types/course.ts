@@ -15,6 +15,7 @@ export type CourseDTO = {
   code: string | null;
   description: string | null;
   image: string | null;
+  isPublic: boolean;
   createdDate: string;
 };
 

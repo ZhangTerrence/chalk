@@ -12,7 +12,7 @@ using chalk.Server.Data;
 namespace chalk.Server.Data.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20250114222842_Initial")]
+    [Migration("20250117005909_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -568,6 +568,10 @@ namespace chalk.Server.Data.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)")
                         .HasColumnName("description");
+
+                    b.Property<bool>("IsPublic")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_public");
 
                     b.Property<string>("Name")
                         .IsRequired()

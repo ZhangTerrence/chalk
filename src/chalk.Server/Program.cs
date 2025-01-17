@@ -1,14 +1,11 @@
-using System.Text;
 using chalk.Server.Configurations;
 using chalk.Server.Data;
 using chalk.Server.Entities;
 using chalk.Server.Services;
 using chalk.Server.Services.Interfaces;
 using FluentValidation;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,7 +15,8 @@ builder.Services.AddDbContext<DatabaseContext>(options => options
     .UseSnakeCaseNamingConvention());
 builder.Services
     .AddIdentity<User, IdentityRole<long>>()
-    .AddEntityFrameworkStores<DatabaseContext>();
+    .AddEntityFrameworkStores<DatabaseContext>()
+    .AddDefaultTokenProviders();
 
 // Adds CORS
 builder.Services.AddCors(options =>
@@ -46,56 +44,32 @@ builder.Services
         options.Password.RequireUppercase = true;
         options.Password.RequireNonAlphanumeric = true;
         options.Password.RequiredLength = 8;
-    })
-    .AddAuthentication(options =>
-    {
-        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    })
-    .AddJwtBearer(options =>
-    {
-        options.SaveToken = true;
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["Jwt:Issuer"],
-            ValidAudience = builder.Configuration["Jwt:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!)),
-            ClockSkew = TimeSpan.Zero
-        };
-        options.Events = new JwtBearerEvents
-        {
-            OnMessageReceived = context =>
-            {
-                var accessToken = context.Request.Cookies["AccessToken"];
-                var refreshToken = context.Request.Cookies["RefreshToken"];
-                context.Token = accessToken;
-                context.HttpContext.Items.Add("AccessToken", accessToken);
-                context.HttpContext.Items.Add("RefreshToken", refreshToken);
-                return Task.CompletedTask;
-            }
-        };
+        options.SignIn.RequireConfirmedEmail = true;
+        options.Lockout.AllowedForNewUsers = true;
+        options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+        options.Lockout.MaxFailedAccessAttempts = 5;
     });
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SameSite = SameSiteMode.Strict;
+    options.Cookie.MaxAge = TimeSpan.FromDays(1);
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(15);
+    options.LoginPath = "/api/account/refresh";
+});
 builder.Services.AddAuthorization();
 
 // Configures controller and routing behavior
 builder.Services
     .AddControllers(options => options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true)
     .ConfigureApiBehaviorOptions(options => options.SuppressModelStateInvalidFilter = true);
-builder.Services.AddRouting(options =>
-{
-    options.LowercaseUrls = true;
-    options.LowercaseQueryStrings = true;
-});
+builder.Services.AddRouting(options => { options.LowercaseUrls = true; });
 
 // Adds FluentValidation
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
 // Adds scoped services
-builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ICourseService, CourseService>();
 builder.Services.AddScoped<IOrganizationService, OrganizationService>();

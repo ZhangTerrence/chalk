@@ -9,7 +9,5 @@ public interface IUserService
 
     public Task<User> GetUserAsync(long userId);
 
-    public Task<User> CreateUserAsync(RegisterRequest request);
-
     public Task<User> UpdateUserAsync(long userId, UpdateUserRequest request);
 }
