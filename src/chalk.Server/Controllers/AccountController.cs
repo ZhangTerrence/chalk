@@ -16,6 +16,8 @@ namespace chalk.Server.Controllers;
 [Route("/api/account")]
 public class AccountController : ControllerBase
 {
+    private readonly IConfiguration _configuration;
+
     private readonly UserManager<User> _userManager;
     private readonly SignInManager<User> _signInManager;
     private readonly IEmailService _emailService;
@@ -25,6 +27,7 @@ public class AccountController : ControllerBase
     private readonly IValidator<LoginRequest> _loginRequestValidator;
 
     public AccountController(
+        IConfiguration configuration,
         UserManager<User> userManager,
         SignInManager<User> signInManager,
         IEmailService emailService,
@@ -33,6 +36,7 @@ public class AccountController : ControllerBase
         IValidator<LoginRequest> loginRequestValidator
     )
     {
+        _configuration = configuration;
         _userManager = userManager;
         _signInManager = signInManager;
         _emailService = emailService;
@@ -64,7 +68,7 @@ public class AccountController : ControllerBase
             return StatusCode(StatusCodes.Status500InternalServerError, new ApiResponse<object>(["Unable to generate confirmation link."]));
         }
 
-        _emailService.SendEmail(request.Email, "Confirm Email", confirmationLink);
+        _emailService.SendEmail(request.Email, "Confirm Your Email", confirmationLink);
 
         return Created();
     }
@@ -86,7 +90,14 @@ public class AccountController : ControllerBase
 
         await _userManager.AddToRoleAsync(user, "User");
 
-        return Ok(new ApiResponse<UserResponse>(null, (await _userService.GetUserAsync(user.Id)).ToResponse()));
+        var clientHost = _configuration["Client:Host"];
+        var clientPort = _configuration["Client:Port"];
+        if (clientHost is null || clientPort is null)
+        {
+            return NoContent();
+        }
+
+        return Redirect(Request.Scheme + "://" + clientHost + ":" + clientPort + "/login");
     }
 
     [HttpPost("login")]

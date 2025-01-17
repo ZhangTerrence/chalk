@@ -4,6 +4,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace chalk.Server.Data.Migrations
 {
     /// <inheritdoc />
@@ -38,8 +40,6 @@ namespace chalk.Server.Data.Migrations
                     display_name = table.Column<string>(type: "character varying(31)", maxLength: 31, nullable: false),
                     description = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
                     profile_picture = table.Column<string>(type: "text", nullable: true),
-                    refresh_token = table.Column<string>(type: "text", nullable: true),
-                    refresh_token_expiry_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     created_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     updated_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     user_name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
@@ -598,6 +598,15 @@ namespace chalk.Server.Data.Migrations
                         principalTable: "submissions",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.InsertData(
+                table: "system_roles",
+                columns: new[] { "id", "concurrency_stamp", "name", "normalized_name" },
+                values: new object[,]
+                {
+                    { 1L, null, "Admin", "ADMIN" },
+                    { 2L, null, "User", "USER" }
                 });
 
             migrationBuilder.CreateIndex(

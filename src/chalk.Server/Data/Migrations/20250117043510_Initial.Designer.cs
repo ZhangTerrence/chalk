@@ -12,7 +12,7 @@ using chalk.Server.Data;
 namespace chalk.Server.Data.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20250117005909_Initial")]
+    [Migration("20250117043510_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -57,6 +57,20 @@ namespace chalk.Server.Data.Migrations
                         .HasDatabaseName("RoleNameIndex");
 
                     b.ToTable("system_roles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1L,
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = 2L,
+                            Name = "User",
+                            NormalizedName = "USER"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<long>", b =>
@@ -821,14 +835,6 @@ namespace chalk.Server.Data.Migrations
                     b.Property<string>("ProfilePicture")
                         .HasColumnType("text")
                         .HasColumnName("profile_picture");
-
-                    b.Property<string>("RefreshToken")
-                        .HasColumnType("text")
-                        .HasColumnName("refresh_token");
-
-                    b.Property<DateTime?>("RefreshTokenExpiryDate")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("refresh_token_expiry_date");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text")

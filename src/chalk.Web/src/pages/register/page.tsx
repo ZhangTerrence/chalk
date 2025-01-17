@@ -1,10 +1,11 @@
-import { useEffect } from "react";
+import React from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoaderIcon } from "lucide-react";
 import { Helmet } from "react-helmet-async";
 import { useForm } from "react-hook-form";
 import { NavLink, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button.tsx";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form.tsx";
@@ -19,10 +20,10 @@ import { RegisterSchema, type RegisterSchemaType } from "@/lib/validators/regist
 export default function RegisterPage() {
   const user = useTypedSelector(selectUser);
 
-  const [register, { isLoading }] = useRegisterMutation();
+  const [register, { isLoading, isSuccess }] = useRegisterMutation();
   const navigate = useNavigate();
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (user) {
       navigate("/dashboard");
     }
@@ -39,12 +40,19 @@ export default function RegisterPage() {
     },
   });
 
+  React.useEffect(() => {
+    if (!isLoading && isSuccess) {
+      form.reset();
+      toast.success("Successfully registered account.");
+    }
+  }, [isLoading, isSuccess]);
+
   return (
     <>
       <Helmet>
         <title>Chalk - Register</title>
       </Helmet>
-      {isLoading && <LoaderIcon className="absolute" />}
+      {isLoading && <LoaderIcon className="absolute animate-spin" />}
       <main className="flex flex-col gap-y-4 w-1/2 max-xl:w-3/4 max-sm:w-full max-sm:p-4">
         <h1 className="text-2xl underline">
           <strong>Register</strong>

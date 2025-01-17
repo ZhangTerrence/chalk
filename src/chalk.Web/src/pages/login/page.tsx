@@ -40,7 +40,7 @@ export default function LoginPage() {
       <Helmet>
         <title>Chalk - Login</title>
       </Helmet>
-      {isLoading && <LoaderIcon className="absolute" />}
+      {isLoading && <LoaderIcon className="absolute animate-spin" />}
       <main className="flex flex-col gap-y-4 w-1/2 max-xl:w-3/4 max-sm:w-full max-sm:p-4">
         <h1 className="text-2xl underline">
           <strong>Login</strong>
