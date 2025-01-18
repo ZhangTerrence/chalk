@@ -2,50 +2,48 @@ import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 import { PlusIcon, UsersIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-import { Dialog, DialogTrigger } from "@/components/ui/dialog.tsx";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu.tsx";
 import { SidebarGroup, SidebarGroupAction, SidebarGroupLabel, useSidebar } from "@/components/ui/sidebar.tsx";
 
-import { CreateOrganizationDialog } from "@/components/DashboardSidebar/Dialogs/CreateOrganizationDialog.tsx";
+import type { DashboardDialog } from "@/components/DashboardSidebar/DashboardSidebar.tsx";
 
-export const OrganizationsSection = () => {
+type OrganizationsSectionProps = {
+  changeDialog: (section: Pick<DashboardDialog, "section">["section"]) => void;
+};
+
+export const OrganizationsSection = (props: OrganizationsSectionProps) => {
   const { isMobile } = useSidebar();
   const navigate = useNavigate();
 
   return (
     <SidebarGroup>
-      <Dialog>
-        <DropdownMenu>
-          <DropdownMenuTrigger>
-            <SidebarGroupLabel>Organizations</SidebarGroupLabel>
-            <SidebarGroupAction asChild>
+      <DropdownMenu>
+        <DropdownMenuTrigger>
+          <SidebarGroupLabel>Organizations</SidebarGroupLabel>
+          <SidebarGroupAction asChild>
+            <PlusIcon />
+          </SidebarGroupAction>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent
+          side={isMobile ? "bottom" : "right"}
+          align="start"
+          sideOffset={isMobile ? 5 : 20}
+          className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
+        >
+          <DropdownMenuItem onClick={() => navigate("/organizations")} className="py-3">
+            <div className="flex space-x-2 items-center">
+              <UsersIcon />
+              <span>Find Organizations</span>
+            </div>
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => props.changeDialog("create-organization")} className="py-3">
+            <div className="flex space-x-2 items-center">
               <PlusIcon />
-            </SidebarGroupAction>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent
-            side={isMobile ? "bottom" : "right"}
-            align="start"
-            sideOffset={isMobile ? 5 : 20}
-            className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
-          >
-            <DropdownMenuItem onClick={() => navigate("/organizations")} className="py-3">
-              <div className="flex space-x-2 items-center">
-                <UsersIcon />
-                <span>Find Organizations</span>
-              </div>
-            </DropdownMenuItem>
-            <DropdownMenuItem className="py-3">
-              <DialogTrigger className="flex w-full">
-                <div className="flex space-x-2 items-center">
-                  <PlusIcon />
-                  <span>Create New Organization</span>
-                </div>
-              </DialogTrigger>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-        <CreateOrganizationDialog />
-      </Dialog>
+              <span>Create New Organization</span>
+            </div>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </SidebarGroup>
   );
 };

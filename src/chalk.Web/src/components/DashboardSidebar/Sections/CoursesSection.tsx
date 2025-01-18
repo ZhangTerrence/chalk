@@ -1,10 +1,7 @@
-import React from "react";
-
 import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 import { PlusIcon, UsersIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-import { Dialog, DialogTrigger } from "@/components/ui/dialog.tsx";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu.tsx";
 import {
   SidebarGroup,
@@ -17,52 +14,49 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar.tsx";
 
-import { CreateCourseDialog } from "@/components/DashboardSidebar/Dialogs/CreateCourseDialog.tsx";
+import type { DashboardDialog } from "@/components/DashboardSidebar/DashboardSidebar.tsx";
 
 import { selectUserCourses } from "@/redux/slices/user.ts";
 import { useTypedSelector } from "@/redux/store.ts";
 
-export const CoursesSection = () => {
+type CoursesSectionProps = {
+  changeDialog: (section: Pick<DashboardDialog, "section">["section"]) => void;
+};
+
+export const CoursesSection = (props: CoursesSectionProps) => {
   const courses = useTypedSelector(selectUserCourses) ?? [];
   const { isMobile } = useSidebar();
   const navigate = useNavigate();
 
-  const [open, setOpen] = React.useState(false);
-
-  const close = () => {
-    setOpen(false);
-  };
-
   return (
     <SidebarGroup>
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DropdownMenu>
-          <DropdownMenuTrigger>
-            <SidebarGroupLabel>Courses</SidebarGroupLabel>
-            <SidebarGroupAction asChild>
-              <PlusIcon />
-            </SidebarGroupAction>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent
-            side={isMobile ? "bottom" : "right"}
-            align="start"
-            sideOffset={isMobile ? 5 : 20}
-            className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
-          >
-            <DropdownMenuItem onClick={() => navigate("/courses")} className="py-3">
+      <DropdownMenu>
+        <DropdownMenuTrigger>
+          <SidebarGroupLabel>Courses</SidebarGroupLabel>
+          <SidebarGroupAction asChild>
+            <PlusIcon />
+          </SidebarGroupAction>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent
+          side={isMobile ? "bottom" : "right"}
+          align="start"
+          sideOffset={isMobile ? 5 : 20}
+          className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
+        >
+          <DropdownMenuItem onClick={() => navigate("/courses")} className="py-3">
+            <div className="flex space-x-2 items-center">
               <UsersIcon />
-              <span>Find Courses</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem className="py-3" asChild>
-              <DialogTrigger className="flex w-full">
-                <PlusIcon />
-                <span>Create New Course</span>
-              </DialogTrigger>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-        <CreateCourseDialog close={close} />
-      </Dialog>
+              <span>Find Organizations</span>
+            </div>
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => props.changeDialog("create-course")} className="py-3">
+            <div className="flex space-x-2 items-center">
+              <PlusIcon />
+              <span>Create New Organization</span>
+            </div>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
       <SidebarGroupContent>
         <SidebarMenu>
           {courses.map((course) => (

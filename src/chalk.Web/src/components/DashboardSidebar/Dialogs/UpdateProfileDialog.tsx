@@ -6,9 +6,13 @@ import { toast } from "sonner";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar.tsx";
 import { Button } from "@/components/ui/button.tsx";
+import { DialogHeader, DialogTitle } from "@/components/ui/dialog.tsx";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form.tsx";
 import { Input } from "@/components/ui/input.tsx";
+import { Separator } from "@/components/ui/separator.tsx";
 import { Textarea } from "@/components/ui/textarea.tsx";
+
+import type { DashboardDialog } from "@/components/DashboardSidebar/DashboardSidebar.tsx";
 
 import { useUpdateUserMutation } from "@/redux/services/user.ts";
 import { selectUser } from "@/redux/slices/user.ts";
@@ -17,7 +21,11 @@ import { useTypedSelector } from "@/redux/store.ts";
 import { getImageData } from "@/lib/utils.ts";
 import { UpdateUserSchema, type UpdateUserType } from "@/lib/validators/updateUser.ts";
 
-export const ProfileSection = () => {
+type UpdateProfileDialogProps = {
+  changeDialog: (section: Pick<DashboardDialog, "section">["section"]) => void;
+};
+
+export const UpdateProfileDialog = (props: UpdateProfileDialogProps) => {
   const user = useTypedSelector(selectUser)!;
   const [updateUser, { isLoading, isSuccess }] = useUpdateUserMutation();
 
@@ -54,9 +62,19 @@ export const ProfileSection = () => {
   };
 
   const onSubmit = async (data: UpdateUserType) => {
+    if (
+      user.firstName === data.firstName &&
+      user.lastName === data.lastName &&
+      user.displayName === data.displayName &&
+      (user.description ?? "") === data.description &&
+      !uploadedProfilePicture
+    ) {
+      return;
+    }
+
     const formData = new FormData();
 
-    for (const [key, value] of Object.entries(data)) {
+    for (let [key, value] of Object.entries(data)) {
       formData.append(key, value);
     }
     if (uploadedProfilePicture) {
@@ -64,27 +82,29 @@ export const ProfileSection = () => {
     }
 
     await updateUser(formData).unwrap();
+
+    props.changeDialog(null);
   };
 
   return (
-    <div className="grow p-4 pt-20 pl-4 flex flex-col gap-y-4">
+    <>
+      <DialogHeader>
+        <DialogTitle>Profile</DialogTitle>
+      </DialogHeader>
+      <Separator orientation="horizontal" />
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col space-y-4">
-          <div className="flex space-x-4 w-full">
-            <div className="relative h-full aspect-square">
-              <Avatar className="h-full w-full rounded-full">
-                <AvatarImage
-                  src={profilePicture}
-                  alt={fullName}
-                  className="object-center object-contain max-w-40 h-auto"
-                />
-                <AvatarFallback className="rounded-lg text-2xl">{fullName.charAt(0).toUpperCase()}</AvatarFallback>
+          <div className="flex space-x-4">
+            <div className="relative h-auto aspect-square border border-primary rounded-full">
+              <Avatar className="w-full h-full aspect-square">
+                <AvatarImage src={profilePicture} alt={fullName} className="object-center object-contain" />
+                <AvatarFallback className="text-2xl">{fullName.charAt(0).toUpperCase()}</AvatarFallback>
               </Avatar>
               <Input
                 type="file"
                 accept="image/*"
                 onChange={onFileUpload}
-                className="absolute h-full w-full top-0 opacity-0 hover:cursor-pointer"
+                className="absolute top-0 opacity-0 hover:cursor-pointer w-full h-full"
               />
             </div>
             <div className="grow flex flex-col space-y-2">
@@ -138,7 +158,7 @@ export const ProfileSection = () => {
               <FormItem className="grow">
                 <FormLabel>Description</FormLabel>
                 <FormControl>
-                  <Textarea {...field} className="max-h-60" />
+                  <Textarea {...field} className="resize-none h-40" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -149,6 +169,6 @@ export const ProfileSection = () => {
           </Button>
         </form>
       </Form>
-    </div>
+    </>
   );
 };

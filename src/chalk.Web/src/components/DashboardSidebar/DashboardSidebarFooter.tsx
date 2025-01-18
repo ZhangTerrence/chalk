@@ -1,20 +1,24 @@
 import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
-import { LogOutIcon, SettingsIcon } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { BrushIcon, LogOutIcon, SettingsIcon, UserIcon } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar.tsx";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu.tsx";
 import { SidebarFooter, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/components/ui/sidebar.tsx";
 
+import type { DashboardDialog } from "@/components/DashboardSidebar/DashboardSidebar.tsx";
+
 import { useLogoutMutation } from "@/redux/services/account.ts";
 import { selectUser } from "@/redux/slices/user.ts";
 import { useTypedSelector } from "@/redux/store.ts";
 
-export const DashboardSidebarFooter = () => {
+type DashboardSidebarFooterProps = {
+  changeDialog: (section: Pick<DashboardDialog, "section">["section"]) => void;
+};
+
+export const DashboardSidebarFooter = (props: DashboardSidebarFooterProps) => {
   const user = useTypedSelector(selectUser)!;
   const [logout] = useLogoutMutation();
   const { isMobile } = useSidebar();
-  const navigate = useNavigate();
 
   const fullName = `${user.firstName} ${user.lastName}`;
 
@@ -28,7 +32,11 @@ export const DashboardSidebarFooter = () => {
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage src={user.profilePicture} alt={fullName} className="object-contain" />
+                <AvatarImage
+                  src={user.profilePicture ?? undefined}
+                  alt={fullName}
+                  className="object-contain border   border-primary rounded-full"
+                />
                 <AvatarFallback className="rounded-lg">{fullName.charAt(0).toUpperCase()}</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
@@ -43,9 +51,17 @@ export const DashboardSidebarFooter = () => {
             sideOffset={isMobile ? 5 : 20}
             className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
           >
-            <DropdownMenuItem onClick={() => navigate("/settings")} className="py-3">
+            <DropdownMenuItem onClick={() => props.changeDialog("update-account")} className="py-3">
               <SettingsIcon />
-              Settings
+              Account
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => props.changeDialog("update-profile")} className="py-3">
+              <UserIcon />
+              Profile
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => props.changeDialog("update-appearance")} className="py-3">
+              <BrushIcon />
+              Appearance
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => logout(null)} className="py-3">
               <LogOutIcon />

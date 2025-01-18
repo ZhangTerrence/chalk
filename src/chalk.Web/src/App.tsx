@@ -8,7 +8,6 @@ import DashboardLayout from "@/pages/(private)/dashboard/layout.tsx";
 import DashboardPage from "@/pages/(private)/dashboard/page.tsx";
 import PrivateLayout from "@/pages/(private)/layout.tsx";
 import OrganizationsPage from "@/pages/(private)/organizations/page.tsx";
-import SettingsPage from "@/pages/(private)/settings/page.tsx";
 import RootLayout from "@/pages/layout.tsx";
 import LoginPage from "@/pages/login/page.tsx";
 import NotFoundPage from "@/pages/notFound";
@@ -34,7 +33,6 @@ export default function App() {
               <Route path="/dashboard" element={<DashboardLayout />}>
                 <Route index element={<DashboardPage />} />
               </Route>
-              <Route path="/settings" element={<SettingsPage />} />
               <Route path="/courses" element={<CoursesPage />} />
               <Route path="/organizations" element={<OrganizationsPage />} />
             </Route>
