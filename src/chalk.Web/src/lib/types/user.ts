@@ -22,7 +22,7 @@ export type UserResponse = {
   description: string | null;
   profilePicture: string | null;
   createdDate: string;
-  organizations: OrganizationDTO[];
+  directMessages: ChannelDTO[];
   courses: CourseDTO[];
-  channels: ChannelDTO[];
+  organizations: OrganizationDTO[];
 };

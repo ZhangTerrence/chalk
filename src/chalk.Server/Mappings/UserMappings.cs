@@ -34,8 +34,8 @@ public static class UserMappings
             user.ProfilePicture,
             user.CreatedDate.ToString(CultureInfo.CurrentCulture),
             user.DirectMessages.Select(e => e.Channel.ToDTO()),
-            user.Organizations.Select(e => e.Organization.ToDTO()),
-            user.Courses.Select(e => e.Course.ToDTO())
+            user.Courses.Select(e => e.Course.ToDTO()),
+            user.Organizations.Select(e => e.Organization.ToDTO())
         );
     }
 

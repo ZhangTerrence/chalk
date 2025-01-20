@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace chalk.Server.Controllers;
 
 [ApiController]
-[Route("/api/user"), Authorize]
+[Route("/api/users"), Authorize]
 public class UserController : ControllerBase
 {
     private readonly IUserService _userService;

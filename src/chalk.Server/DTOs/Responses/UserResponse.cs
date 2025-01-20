@@ -33,9 +33,9 @@ public record UserResponse(
     [property: JsonPropertyName("directMessages")]
     IEnumerable<ChannelDTO> DirectMessages,
     [property: JsonRequired]
-    [property: JsonPropertyName("organizations")]
-    IEnumerable<OrganizationDTO> Organizations,
-    [property: JsonRequired]
     [property: JsonPropertyName("courses")]
-    IEnumerable<CourseDTO> Courses
+    IEnumerable<CourseDTO> Courses,
+    [property: JsonRequired]
+    [property: JsonPropertyName("organizations")]
+    IEnumerable<OrganizationDTO> Organizations
 );

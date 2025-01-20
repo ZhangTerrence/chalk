@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace chalk.Server.Controllers;
 
 [ApiController]
-[Route("/api/course"), Authorize]
+[Route("/api/courses"), Authorize]
 public class CourseController : ControllerBase
 {
     private readonly ICourseService _courseService;

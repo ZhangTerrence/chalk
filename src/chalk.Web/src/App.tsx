@@ -4,6 +4,7 @@ import { BrowserRouter, Route, Routes } from "react-router";
 import { Toaster } from "sonner";
 
 import CoursesPage from "@/pages/(private)/courses/page.tsx";
+import DashboardCoursesPage from "@/pages/(private)/dashboard/courses/page.tsx";
 import DashboardLayout from "@/pages/(private)/dashboard/layout.tsx";
 import DashboardPage from "@/pages/(private)/dashboard/page.tsx";
 import PrivateLayout from "@/pages/(private)/layout.tsx";
@@ -32,6 +33,7 @@ export default function App() {
             <Route element={<PrivateLayout />}>
               <Route path="/dashboard" element={<DashboardLayout />}>
                 <Route index element={<DashboardPage />} />
+                <Route path="/dashboard/courses" element={<DashboardCoursesPage />} />
               </Route>
               <Route path="/courses" element={<CoursesPage />} />
               <Route path="/organizations" element={<OrganizationsPage />} />

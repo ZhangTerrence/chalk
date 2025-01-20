@@ -38,3 +38,4 @@ export default userSlice.reducer;
 
 export const selectUser = (state: RootState) => state.user;
 export const selectUserCourses = (state: RootState) => state.user?.courses;
+export const selectUserOrganizations = (state: RootState) => state.user?.organizations;

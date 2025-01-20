@@ -4,7 +4,7 @@ export default function CoursesPage() {
   return (
     <>
       <Helmet>
-        <title>Chalk - Courses</title>
+        <title>Courses</title>
       </Helmet>
       <main>Hello, world.</main>
     </>

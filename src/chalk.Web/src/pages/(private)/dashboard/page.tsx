@@ -4,7 +4,7 @@ export default function DashboardPage() {
   return (
     <>
       <Helmet>
-        <title>Chalk - Dashboard</title>
+        <title>Dashboard</title>
       </Helmet>
       <main>Hello, world.</main>
     </>

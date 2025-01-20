@@ -38,7 +38,7 @@ export default function LoginPage() {
   return (
     <>
       <Helmet>
-        <title>Chalk - Login</title>
+        <title>Login</title>
       </Helmet>
       {isLoading && <LoaderIcon className="absolute animate-spin" />}
       <main className="flex flex-col gap-y-4 w-1/2 max-xl:w-3/4 max-sm:w-full max-sm:p-4">

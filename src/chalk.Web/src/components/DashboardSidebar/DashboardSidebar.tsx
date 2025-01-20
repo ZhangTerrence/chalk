@@ -1,7 +1,7 @@
 import React from "react";
 
 import { Dialog, DialogContent } from "@/components/ui/dialog.tsx";
-import { Sidebar, SidebarContent, SidebarRail } from "@/components/ui/sidebar.tsx";
+import { Sidebar, SidebarContent, SidebarRail, SidebarSeparator } from "@/components/ui/sidebar.tsx";
 
 import { DashboardSidebarFooter } from "@/components/DashboardSidebar/DashboardSidebarFooter.tsx";
 import { DashboardSidebarHeader } from "@/components/DashboardSidebar/DashboardSidebarHeader.tsx";
@@ -12,40 +12,43 @@ import { UpdateAppearanceDialog } from "@/components/DashboardSidebar/Dialogs/Up
 import { UpdateProfileDialog } from "@/components/DashboardSidebar/Dialogs/UpdateProfileDialog.tsx";
 import { CoursesSection } from "@/components/DashboardSidebar/Sections/CoursesSection.tsx";
 import { DirectMessagesSection } from "@/components/DashboardSidebar/Sections/DirectMessagesSection.tsx";
-import { OrganizationsSection } from "@/components/DashboardSidebar/Sections/OrganizationsSection.tsx";
+
+import { selectUser } from "@/redux/slices/user.ts";
+import { useTypedSelector } from "@/redux/store.ts";
 
 export type DashboardDialog = {
   open: boolean;
   section: "create-course" | "create-organization" | "update-account" | "update-profile" | "update-appearance" | null;
 };
-export type DashboardSection = "direct-messages" | "courses" | "organizations";
 
 export const DashboardSidebar = () => {
+  const user = useTypedSelector(selectUser)!;
+
+  const contextList: { [key: string]: { id: number } } = {};
+  contextList[user.displayName] = {
+    id: user.id,
+  };
+  user.organizations.forEach((organization) => {
+    contextList[organization.name] = {
+      id: organization.id,
+    };
+  });
+
   const [dialog, setDialog] = React.useState<DashboardDialog>({
     open: false,
     section: null,
   });
-  const [section, setSection] = React.useState<DashboardSection>(
-    (localStorage.getItem("section") as DashboardSection) ?? "direct-messages",
-  );
+  const [context, setContext] = React.useState<string>(user.displayName);
 
   const changeDialog = (section: Pick<DashboardDialog, "section">["section"]) => {
-    if (section) {
-      setDialog({
-        open: true,
-        section: section,
-      });
-    } else {
-      setDialog({
-        open: false,
-        section: null,
-      });
-    }
+    setDialog({
+      open: !!section,
+      section: section,
+    });
   };
 
-  const changeSection = (section: DashboardSection) => {
-    localStorage.setItem("section", section);
-    return setSection(section);
+  const changeContext = (section: string) => {
+    return setContext(section);
   };
 
   const renderDialog = () => {
@@ -65,19 +68,6 @@ export const DashboardSidebar = () => {
     }
   };
 
-  const renderSection = () => {
-    switch (section) {
-      case "direct-messages":
-        return <DirectMessagesSection />;
-      case "courses":
-        return <CoursesSection changeDialog={changeDialog} />;
-      case "organizations":
-        return <OrganizationsSection changeDialog={changeDialog} />;
-      default:
-        return null;
-    }
-  };
-
   return (
     <Dialog
       open={dialog.open}
@@ -89,8 +79,17 @@ export const DashboardSidebar = () => {
       }}
     >
       <Sidebar>
-        <DashboardSidebarHeader section={section} changeSection={changeSection} />
-        <SidebarContent>{renderSection()}</SidebarContent>
+        <DashboardSidebarHeader contextList={contextList} context={context} changeContext={changeContext} />
+        <SidebarContent>
+          {context === user.displayName ? (
+            <>
+              <SidebarSeparator />
+              <DirectMessagesSection />
+              <SidebarSeparator />
+              <CoursesSection changeDialog={changeDialog} />
+            </>
+          ) : null}
+        </SidebarContent>
         <DashboardSidebarFooter changeDialog={changeDialog} />
         <SidebarRail />
       </Sidebar>

@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace chalk.Server.Controllers;
 
 [ApiController]
-[Route("/api/organization"), Authorize]
+[Route("/api/organizations"), Authorize]
 public class OrganizationController : ControllerBase
 {
     private readonly IOrganizationService _organizationService;
