@@ -4,10 +4,22 @@ using chalk.Server.Entities;
 using chalk.Server.Services;
 using chalk.Server.Services.Interfaces;
 using FluentValidation;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
+using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddDataProtection().UseCryptographicAlgorithms(new AuthenticatedEncryptorConfiguration
+{
+    EncryptionAlgorithm = EncryptionAlgorithm.AES_256_CBC,
+    ValidationAlgorithm = ValidationAlgorithm.HMACSHA256
+});
+
+// Adds logging
+builder.Services.AddHttpLogging(_ => { });
 
 // Connects PostgreSQL database
 builder.Services.AddDbContext<DatabaseContext>(options => options
@@ -23,32 +35,28 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy(
         name: "CorsPolicy",
-        policy =>
-        {
-            policy
-                .SetIsOriginAllowed(origin => new Uri(origin).Host == "localhost")
-                .AllowAnyHeader()
-                .AllowAnyMethod()
-                .AllowCredentials();
-        }
+        policy => policy
+            .SetIsOriginAllowed(origin => new Uri(origin).Host == "localhost")
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials()
     );
 });
 
 // Adds authentication and authorization
-builder.Services
-    .Configure<IdentityOptions>(options =>
-    {
-        options.User.RequireUniqueEmail = true;
-        options.Password.RequireDigit = true;
-        options.Password.RequireLowercase = true;
-        options.Password.RequireUppercase = true;
-        options.Password.RequireNonAlphanumeric = true;
-        options.Password.RequiredLength = 8;
-        options.SignIn.RequireConfirmedEmail = true;
-        options.Lockout.AllowedForNewUsers = true;
-        options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
-        options.Lockout.MaxFailedAccessAttempts = 5;
-    });
+builder.Services.Configure<IdentityOptions>(options =>
+{
+    options.User.RequireUniqueEmail = true;
+    options.Password.RequireDigit = true;
+    options.Password.RequireLowercase = true;
+    options.Password.RequireUppercase = true;
+    options.Password.RequireNonAlphanumeric = true;
+    options.Password.RequiredLength = 8;
+    options.SignIn.RequireConfirmedEmail = true;
+    options.Lockout.AllowedForNewUsers = true;
+    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+    options.Lockout.MaxFailedAccessAttempts = 5;
+});
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.Cookie.HttpOnly = true;
@@ -63,7 +71,7 @@ builder.Services.AddAuthorization();
 builder.Services
     .AddControllers(options => options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true)
     .ConfigureApiBehaviorOptions(options => options.SuppressModelStateInvalidFilter = true);
-builder.Services.AddRouting(options => { options.LowercaseUrls = true; });
+builder.Services.AddRouting(options => options.LowercaseUrls = true);
 
 // Adds FluentValidation
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
@@ -91,6 +99,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseHttpLogging();
+
 app.UseHttpsRedirection();
 
 app.UseCors("CorsPolicy");
@@ -103,5 +113,3 @@ app.MapControllers();
 app.UseExceptionHandler();
 
 app.Run();
-
-public partial class Program;
