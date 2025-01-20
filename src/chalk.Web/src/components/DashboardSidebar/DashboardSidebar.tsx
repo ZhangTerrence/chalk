@@ -38,7 +38,7 @@ export const DashboardSidebar = () => {
     open: false,
     section: null,
   });
-  const [context, setContext] = React.useState<string>(user.displayName);
+  const [context, setContext] = React.useState(user.displayName);
 
   const changeDialog = (section: Pick<DashboardDialog, "section">["section"]) => {
     setDialog({
