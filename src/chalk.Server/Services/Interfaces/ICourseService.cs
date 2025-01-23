@@ -14,4 +14,10 @@ public interface ICourseService
     public Task<Course> UpdateCourseAsync(long courseId, UpdateCourseRequest request);
 
     public Task DeleteCourseAsync(long courseId);
+
+    public Task<Course> CreateCourseModuleAsync(CreateCourseModuleRequest request);
+
+    public Task<Course> UpdateCourseModuleAsync(long courseModuleId, UpdateCourseModuleRequest request);
+
+    public Task<Course> DeleteCourseModuleAsync(long courseModuleId);
 }

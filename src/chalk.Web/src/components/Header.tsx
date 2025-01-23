@@ -10,9 +10,9 @@ import {
 
 export const Header = () => {
   return (
-    <header className="w-screen fixed top-0">
+    <header className="fixed top-0 w-screen">
       <NavigationMenu>
-        <NavigationMenuList className="w-screen p-4 flex justify-between">
+        <NavigationMenuList className="flex w-screen justify-between p-4">
           <NavigationMenuItem>
             <NavigationMenuLink asChild>
               <NavLink to="/" className="ml-2 hover:text-primary/90">

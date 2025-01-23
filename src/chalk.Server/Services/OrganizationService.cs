@@ -109,6 +109,8 @@ public class OrganizationService : IOrganizationService
             organization.ProfilePicture = uri;
         }
 
+        organization.IsPublic = request.IsPublic!.Value;
+
         organization.UpdatedDate = DateTime.UtcNow;
 
         await _context.SaveChangesAsync();

@@ -12,6 +12,7 @@ export const userApi = baseApi.injectEndpoints({
         formData: true,
         body: body,
       }),
+      invalidatesTags: (response) => [{ type: "course", id: response?.data.id }],
     }),
   }),
 });

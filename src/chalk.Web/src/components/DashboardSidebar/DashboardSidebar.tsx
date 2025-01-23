@@ -5,20 +5,20 @@ import { Sidebar, SidebarContent, SidebarRail, SidebarSeparator } from "@/compon
 
 import { DashboardSidebarFooter } from "@/components/DashboardSidebar/DashboardSidebarFooter.tsx";
 import { DashboardSidebarHeader } from "@/components/DashboardSidebar/DashboardSidebarHeader.tsx";
-import { CreateCourseDialog } from "@/components/DashboardSidebar/Dialogs/CreateCourseDialog.tsx";
-import { CreateOrganizationDialog } from "@/components/DashboardSidebar/Dialogs/CreateOrganizationDialog.tsx";
-import { UpdateAccountDialog } from "@/components/DashboardSidebar/Dialogs/UpdateAccountDialog.tsx";
-import { UpdateAppearanceDialog } from "@/components/DashboardSidebar/Dialogs/UpdateAppearanceDialog.tsx";
-import { UpdateProfileDialog } from "@/components/DashboardSidebar/Dialogs/UpdateProfileDialog.tsx";
-import { CoursesSection } from "@/components/DashboardSidebar/Sections/CoursesSection.tsx";
-import { DirectMessagesSection } from "@/components/DashboardSidebar/Sections/DirectMessagesSection.tsx";
+import { CreateCourseDialog } from "@/components/Dialogs/CreateCourseDialog.tsx";
+import { CreateOrganizationDialog } from "@/components/Dialogs/CreateOrganizationDialog.tsx";
+import { UpdateAccountDialog } from "@/components/Dialogs/UpdateAccountDialog.tsx";
+import { UpdateAppearanceDialog } from "@/components/Dialogs/UpdateAppearanceDialog.tsx";
+import { UpdateProfileDialog } from "@/components/Dialogs/UpdateProfileDialog.tsx";
+import { CoursesSection } from "@/components/Sections/CoursesSection.tsx";
+import { DirectMessagesSection } from "@/components/Sections/DirectMessagesSection.tsx";
 
 import { selectUser } from "@/redux/slices/user.ts";
 import { useTypedSelector } from "@/redux/store.ts";
 
-export type DashboardDialog = {
+export type DashboardDialogs = {
   open: boolean;
-  section: "create-course" | "create-organization" | "update-account" | "update-profile" | "update-appearance" | null;
+  type: "create-course" | "create-organization" | "update-account" | "update-profile" | "update-appearance" | null;
 };
 
 export const DashboardSidebar = () => {
@@ -34,16 +34,16 @@ export const DashboardSidebar = () => {
     };
   });
 
-  const [dialog, setDialog] = React.useState<DashboardDialog>({
+  const [dialog, setDialog] = React.useState<DashboardDialogs>({
     open: false,
-    section: null,
+    type: null,
   });
   const [context, setContext] = React.useState(user.displayName);
 
-  const changeDialog = (section: Pick<DashboardDialog, "section">["section"]) => {
+  const changeDialog = (type: Pick<DashboardDialogs, "type">["type"]) => {
     setDialog({
-      open: !!section,
-      section: section,
+      open: !!type,
+      type: type,
     });
   };
 
@@ -51,12 +51,12 @@ export const DashboardSidebar = () => {
     return setContext(section);
   };
 
-  const renderDialog = () => {
-    switch (dialog.section) {
+  const renderDialogContent = () => {
+    switch (dialog.type) {
       case "create-course":
         return <CreateCourseDialog changeDialog={changeDialog} />;
       case "create-organization":
-        return <CreateOrganizationDialog changeDialog={changeDialog} />;
+        return <CreateOrganizationDialog />;
       case "update-account":
         return <UpdateAccountDialog />;
       case "update-profile":
@@ -74,7 +74,7 @@ export const DashboardSidebar = () => {
       onOpenChange={(open) => {
         setDialog({
           open: open,
-          section: dialog.section,
+          type: dialog.type,
         });
       }}
     >
@@ -93,7 +93,7 @@ export const DashboardSidebar = () => {
         <DashboardSidebarFooter changeDialog={changeDialog} />
         <SidebarRail />
       </Sidebar>
-      <DialogContent>{renderDialog()}</DialogContent>
+      <DialogContent>{renderDialogContent()}</DialogContent>
     </Dialog>
   );
 };

@@ -10,5 +10,5 @@ namespace chalk.Server.DTOs.Requests;
 public record CreateOrganizationRequest(
     string Name,
     string? Description,
-    bool IsPublic
+    bool? IsPublic
 );

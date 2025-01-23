@@ -12,5 +12,5 @@ public record UpdateOrganizationRequest(
     string Name,
     string? Description,
     IFormFile? ProfilePicture,
-    bool IsPublic
+    bool? IsPublic
 );

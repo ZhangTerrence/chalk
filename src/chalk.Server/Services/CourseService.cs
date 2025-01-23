@@ -27,6 +27,7 @@ public class CourseService : ICourseService
             .Include(e => e.Organization).AsSingleQuery()
             .Include(e => e.Users).ThenInclude(u => u.User).AsSingleQuery()
             .Include(e => e.Roles).AsSingleQuery()
+            .Include(e => e.Modules).ThenInclude(e => e.Attachments).AsSingleQuery()
             .ToListAsync();
     }
 
@@ -36,6 +37,7 @@ public class CourseService : ICourseService
             .Include(e => e.Organization).AsSingleQuery()
             .Include(e => e.Users).ThenInclude(u => u.User).AsSingleQuery()
             .Include(e => e.Roles).AsSingleQuery()
+            .Include(e => e.Modules).ThenInclude(e => e.Attachments).AsSingleQuery()
             .FirstOrDefaultAsync(e => e.Id == courseId);
         if (course is null)
         {
@@ -54,6 +56,8 @@ public class CourseService : ICourseService
         }
 
         var course = request.ToEntity(null);
+        var createdCourse = await _context.Courses.AddAsync(course);
+
         var role = CreateRoleRequest
             .CreateCourseRole("Instructor", null, PermissionUtilities.All, 0, course.Id)
             .ToEntity();
@@ -72,7 +76,6 @@ public class CourseService : ICourseService
         };
         userCourse.Roles.Add(userRole);
 
-        var createdCourse = await _context.Courses.AddAsync(course);
         course.Users.Add(userCourse);
         course.Roles.Add(role);
 
@@ -98,12 +101,24 @@ public class CourseService : ICourseService
             course.Image = uri;
         }
 
-        course.IsPublic = request.IsPublic;
+        course.IsPublic = request.IsPublic!.Value;
+        var i = 0;
+        foreach (var courseModuleId in request.Modules)
+        {
+            var courseModule = await _context.CourseModules.FindAsync(courseModuleId);
+            if (courseModule is null)
+            {
+                throw new ServiceException("Course module not found.", StatusCodes.Status404NotFound);
+            }
+
+            courseModule.RelativeOrder = i;
+            i++;
+        }
 
         course.UpdatedDate = DateTime.UtcNow;
 
         await _context.SaveChangesAsync();
-        return await GetCourseAsync(courseId);
+        return await GetCourseAsync(course.Id);
     }
 
     public async Task DeleteCourseAsync(long courseId)
@@ -117,5 +132,76 @@ public class CourseService : ICourseService
         _context.Courses.Remove(course);
 
         await _context.SaveChangesAsync();
+    }
+
+    public async Task<Course> CreateCourseModuleAsync(CreateCourseModuleRequest request)
+    {
+        var course = await _context.Courses
+            .Include(e => e.Modules)
+            .FirstOrDefaultAsync(e => e.Id == request.CourseId);
+        if (course is null)
+        {
+            throw new ServiceException("Course not found.", StatusCodes.Status404NotFound);
+        }
+
+        // Adds to the end
+        var relativeOrder = course.Modules.Select(e => e.RelativeOrder).DefaultIfEmpty(0).Max();
+
+        var courseModule = request.ToEntity(relativeOrder);
+        course.Modules.Add(courseModule);
+
+        await _context.SaveChangesAsync();
+        return await GetCourseAsync(course.Id);
+    }
+
+    public async Task<Course> UpdateCourseModuleAsync(long courseModuleId, UpdateCourseModuleRequest request)
+    {
+        var courseModule = await _context.CourseModules.FindAsync(courseModuleId);
+        if (courseModule is null)
+        {
+            throw new ServiceException("Course module not found.", StatusCodes.Status404NotFound);
+        }
+
+        courseModule.Name = request.Name;
+        courseModule.Description = request.Description;
+        courseModule.UpdatedDate = DateTime.UtcNow;
+
+        await _context.SaveChangesAsync();
+
+        var course = await _context.Courses.FindAsync(courseModule.CourseId);
+        if (course is null)
+        {
+            throw new ServiceException("Course not found.", StatusCodes.Status404NotFound);
+        }
+
+        return await GetCourseAsync(course.Id);
+    }
+
+    public async Task<Course> DeleteCourseModuleAsync(long courseModuleId)
+    {
+        var courseModule = await _context.CourseModules.FindAsync(courseModuleId);
+        if (courseModule is null)
+        {
+            throw new ServiceException("Course module not found.", StatusCodes.Status404NotFound);
+        }
+
+        var course = await _context.Courses
+            .Include(e => e.Modules)
+            .FirstOrDefaultAsync(e => e.Id == courseModule.CourseId);
+        if (course is null)
+        {
+            throw new ServiceException("Course not found.", StatusCodes.Status404NotFound);
+        }
+
+        _context.CourseModules.Remove(courseModule);
+
+        foreach (var module in course.Modules)
+        {
+            module.RelativeOrder -= 1;
+        }
+
+        await _context.SaveChangesAsync();
+
+        return await GetCourseAsync(course.Id);
     }
 }

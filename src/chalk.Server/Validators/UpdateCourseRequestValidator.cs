@@ -19,6 +19,7 @@ public class UpdateCourseRequestValidator : AbstractValidator<UpdateCourseReques
             .MaximumLength(255)
             .WithMessage("The course's description must have at most 255 characters.");
         RuleFor(e => e.Image);
+        RuleFor(e => e.Modules);
         RuleFor(e => e.IsPublic)
             .NotNull()
             .WithMessage("Must specify whether the course is public.");

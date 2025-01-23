@@ -12,14 +12,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Separator } from "@/components/ui/separator.tsx";
 import { Textarea } from "@/components/ui/textarea.tsx";
 
-import type { DashboardDialog } from "@/components/DashboardSidebar/DashboardSidebar.tsx";
+import type { DashboardDialogs } from "@/components/DashboardSidebar/DashboardSidebar.tsx";
 
 import { useCreateCourseMutation } from "@/redux/services/course.ts";
 
 import { CreateCourseSchema, type CreateCourseType } from "@/lib/validators/createCourse.ts";
 
 type CreateCourseDialogProps = {
-  changeDialog: (section: Pick<DashboardDialog, "section">["section"]) => void;
+  changeDialog: (type: Pick<DashboardDialogs, "type">["type"]) => void;
 };
 
 export const CreateCourseDialog = (props: CreateCourseDialogProps) => {
@@ -52,7 +52,7 @@ export const CreateCourseDialog = (props: CreateCourseDialogProps) => {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(async (data) => await createCourse(data).unwrap())}
-          className="flex flex-col gap-y-4 min-w-80"
+          className="flex min-w-80 flex-col gap-y-4"
         >
           <FormField
             control={form.control}
@@ -117,7 +117,7 @@ export const CreateCourseDialog = (props: CreateCourseDialogProps) => {
               </FormItem>
             )}
           />
-          <DialogFooter className="max-md:flex max-md:flex-row max-md:space-x-4 max-md:justify-end max-md:w-full">
+          <DialogFooter className="max-md:flex max-md:w-full max-md:flex-row max-md:justify-end max-md:space-x-4">
             <DialogClose asChild>
               <Button variant="outline">Cancel</Button>
             </DialogClose>

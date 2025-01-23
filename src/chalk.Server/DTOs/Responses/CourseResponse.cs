@@ -34,5 +34,8 @@ public record CourseResponse(
     IEnumerable<UserDTO> Users,
     [property: JsonRequired]
     [property: JsonPropertyName("roles")]
-    IEnumerable<RoleDTO> Roles
+    IEnumerable<RoleDTO> Roles,
+    [property: JsonRequired]
+    [property: JsonPropertyName("modules")]
+    IEnumerable<CourseModuleDTO> Modules
 );

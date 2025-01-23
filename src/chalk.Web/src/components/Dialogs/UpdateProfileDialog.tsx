@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input.tsx";
 import { Separator } from "@/components/ui/separator.tsx";
 import { Textarea } from "@/components/ui/textarea.tsx";
 
-import type { DashboardDialog } from "@/components/DashboardSidebar/DashboardSidebar.tsx";
+import type { DashboardDialogs } from "@/components/DashboardSidebar/DashboardSidebar.tsx";
 
 import { useUpdateUserMutation } from "@/redux/services/user.ts";
 import { selectUser } from "@/redux/slices/user.ts";
@@ -22,7 +22,7 @@ import { getImageData } from "@/lib/utils.ts";
 import { UpdateUserSchema, type UpdateUserType } from "@/lib/validators/updateUser.ts";
 
 type UpdateProfileDialogProps = {
-  changeDialog: (section: Pick<DashboardDialog, "section">["section"]) => void;
+  changeDialog: (type: Pick<DashboardDialogs, "type">["type"]) => void;
 };
 
 export const UpdateProfileDialog = (props: UpdateProfileDialogProps) => {
@@ -95,19 +95,19 @@ export const UpdateProfileDialog = (props: UpdateProfileDialogProps) => {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col space-y-4">
           <div className="flex space-x-4">
-            <div className="relative h-auto aspect-square border border-primary rounded-full">
-              <Avatar className="w-full h-full aspect-square">
-                <AvatarImage src={profilePicture} alt={fullName} className="object-center object-contain" />
+            <div className="relative aspect-square h-auto rounded-full border border-primary">
+              <Avatar className="aspect-square h-full w-full">
+                <AvatarImage src={profilePicture} alt={fullName} className="object-contain object-center" />
                 <AvatarFallback className="text-2xl">{fullName.charAt(0).toUpperCase()}</AvatarFallback>
               </Avatar>
               <Input
                 type="file"
                 accept="image/*"
                 onChange={onFileUpload}
-                className="absolute top-0 opacity-0 hover:cursor-pointer w-full h-full"
+                className="absolute top-0 h-full w-full opacity-0 hover:cursor-pointer"
               />
             </div>
-            <div className="grow flex flex-col space-y-2">
+            <div className="flex grow flex-col space-y-2">
               <div className="flex space-x-2">
                 <FormField
                   control={form.control}
@@ -158,7 +158,7 @@ export const UpdateProfileDialog = (props: UpdateProfileDialogProps) => {
               <FormItem className="grow">
                 <FormLabel>Description</FormLabel>
                 <FormControl>
-                  <Textarea {...field} className="resize-none h-40" />
+                  <Textarea {...field} className="h-40 resize-none" />
                 </FormControl>
                 <FormMessage />
               </FormItem>

@@ -17,16 +17,22 @@ public class CourseController : ControllerBase
 
     private readonly IValidator<CreateCourseRequest> _createCourseRequestValidator;
     private readonly IValidator<UpdateCourseRequest> _updateCourseRequestValidator;
+    private readonly IValidator<CreateCourseModuleRequest> _createCourseModuleRequestValidator;
+    private readonly IValidator<UpdateCourseModuleRequest> _updateCourseModuleRequestValidator;
 
     public CourseController(
         ICourseService courseService,
         IValidator<CreateCourseRequest> createCourseRequestValidator,
-        IValidator<UpdateCourseRequest> updateCourseRequestValidator
+        IValidator<UpdateCourseRequest> updateCourseRequestValidator,
+        IValidator<CreateCourseModuleRequest> createCourseModuleRequestValidator,
+        IValidator<UpdateCourseModuleRequest> updateCourseModuleRequestValidator
     )
     {
         _courseService = courseService;
         _createCourseRequestValidator = createCourseRequestValidator;
         _updateCourseRequestValidator = updateCourseRequestValidator;
+        _createCourseModuleRequestValidator = createCourseModuleRequestValidator;
+        _updateCourseModuleRequestValidator = updateCourseModuleRequestValidator;
     }
 
     [HttpGet]
@@ -74,5 +80,38 @@ public class CourseController : ControllerBase
     {
         await _courseService.DeleteCourseAsync(courseId);
         return NoContent();
+    }
+
+    [HttpPost("modules")]
+    public async Task<IActionResult> AddCourseModule([FromBody] CreateCourseModuleRequest request)
+    {
+        var validationResult = await _createCourseModuleRequestValidator.ValidateAsync(request);
+        if (!validationResult.IsValid)
+        {
+            return BadRequest(new ApiResponse<object>(validationResult.GetErrorMessages()));
+        }
+
+        var course = await _courseService.CreateCourseModuleAsync(request);
+        return Created(nameof(AddCourseModule), new ApiResponse<CourseResponse>(null, course.ToResponse()));
+    }
+
+    [HttpPut("modules/{courseModuleId:long}")]
+    public async Task<IActionResult> UpdateCourseModule([FromRoute] long courseModuleId, [FromBody] UpdateCourseModuleRequest request)
+    {
+        var validationResult = await _updateCourseModuleRequestValidator.ValidateAsync(request);
+        if (!validationResult.IsValid)
+        {
+            return BadRequest(new ApiResponse<object>(validationResult.GetErrorMessages()));
+        }
+
+        var course = await _courseService.UpdateCourseModuleAsync(courseModuleId, request);
+        return Ok(new ApiResponse<CourseResponse>(null, course.ToResponse()));
+    }
+
+    [HttpDelete("modules/{courseModuleId:long}")]
+    public async Task<IActionResult> DeleteCourseModule([FromRoute] long courseModuleId)
+    {
+        var course = await _courseService.DeleteCourseModuleAsync(courseModuleId);
+        return Ok(new ApiResponse<CourseResponse>(null, course.ToResponse()));
     }
 }

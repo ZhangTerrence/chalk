@@ -4,7 +4,7 @@ import { Header } from "@/components/Header.tsx";
 
 export default function RootLayout() {
   return (
-    <div className="min-h-screen w-screen flex items-center justify-center relative">
+    <div className="relative flex min-h-screen w-screen items-center justify-center">
       <Header />
       <Outlet />
     </div>

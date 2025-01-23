@@ -9,6 +9,7 @@ const baseApi = createApi({
     baseUrl: `${protocol}${host}:${port}/api`,
     credentials: "include",
   }),
+  tagTypes: ["user", "course"],
   endpoints: () => ({}),
 });
 

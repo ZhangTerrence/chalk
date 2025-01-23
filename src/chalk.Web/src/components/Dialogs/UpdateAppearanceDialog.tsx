@@ -40,7 +40,7 @@ export const UpdateAppearanceDialog = () => {
           </SelectContent>
         </Select>
       </div>
-      <div className="flex items-center space-x-2 justify-between py-2">
+      <div className="flex items-center justify-between space-x-2 py-2">
         <Label htmlFor="toggle-dark-mode" className="text-md font-semibold">
           Dark Mode
         </Label>

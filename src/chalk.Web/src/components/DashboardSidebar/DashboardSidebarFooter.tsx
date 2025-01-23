@@ -5,14 +5,14 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar.tsx"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu.tsx";
 import { SidebarFooter, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/components/ui/sidebar.tsx";
 
-import type { DashboardDialog } from "@/components/DashboardSidebar/DashboardSidebar.tsx";
+import type { DashboardDialogs } from "@/components/DashboardSidebar/DashboardSidebar.tsx";
 
 import { useLogoutMutation } from "@/redux/services/account.ts";
 import { selectUser } from "@/redux/slices/user.ts";
 import { useTypedSelector } from "@/redux/store.ts";
 
 type DashboardSidebarFooterProps = {
-  changeDialog: (section: Pick<DashboardDialog, "section">["section"]) => void;
+  changeDialog: (type: Pick<DashboardDialogs, "type">["type"]) => void;
 };
 
 export const DashboardSidebarFooter = (props: DashboardSidebarFooterProps) => {
@@ -35,7 +35,7 @@ export const DashboardSidebarFooter = (props: DashboardSidebarFooterProps) => {
                 <AvatarImage
                   src={user.profilePicture ?? undefined}
                   alt={fullName}
-                  className="object-contain border   border-primary rounded-full"
+                  className="rounded-full border border-primary object-contain"
                 />
                 <AvatarFallback className="rounded-lg">{fullName.charAt(0).toUpperCase()}</AvatarFallback>
               </Avatar>

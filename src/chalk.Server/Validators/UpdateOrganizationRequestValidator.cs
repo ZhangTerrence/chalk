@@ -18,6 +18,6 @@ public class UpdateOrganizationRequestValidator : AbstractValidator<UpdateOrgani
         RuleFor(e => e.ProfilePicture);
         RuleFor(e => e.IsPublic)
             .NotNull()
-            .WithMessage("Must specify whether the course is public.");
+            .WithMessage("Must specify whether the organization is public.");
     }
 }

@@ -22,7 +22,7 @@ export const DashboardSidebarHeader = (props: DashboardSidebarHeaderProps) => {
       <SidebarGroup>
         <SidebarGroupContent>
           <DropdownMenu>
-            <DropdownMenuTrigger className="w-full border-2 rounded-lg p-2">{props.context}</DropdownMenuTrigger>
+            <DropdownMenuTrigger className="w-full rounded-lg border-2 p-2">{props.context}</DropdownMenuTrigger>
             <DropdownMenuContent className="w-[--radix-popper-anchor-width]" sideOffset={10}>
               {Object.entries(props.contextList).map(([k, v]) => (
                 <DropdownMenuItem key={v.id} className="flex justify-center">
@@ -36,7 +36,7 @@ export const DashboardSidebarHeader = (props: DashboardSidebarHeaderProps) => {
                   <DropdownMenuSeparator />
                 </>
               )}
-              <div className="p-2 flex flex-col space-y-4">
+              <div className="flex flex-col space-y-4 p-2">
                 <Button className="w-full">Finds Organizations</Button>
                 <Button className="w-full">Create Organization</Button>
               </div>

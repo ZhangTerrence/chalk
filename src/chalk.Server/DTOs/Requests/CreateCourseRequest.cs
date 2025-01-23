@@ -12,5 +12,5 @@ public record CreateCourseRequest(
     string Name,
     string? Code,
     string? Description,
-    bool IsPublic
+    bool? IsPublic
 );

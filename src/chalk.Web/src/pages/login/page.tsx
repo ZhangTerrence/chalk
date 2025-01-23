@@ -41,14 +41,14 @@ export default function LoginPage() {
         <title>Login</title>
       </Helmet>
       {isLoading && <LoaderIcon className="absolute animate-spin" />}
-      <main className="flex flex-col gap-y-4 w-1/2 max-xl:w-3/4 max-sm:w-full max-sm:p-4">
+      <main className="flex w-1/2 flex-col gap-y-4 max-xl:w-3/4 max-sm:w-full max-sm:p-4">
         <h1 className="text-2xl underline">
           <strong>Login</strong>
         </h1>
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(async (data) => await login(data).unwrap())}
-            className="flex flex-col gap-y-4 min-w-80"
+            className="flex min-w-80 flex-col gap-y-4"
           >
             <FormField
               control={form.control}

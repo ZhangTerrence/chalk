@@ -1,10 +1,8 @@
-import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 import { ChevronDownIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 import { Button } from "@/components/ui/button.tsx";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible.tsx";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu.tsx";
 import {
   SidebarGroup,
   SidebarGroupContent,
@@ -14,21 +12,20 @@ import {
   SidebarMenuItem,
   SidebarMenuSub,
   SidebarMenuSubItem,
-  useSidebar,
 } from "@/components/ui/sidebar.tsx";
 
-import type { DashboardDialog } from "@/components/DashboardSidebar/DashboardSidebar.tsx";
+import type { DashboardDialogs } from "@/components/DashboardSidebar/DashboardSidebar.tsx";
+import { AddCourseDropdown } from "@/components/Dropdowns/AddCourseDropdown.tsx";
 
 import { selectUserCourses } from "@/redux/slices/user.ts";
 import { useTypedSelector } from "@/redux/store.ts";
 
 type CoursesSectionProps = {
-  changeDialog: (section: Pick<DashboardDialog, "section">["section"]) => void;
+  changeDialog: (type: Pick<DashboardDialogs, "type">["type"]) => void;
 };
 
 export const CoursesSection = (props: CoursesSectionProps) => {
   const courses = useTypedSelector(selectUserCourses) ?? [];
-  const { isMobile } = useSidebar();
   const navigate = useNavigate();
 
   return (
@@ -43,28 +40,7 @@ export const CoursesSection = (props: CoursesSectionProps) => {
         <CollapsibleContent>
           <SidebarGroupContent>
             <SidebarMenu className="gap-y-2">
-              <DropdownMenu>
-                <DropdownMenuTrigger className="focus:outline-none" asChild>
-                  <SidebarMenuItem>
-                    <Button variant="outline" className="w-full">
-                      Add
-                    </Button>
-                  </SidebarMenuItem>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent
-                  side={isMobile ? "bottom" : "right"}
-                  align="start"
-                  sideOffset={isMobile ? 5 : 20}
-                  className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
-                >
-                  <DropdownMenuItem onClick={() => navigate("/courses")} className="py-3">
-                    <span>Find Courses</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => props.changeDialog("create-course")} className="py-3">
-                    <span>Create New Course</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <AddCourseDropdown changeDialog={props.changeDialog} />
               {courses.map((course) => (
                 <Collapsible
                   key={course.name}
@@ -74,7 +50,7 @@ export const CoursesSection = (props: CoursesSectionProps) => {
                   <SidebarMenuItem>
                     <SidebarMenuButton className="px-2" asChild>
                       <CollapsibleTrigger>
-                        <span className="text-nowrap text-ellipsis w-[90%] overflow-x-clip">
+                        <span className="w-[90%] overflow-x-clip text-ellipsis text-nowrap">
                           {course.code && course.code + " - "}
                           {course.name}
                         </span>
@@ -83,7 +59,16 @@ export const CoursesSection = (props: CoursesSectionProps) => {
                     </SidebarMenuButton>
                     <CollapsibleContent>
                       <SidebarMenuSub>
-                        <SidebarMenuSubItem className="p-2">Home</SidebarMenuSubItem>
+                        <SidebarMenuSubItem onClick={() => navigate(`/courses/${course.id}`)}>
+                          <Button variant="ghost" className="w-full justify-normal pl-2">
+                            Home
+                          </Button>
+                        </SidebarMenuSubItem>
+                        <SidebarMenuSubItem onClick={() => navigate(`/courses/${course.id}/modules`)}>
+                          <Button variant="ghost" className="w-full justify-normal pl-2">
+                            Modules
+                          </Button>
+                        </SidebarMenuSubItem>
                       </SidebarMenuSub>
                     </CollapsibleContent>
                   </SidebarMenuItem>

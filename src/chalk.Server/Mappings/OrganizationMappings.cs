@@ -14,7 +14,7 @@ public static class OrganizationMappings
         {
             Name = request.Name,
             Description = request.Description,
-            IsPublic = request.IsPublic,
+            IsPublic = request.IsPublic!.Value,
             CreatedDate = DateTime.UtcNow,
             UpdatedDate = DateTime.UtcNow,
             Owner = owner
