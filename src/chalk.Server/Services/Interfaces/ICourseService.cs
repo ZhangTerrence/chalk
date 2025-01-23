@@ -20,4 +20,6 @@ public interface ICourseService
     public Task<Course> UpdateCourseModuleAsync(long courseModuleId, UpdateCourseModuleRequest request);
 
     public Task<Course> DeleteCourseModuleAsync(long courseModuleId);
+
+    public Task<Course> AddCourseModuleAttachmentAsync(long courseModuleId, CreateAttachmentRequest request);
 }

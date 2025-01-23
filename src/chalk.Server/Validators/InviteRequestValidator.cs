@@ -17,10 +17,10 @@ public class InviteRequestValidator : AbstractValidator<InviteRequest>
             .NotNull()
             .WithMessage("Must specify the user the invite is addressed to.");
         RuleFor(e => e.CourseId)
-            .NotNull().When(e => e.Origin == Origin.Course)
+            .NotNull().When(e => e.Origin == InviteOrigin.Course)
             .WithMessage("Must specify the course the invite is addressed from.");
         RuleFor(e => e.OrganizationId)
-            .NotNull().When(e => e.Origin == Origin.Organization)
+            .NotNull().When(e => e.Origin == InviteOrigin.Organization)
             .WithMessage("Must specify the organization the invite is addressed from.");
         RuleFor(e => e.RoleId)
             .NotNull()

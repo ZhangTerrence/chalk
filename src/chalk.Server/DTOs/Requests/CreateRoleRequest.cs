@@ -17,7 +17,7 @@ namespace chalk.Server.DTOs.Requests;
 ///     <paramref name="CourseId"/> and <paramref name="OrganizationId"/> are conditionally required based on <paramref name="Origin"/>.
 /// </remarks>
 public record CreateRoleRequest(
-    Origin? Origin,
+    RoleOrigin? Origin,
     string Name,
     string? Description,
     long? Permissions,
@@ -28,11 +28,11 @@ public record CreateRoleRequest(
 {
     public static CreateRoleRequest CreateCourseRole(string name, string? description, long permissions, int rank, long courseId)
     {
-        return new CreateRoleRequest(Shared.Origin.Course, name, description, permissions, rank, courseId, null);
+        return new CreateRoleRequest(RoleOrigin.Course, name, description, permissions, rank, courseId, null);
     }
 
     public static CreateRoleRequest CreateOrganizationRole(string name, string? description, long permissions, int rank, long organizationId)
     {
-        return new CreateRoleRequest(Shared.Origin.Organization, name, description, permissions, rank, null, organizationId);
+        return new CreateRoleRequest(RoleOrigin.Organization, name, description, permissions, rank, null, organizationId);
     }
 }

@@ -204,4 +204,36 @@ public class CourseService : ICourseService
 
         return await GetCourseAsync(course.Id);
     }
+
+    public async Task<Course> AddCourseModuleAttachmentAsync(long courseModuleId, CreateAttachmentRequest request)
+    {
+        var courseModule = await _context.CourseModules.FindAsync(courseModuleId);
+        if (courseModule is null)
+        {
+            throw new ServiceException("Course module not found.", StatusCodes.Status404NotFound);
+        }
+
+        if (request.Origin != AttachmentOrigin.CourseModule)
+        {
+            throw new ServiceException("Incorrect origin.", StatusCodes.Status400BadRequest);
+        }
+
+        var hash = FileUtilities.S3ObjectHash("course-module-attachment", Guid.NewGuid().ToString());
+        var url = await _fileUploadService.UploadAsync(hash, request.Resource);
+
+        var attachment = new Attachment
+        {
+            Name = request.Name,
+            Description = request.Description,
+            Resource = url,
+            CreatedDate = DateTime.UtcNow,
+            UpdatedDate = DateTime.UtcNow,
+        };
+
+        _context.Attachments.Add(attachment);
+
+        await _context.SaveChangesAsync();
+
+        return await GetCourseAsync(courseModule.CourseId);
+    }
 }

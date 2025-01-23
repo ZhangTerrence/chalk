@@ -15,7 +15,7 @@ namespace chalk.Server.DTOs.Requests;
 ///     <paramref name="CourseId"/> and <paramref name="OrganizationId"/> are conditionally required based on <paramref name="Origin"/>.
 /// </remarks>
 public record InviteRequest(
-    Origin? Origin,
+    InviteOrigin? Origin,
     long? UserId,
     long? CourseId,
     long? OrganizationId,

@@ -30,10 +30,10 @@ public class CreateRoleRequestValidator : AbstractValidator<CreateRoleRequest>
             .Must(e => e!.Value >= 0)
             .WithMessage("The role's relative rank must be zero or positive.");
         RuleFor(e => e.CourseId)
-            .NotNull().When(e => e.Origin == Origin.Course)
+            .NotNull().When(e => e.Origin == RoleOrigin.Course)
             .WithMessage("Must specify the course which the role belongs to.");
         RuleFor(e => e.OrganizationId)
-            .NotNull().When(e => e.Origin == Origin.Organization)
+            .NotNull().When(e => e.Origin == RoleOrigin.Organization)
             .WithMessage("Must specify the organization which the role belongs to.");
     }
 }

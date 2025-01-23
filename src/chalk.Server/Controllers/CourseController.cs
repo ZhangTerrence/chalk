@@ -19,13 +19,15 @@ public class CourseController : ControllerBase
     private readonly IValidator<UpdateCourseRequest> _updateCourseRequestValidator;
     private readonly IValidator<CreateCourseModuleRequest> _createCourseModuleRequestValidator;
     private readonly IValidator<UpdateCourseModuleRequest> _updateCourseModuleRequestValidator;
+    private readonly IValidator<CreateAttachmentRequest> _createAttachmentRequestValidator;
 
     public CourseController(
         ICourseService courseService,
         IValidator<CreateCourseRequest> createCourseRequestValidator,
         IValidator<UpdateCourseRequest> updateCourseRequestValidator,
         IValidator<CreateCourseModuleRequest> createCourseModuleRequestValidator,
-        IValidator<UpdateCourseModuleRequest> updateCourseModuleRequestValidator
+        IValidator<UpdateCourseModuleRequest> updateCourseModuleRequestValidator,
+        IValidator<CreateAttachmentRequest> createAttachmentRequestValidator
     )
     {
         _courseService = courseService;
@@ -33,6 +35,7 @@ public class CourseController : ControllerBase
         _updateCourseRequestValidator = updateCourseRequestValidator;
         _createCourseModuleRequestValidator = createCourseModuleRequestValidator;
         _updateCourseModuleRequestValidator = updateCourseModuleRequestValidator;
+        _createAttachmentRequestValidator = createAttachmentRequestValidator;
     }
 
     [HttpGet]
@@ -113,5 +116,18 @@ public class CourseController : ControllerBase
     {
         var course = await _courseService.DeleteCourseModuleAsync(courseModuleId);
         return Ok(new ApiResponse<CourseResponse>(null, course.ToResponse()));
+    }
+
+    [HttpPost("modules/{courseModuleId:long}/attach")]
+    public async Task<IActionResult> AddCourseModuleAttachment([FromRoute] long courseModuleId, [FromBody] CreateAttachmentRequest request)
+    {
+        var validationResult = await _createAttachmentRequestValidator.ValidateAsync(request);
+        if (!validationResult.IsValid)
+        {
+            return BadRequest(new ApiResponse<object>(validationResult.GetErrorMessages()));
+        }
+
+        var course = await _courseService.AddCourseModuleAttachmentAsync(courseModuleId, request);
+        return Created(nameof(AddCourseModuleAttachment), new ApiResponse<CourseResponse>(null, course.ToResponse()));
     }
 }
