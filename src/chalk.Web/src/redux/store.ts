@@ -7,6 +7,7 @@ import baseApi from "@/redux/services/base.ts";
 
 import type { ApiResponse } from "@/lib/types/_index.ts";
 
+import courseReducer from "./slices/course.ts";
 import themeReducer from "./slices/theme.ts";
 import userReducer from "./slices/user.ts";
 
@@ -33,6 +34,7 @@ export const store = configureStore({
   reducer: {
     [baseApi.reducerPath]: baseApi.reducer,
     user: userReducer,
+    course: courseReducer,
     theme: themeReducer,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(queryErrorLogger).concat(baseApi.middleware),

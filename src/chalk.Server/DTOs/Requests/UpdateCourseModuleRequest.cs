@@ -5,10 +5,8 @@ namespace chalk.Server.DTOs.Requests;
 /// </summary>
 /// <param name="Name">The course module's name.</param>
 /// <param name="Description">The course module's description.</param>
-/// <param name="CourseId">The course the module belongs to.</param>
-/// <remarks><paramref name="Name"/> and <paramref name="CourseId"/> are required.</remarks>
+/// <remarks><paramref name="Name"/> is required.</remarks>
 public record UpdateCourseModuleRequest(
     string Name,
-    string? Description,
-    long? CourseId
+    string? Description
 );

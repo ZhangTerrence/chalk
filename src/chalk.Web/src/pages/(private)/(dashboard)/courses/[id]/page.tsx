@@ -1,9 +1,14 @@
-import { useOutletContext } from "react-router-dom";
+import NotFoundPage from "@/pages/notFound.tsx";
 
-import type { CourseResponse } from "@/lib/types/course.ts";
+import { selectCourse } from "@/redux/slices/course.ts";
+import { useTypedSelector } from "@/redux/store.ts";
 
 export default function CoursePage() {
-  const course: CourseResponse = useOutletContext();
+  const course = useTypedSelector(selectCourse);
+
+  if (!course) {
+    return <NotFoundPage />;
+  }
 
   return (
     <div className="flex h-full w-full items-center justify-center">

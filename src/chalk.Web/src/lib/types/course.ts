@@ -16,6 +16,12 @@ export type CreateCourseModuleRequest = {
   courseId: number;
 };
 
+export type UpdateCourseModuleRequest = {
+  id: number;
+  name: string;
+  description?: string;
+};
+
 export type CourseDTO = {
   id: number;
   name: string;

@@ -3,7 +3,6 @@ import { Helmet } from "react-helmet-async";
 import { Outlet, useParams } from "react-router-dom";
 
 import ErrorPage from "@/pages/error.tsx";
-import NotFoundPage from "@/pages/notFound.tsx";
 
 import { SidebarTrigger, useSidebar } from "@/components/ui/sidebar.tsx";
 
@@ -13,13 +12,11 @@ export default function CourseLayout() {
   const { id } = useParams();
   const { isMobile } = useSidebar();
 
-  if (!id || Number.isNaN(id)) {
-    return <NotFoundPage />;
-  }
+  const { data, isFetching } = useGetCourseQuery(Number.parseInt(id ?? ""), {
+    refetchOnMountOrArgChange: true,
+  });
 
-  const { data, isLoading } = useGetCourseQuery(Number.parseInt(id));
-
-  if (isLoading) {
+  if (isFetching) {
     return <LoaderIcon className="absolute inset-0 m-auto animate-spin" />;
   }
 
@@ -36,8 +33,8 @@ export default function CourseLayout() {
           {course.code && course.code + " - "} {course.name}
         </title>
       </Helmet>
-      {isMobile && <SidebarTrigger className="absolute left-0 top-0 m-4" />}
-      <Outlet context={course} />
+      {isMobile && <SidebarTrigger className="mb-4" />}
+      <Outlet />
     </>
   );
 }

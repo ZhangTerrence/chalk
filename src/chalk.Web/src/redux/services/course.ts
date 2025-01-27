@@ -1,7 +1,12 @@
 import baseApi from "@/redux/services/base.ts";
 
 import type { ApiResponse } from "@/lib/types/_index.ts";
-import type { CourseResponse, CreateCourseModuleRequest, CreateCourseRequest } from "@/lib/types/course.ts";
+import type {
+  CourseResponse,
+  CreateCourseModuleRequest,
+  CreateCourseRequest,
+  UpdateCourseModuleRequest,
+} from "@/lib/types/course.ts";
 
 export const courseApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -26,8 +31,30 @@ export const courseApi = baseApi.injectEndpoints({
         method: "POST",
         body: body,
       }),
+      invalidatesTags: (response) => [{ type: "course", id: response?.data.id }],
+    }),
+    updateCourseModule: builder.mutation<ApiResponse<CourseResponse>, UpdateCourseModuleRequest>({
+      query: (body) => ({
+        url: `/courses/modules/${body.id}`,
+        method: "PUT",
+        body: body,
+      }),
+      invalidatesTags: (response) => [{ type: "course", id: response?.data.id }],
+    }),
+    deleteCourseModule: builder.mutation<ApiResponse<CourseResponse>, number>({
+      query: (courseModuleId) => ({
+        url: `/courses/modules/${courseModuleId}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: (response) => [{ type: "course", id: response?.data.id }],
     }),
   }),
 });
 
-export const { useGetCourseQuery, useCreateCourseMutation, useAddCourseModuleMutation } = courseApi;
+export const {
+  useGetCourseQuery,
+  useCreateCourseMutation,
+  useAddCourseModuleMutation,
+  useUpdateCourseModuleMutation,
+  useDeleteCourseModuleMutation,
+} = courseApi;

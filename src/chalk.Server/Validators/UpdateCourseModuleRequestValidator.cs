@@ -15,8 +15,5 @@ public class UpdateCourseModuleRequestValidator : AbstractValidator<UpdateCourse
         RuleFor(e => e.Description)
             .MaximumLength(255)
             .WithMessage("The course module's description must have at most 255 characters.");
-        RuleFor(e => e.CourseId)
-            .NotNull()
-            .WithMessage("Must specify the course which the module belongs to.");
     }
 }

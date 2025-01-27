@@ -145,10 +145,12 @@ public class CourseService : ICourseService
         }
 
         // Adds to the end
-        var relativeOrder = course.Modules.Select(e => e.RelativeOrder).DefaultIfEmpty(0).Max();
+        var relativeOrder = course.Modules.Select(e => e.RelativeOrder).DefaultIfEmpty(-1).Max() + 1;
 
         var courseModule = request.ToEntity(relativeOrder);
         course.Modules.Add(courseModule);
+
+        course.UpdatedDate = DateTime.UtcNow;
 
         await _context.SaveChangesAsync();
         return await GetCourseAsync(course.Id);
@@ -166,13 +168,15 @@ public class CourseService : ICourseService
         courseModule.Description = request.Description;
         courseModule.UpdatedDate = DateTime.UtcNow;
 
-        await _context.SaveChangesAsync();
-
         var course = await _context.Courses.FindAsync(courseModule.CourseId);
         if (course is null)
         {
             throw new ServiceException("Course not found.", StatusCodes.Status404NotFound);
         }
+
+        course.UpdatedDate = DateTime.UtcNow;
+
+        await _context.SaveChangesAsync();
 
         return await GetCourseAsync(course.Id);
     }
@@ -197,8 +201,13 @@ public class CourseService : ICourseService
 
         foreach (var module in course.Modules)
         {
-            module.RelativeOrder -= 1;
+            if (module.RelativeOrder > courseModule.RelativeOrder)
+            {
+                module.RelativeOrder -= 1;
+            }
         }
+
+        course.UpdatedDate = DateTime.UtcNow;
 
         await _context.SaveChangesAsync();
 
@@ -231,6 +240,16 @@ public class CourseService : ICourseService
         };
 
         _context.Attachments.Add(attachment);
+
+        courseModule.UpdatedDate = DateTime.UtcNow;
+
+        var course = await _context.Courses.FindAsync(courseModule.CourseId);
+        if (course is null)
+        {
+            throw new ServiceException("Course not found.", StatusCodes.Status404NotFound);
+        }
+
+        course.UpdatedDate = DateTime.UtcNow;
 
         await _context.SaveChangesAsync();
 

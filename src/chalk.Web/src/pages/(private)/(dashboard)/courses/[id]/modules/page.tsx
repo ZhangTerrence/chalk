@@ -1,31 +1,42 @@
 import React from "react";
 
-import { useOutletContext } from "react-router-dom";
+import NotFoundPage from "@/pages/notFound.tsx";
 
 import { Button } from "@/components/ui/button.tsx";
 import { Dialog, DialogContent } from "@/components/ui/dialog.tsx";
 
+import { CourseModule } from "@/components/Course/CourseModule.tsx";
+import { AddAttachmentDialog } from "@/components/Dialogs/AddAttachmentDialog.tsx";
 import { AddCourseModuleDialog } from "@/components/Dialogs/AddCourseModuleDialog.tsx";
+import { UpdateCourseModuleDialog } from "@/components/Dialogs/UpdateCourseModuleDialog.tsx";
 
-import type { CourseResponse } from "@/lib/types/course.ts";
+import { selectCourse } from "@/redux/slices/course.ts";
+import { useTypedSelector } from "@/redux/store.ts";
 
 export type CourseModulesDialogs = {
   open: boolean;
-  type: "add-course-module" | null;
+  id: number | null;
+  type: "add-course-module" | "edit-course-module" | "add-course-module-attachment" | null;
 };
 
 export default function CourseModulesPage() {
-  const course: CourseResponse = useOutletContext();
+  const course = useTypedSelector(selectCourse);
+
+  if (!course) {
+    return <NotFoundPage />;
+  }
 
   const [dialog, setDialog] = React.useState<CourseModulesDialogs>({
     open: false,
+    id: null,
     type: null,
   });
 
-  const changeDialog = (section: Pick<CourseModulesDialogs, "type">["type"]) => {
+  const changeDialog = (id: number | null, type: Pick<CourseModulesDialogs, "type">["type"]) => {
     setDialog({
-      open: !!section,
-      type: section,
+      open: !!type,
+      id: id,
+      type: type,
     });
   };
 
@@ -33,10 +44,16 @@ export default function CourseModulesPage() {
     switch (dialog.type) {
       case "add-course-module":
         return <AddCourseModuleDialog courseId={course.id} changeDialog={changeDialog} />;
+      case "edit-course-module":
+        return <UpdateCourseModuleDialog courseModuleId={dialog.id!} changeDialog={changeDialog} />;
+      case "add-course-module-attachment":
+        return <AddAttachmentDialog />;
       default:
         return null;
     }
   };
+
+  const modules = [...course.modules];
 
   return (
     <div className="h-full w-full">
@@ -45,22 +62,21 @@ export default function CourseModulesPage() {
         onOpenChange={(open) => {
           setDialog({
             open: open,
+            id: dialog.id,
             type: dialog.type,
           });
         }}
       >
-        {course.modules.length > 0 ? (
-          <div className="flex w-fit flex-col gap-y-4">
-            {course.modules.map((module) => {
-              return <div key={module.id}>{module.name}</div>;
+        <div className="flex flex-col gap-y-4">
+          {modules
+            .sort((a, b) => a.relativeOrder - b.relativeOrder)
+            .map((module) => {
+              return <CourseModule key={module.id} data={module} changeDialog={changeDialog} />;
             })}
-          </div>
-        ) : (
-          <div className="flex w-fit flex-col gap-y-4">
-            <span>No modules.</span>
-            <Button onClick={() => changeDialog("add-course-module")}>Create a new module</Button>
-          </div>
-        )}
+          <Button variant="outline" onClick={() => changeDialog(null, "add-course-module")}>
+            Create a new module
+          </Button>
+        </div>
         <DialogContent>{renderDialogContent()}</DialogContent>
       </Dialog>
     </div>

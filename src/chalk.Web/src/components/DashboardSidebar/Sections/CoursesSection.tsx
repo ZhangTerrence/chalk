@@ -45,7 +45,7 @@ export const CoursesSection = (props: CoursesSectionProps) => {
                 <Collapsible
                   key={course.name}
                   defaultOpen={false}
-                  className={`group/collapsible [&[data-state=open]>li>button>svg:last-child]:rotate-180`}
+                  className="group/collapsible [&[data-state=open]>li>button>svg:last-child]:rotate-180"
                 >
                   <SidebarMenuItem>
                     <SidebarMenuButton className="px-2" asChild>

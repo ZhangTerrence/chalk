@@ -5,13 +5,13 @@ import { Sidebar, SidebarContent, SidebarRail, SidebarSeparator } from "@/compon
 
 import { DashboardSidebarFooter } from "@/components/DashboardSidebar/DashboardSidebarFooter.tsx";
 import { DashboardSidebarHeader } from "@/components/DashboardSidebar/DashboardSidebarHeader.tsx";
+import { CoursesSection } from "@/components/DashboardSidebar/Sections/CoursesSection.tsx";
+import { DirectMessagesSection } from "@/components/DashboardSidebar/Sections/DirectMessagesSection.tsx";
 import { CreateCourseDialog } from "@/components/Dialogs/CreateCourseDialog.tsx";
 import { CreateOrganizationDialog } from "@/components/Dialogs/CreateOrganizationDialog.tsx";
 import { UpdateAccountDialog } from "@/components/Dialogs/UpdateAccountDialog.tsx";
 import { UpdateAppearanceDialog } from "@/components/Dialogs/UpdateAppearanceDialog.tsx";
 import { UpdateProfileDialog } from "@/components/Dialogs/UpdateProfileDialog.tsx";
-import { CoursesSection } from "@/components/Sections/CoursesSection.tsx";
-import { DirectMessagesSection } from "@/components/Sections/DirectMessagesSection.tsx";
 
 import { selectUser } from "@/redux/slices/user.ts";
 import { useTypedSelector } from "@/redux/store.ts";

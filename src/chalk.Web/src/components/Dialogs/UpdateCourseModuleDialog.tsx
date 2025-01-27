@@ -13,17 +13,17 @@ import { Input } from "@/components/ui/input.tsx";
 import { Separator } from "@/components/ui/separator.tsx";
 import { Textarea } from "@/components/ui/textarea.tsx";
 
-import { useAddCourseModuleMutation } from "@/redux/services/course.ts";
+import { useUpdateCourseModuleMutation } from "@/redux/services/course.ts";
 
 import { AddCourseModuleSchema, type AddCourseModuleType } from "@/lib/validators/addCourseModule.ts";
 
-type AddCourseModuleDialogProps = {
-  courseId: number;
+type UpdateCourseModuleDialogProps = {
+  courseModuleId: number;
   changeDialog: (id: number | null, type: Pick<CourseModulesDialogs, "type">["type"]) => void;
 };
 
-export const AddCourseModuleDialog = (props: AddCourseModuleDialogProps) => {
-  const [addCourseModule, { isLoading, isSuccess }] = useAddCourseModuleMutation();
+export const UpdateCourseModuleDialog = (props: UpdateCourseModuleDialogProps) => {
+  const [updateCourseModule, { isLoading, isSuccess }] = useUpdateCourseModuleMutation();
 
   React.useEffect(() => {
     if (!isLoading && isSuccess) {
@@ -44,16 +44,16 @@ export const AddCourseModuleDialog = (props: AddCourseModuleDialogProps) => {
   return (
     <>
       <DialogHeader>
-        <DialogTitle>Add Course Module</DialogTitle>
+        <DialogTitle>Edit Course Module</DialogTitle>
       </DialogHeader>
       <Separator orientation="horizontal" />
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(
             async (data) =>
-              await addCourseModule({
+              await updateCourseModule({
                 ...data,
-                courseId: props.courseId,
+                id: props.courseModuleId,
               }).unwrap(),
           )}
           className="flex min-w-80 flex-col gap-y-4"
@@ -88,7 +88,7 @@ export const AddCourseModuleDialog = (props: AddCourseModuleDialogProps) => {
             <DialogClose asChild>
               <Button variant="outline">Cancel</Button>
             </DialogClose>
-            <Button>Add</Button>
+            <Button>Edit</Button>
           </DialogFooter>
         </form>
       </Form>
