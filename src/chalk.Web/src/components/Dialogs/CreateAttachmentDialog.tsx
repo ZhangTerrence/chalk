@@ -5,7 +5,7 @@ export const CreateAttachmentDialog = () => {
   return (
     <>
       <DialogHeader>
-        <DialogTitle>Add Attachment</DialogTitle>
+        <DialogTitle>Create Attachment</DialogTitle>
       </DialogHeader>
       <Separator orientation="horizontal" />
     </>

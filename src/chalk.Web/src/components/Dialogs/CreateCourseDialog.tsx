@@ -66,12 +66,12 @@ export const CreateCourseDialog = () => {
           />
           <FormField
             control={form.control}
-            name="description"
+            name="code"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Description</FormLabel>
+                <FormLabel>Code</FormLabel>
                 <FormControl>
-                  <Textarea {...field} className="max-h-40" />
+                  <Input {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -79,12 +79,12 @@ export const CreateCourseDialog = () => {
           />
           <FormField
             control={form.control}
-            name="code"
+            name="description"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Code</FormLabel>
+                <FormLabel>Description</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Textarea {...field} className="max-h-40" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -114,7 +114,7 @@ export const CreateCourseDialog = () => {
               </FormItem>
             )}
           />
-          <DialogFooter className="max-md:flex max-md:w-full max-md:flex-row max-md:justify-end max-md:space-x-4">
+          <DialogFooter className="max-md:flex max-md:w-full max-md:flex-row max-md:justify-end max-md:gap-x-4">
             <DialogClose asChild>
               <Button variant="outline">Cancel</Button>
             </DialogClose>

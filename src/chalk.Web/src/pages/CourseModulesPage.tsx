@@ -34,8 +34,10 @@ export default function CourseModulesPage() {
           variant="outline"
           onClick={() => dispatch(setDialog({ entity: course, type: DialogType.CreateCourseModule }))}
         >
-          <PlusIcon />
-          Create module
+          <span className="flex items-center gap-x-2">
+            <PlusIcon />
+            <p>Create module</p>
+          </span>
         </Button>
       </div>
     </div>

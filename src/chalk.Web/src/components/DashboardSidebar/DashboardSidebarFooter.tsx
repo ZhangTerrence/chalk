@@ -35,7 +35,9 @@ export const DashboardSidebarFooter = () => {
                   alt={fullName}
                   className="rounded-full border border-primary object-contain"
                 />
-                <AvatarFallback className="rounded-lg">{fullName.charAt(0).toUpperCase()}</AvatarFallback>
+                <AvatarFallback className="rounded-lg border border-primary">
+                  {fullName.charAt(0).toUpperCase()}
+                </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-semibold">{fullName}</span>

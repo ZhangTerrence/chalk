@@ -46,8 +46,7 @@ export const CoursesSection = () => {
                     <SidebarMenuButton className="px-2" asChild>
                       <CollapsibleTrigger>
                         <span className="w-[90%] overflow-x-clip text-ellipsis text-nowrap">
-                          {course.code && course.code + " - "}
-                          {course.name}
+                          {course.code ? course.code + " - " : ""} {course.name}
                         </span>
                         <ChevronDownIcon className={`ml-auto transition-transform`} />
                       </CollapsibleTrigger>
@@ -62,11 +61,6 @@ export const CoursesSection = () => {
                         <SidebarMenuSubItem onClick={() => navigate(`/courses/${course.id}/modules`)}>
                           <Button variant="ghost" className="w-full justify-normal pl-2">
                             Modules
-                          </Button>
-                        </SidebarMenuSubItem>
-                        <SidebarMenuSubItem onClick={() => navigate(`/courses/${course.id}/settings`)}>
-                          <Button variant="ghost" className="w-full justify-normal pl-2">
-                            Settings
                           </Button>
                         </SidebarMenuSubItem>
                       </SidebarMenuSub>

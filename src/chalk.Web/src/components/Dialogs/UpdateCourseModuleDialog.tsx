@@ -41,6 +41,16 @@ export const UpdateCourseModuleDialog = () => {
     },
   });
 
+  const onSubmit = async (data: UpdateCourseModuleType) => {
+    if (courseModule.name === data.name && courseModule.description === data.description) {
+      return;
+    }
+
+    await updateCourseModule({ id: courseModule.id, data: data }).unwrap();
+
+    dispatch(setDialog(null));
+  };
+
   return (
     <>
       <DialogHeader>
@@ -48,16 +58,7 @@ export const UpdateCourseModuleDialog = () => {
       </DialogHeader>
       <Separator orientation="horizontal" />
       <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(
-            async (data) =>
-              await updateCourseModule({
-                ...data,
-                id: courseModule.id,
-              }).unwrap(),
-          )}
-          className="flex min-w-80 flex-col gap-y-4"
-        >
+        <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-w-80 flex-col gap-y-4">
           <FormField
             control={form.control}
             name="name"
@@ -84,7 +85,7 @@ export const UpdateCourseModuleDialog = () => {
               </FormItem>
             )}
           />
-          <DialogFooter className="max-md:flex max-md:w-full max-md:flex-row max-md:justify-end max-md:space-x-4">
+          <DialogFooter className="max-md:flex max-md:w-full max-md:flex-row max-md:justify-end max-md:gap-x-4">
             <DialogClose asChild>
               <Button variant="outline">Cancel</Button>
             </DialogClose>

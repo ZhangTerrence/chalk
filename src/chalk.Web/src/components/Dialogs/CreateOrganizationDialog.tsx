@@ -9,7 +9,7 @@ export const CreateOrganizationDialog = () => {
         <DialogTitle>Create Organization</DialogTitle>
       </DialogHeader>
       <Separator orientation="horizontal" />
-      <DialogFooter className="max-md:flex max-md:w-full max-md:flex-row max-md:justify-end max-md:space-x-4">
+      <DialogFooter className="max-md:flex max-md:w-full max-md:flex-row max-md:justify-end max-md:gap-x-4">
         <DialogClose asChild>
           <Button variant="outline">Cancel</Button>
         </DialogClose>

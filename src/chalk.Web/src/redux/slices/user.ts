@@ -20,7 +20,13 @@ export const userSlice = createSlice({
     builder.addMatcher(userApi.endpoints.updateUser.matchFulfilled, (_, { payload }) => payload.data);
     builder.addMatcher(courseApi.endpoints.createCourse.matchFulfilled, (state, { payload }) => {
       if (state) {
-        state.courses.push(payload.data);
+        state.courses = [...state.courses, payload.data];
+      }
+    });
+    builder.addMatcher(courseApi.endpoints.deleteCourse.matchFulfilled, (state, action) => {
+      if (state) {
+        const deletedCourseId = action.meta.arg.originalArgs;
+        state.courses = state.courses.filter((e) => e.id != deletedCourseId);
       }
     });
   },

@@ -1,5 +1,6 @@
 using Amazon.Runtime.CredentialManagement;
 using Amazon.S3;
+using Amazon.S3.Model;
 using Amazon.S3.Transfer;
 using chalk.Server.Configurations;
 using chalk.Server.Services.Interfaces;
@@ -56,5 +57,16 @@ public class FileUploadService : IFileUploadService
         await fileTransferUtility.UploadAsync(request);
 
         return $"https://s3.{Location}.amazonaws.com/{BucketName}/{hash}";
+    }
+
+    public async Task DeleteAsync(string hash)
+    {
+        var request = new DeleteObjectRequest
+        {
+            BucketName = BucketName,
+            Key = hash,
+        };
+
+        await _s3Client.DeleteObjectAsync(request);
     }
 }

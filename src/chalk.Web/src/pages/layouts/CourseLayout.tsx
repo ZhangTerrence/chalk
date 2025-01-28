@@ -30,7 +30,7 @@ export default function CourseLayout() {
     <>
       <Helmet>
         <title>
-          {course.code && course.code + " - "} {course.name}
+          {course.code ? course.code + " - " : ""} {course.name}
         </title>
       </Helmet>
       {isMobile && <SidebarTrigger className="mb-4" />}

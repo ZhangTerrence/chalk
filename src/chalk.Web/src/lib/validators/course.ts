@@ -10,16 +10,16 @@ export const CreateCourseSchema = z.object({
     .refine((e) => inRange(e.length, 3, 31), {
       message: "The course's name must have between 3 and 31 characters.",
     }),
-  description: z
-    .string()
-    .max(255, {
-      message: "The course's description must have at most 255 characters.",
-    })
-    .optional(),
   code: z
     .string()
     .max(31, {
       message: "The course's code must have at most 31 characters.",
+    })
+    .optional(),
+  description: z
+    .string()
+    .max(255, {
+      message: "The course's description must have at most 255 characters.",
     })
     .optional(),
   isPublic: z.boolean({

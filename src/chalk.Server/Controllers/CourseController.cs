@@ -66,7 +66,7 @@ public class CourseController : ControllerBase
     }
 
     [HttpPut("{courseId:long}")]
-    public async Task<IActionResult> UpdateCourse([FromRoute] long courseId, [FromBody] UpdateCourseRequest request)
+    public async Task<IActionResult> UpdateCourse([FromRoute] long courseId, [FromForm] UpdateCourseRequest request)
     {
         var validationResult = await _updateCourseRequestValidator.ValidateAsync(request);
         if (!validationResult.IsValid)

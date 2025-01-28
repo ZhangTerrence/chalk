@@ -129,6 +129,9 @@ public class CourseService : ICourseService
             throw new ServiceException("Course not found.", StatusCodes.Status404NotFound);
         }
 
+        var hash = FileUtilities.S3ObjectHash("course-image", course.Id.ToString());
+        await _fileUploadService.DeleteAsync(hash);
+
         _context.Courses.Remove(course);
 
         await _context.SaveChangesAsync();

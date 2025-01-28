@@ -42,7 +42,7 @@ export const CreateCourseModuleDialog = () => {
   return (
     <>
       <DialogHeader>
-        <DialogTitle>Add Course Module</DialogTitle>
+        <DialogTitle>Create Course Module</DialogTitle>
       </DialogHeader>
       <Separator orientation="horizontal" />
       <Form {...form}>
@@ -82,7 +82,7 @@ export const CreateCourseModuleDialog = () => {
               </FormItem>
             )}
           />
-          <DialogFooter className="max-md:flex max-md:w-full max-md:flex-row max-md:justify-end max-md:space-x-4">
+          <DialogFooter className="max-md:flex max-md:w-full max-md:flex-row max-md:justify-end max-md:gap-x-4">
             <DialogClose asChild>
               <Button variant="outline">Cancel</Button>
             </DialogClose>

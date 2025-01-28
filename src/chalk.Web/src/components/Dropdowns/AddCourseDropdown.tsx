@@ -32,7 +32,7 @@ export const AddCourseDropdown = () => {
         className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
       >
         <DropdownMenuItem onClick={() => navigate("/courses")} className="py-3">
-          <span className="flex items-center space-x-2">
+          <span className="flex items-center gap-x-2">
             <SearchIcon />
             <p>Find Courses</p>
           </span>
@@ -41,7 +41,7 @@ export const AddCourseDropdown = () => {
           onClick={() => dispatch(setDialog({ entity: null, type: DialogType.CreateCourse }))}
           className="py-3"
         >
-          <span className="flex items-center space-x-2">
+          <span className="flex items-center gap-x-2">
             <PlusIcon />
             <p>Create Course</p>
           </span>

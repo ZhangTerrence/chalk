@@ -36,8 +36,8 @@ export const DashboardSidebarHeader = (props: DashboardSidebarHeaderProps) => {
                   <DropdownMenuSeparator />
                 </>
               )}
-              <div className="flex flex-col space-y-4 p-2">
-                <Button className="w-full">Finds Organizations</Button>
+              <div className="space-y-4 p-2">
+                <Button className="w-full">Find Organizations</Button>
                 <Button className="w-full">Create Organization</Button>
               </div>
             </DropdownMenuContent>

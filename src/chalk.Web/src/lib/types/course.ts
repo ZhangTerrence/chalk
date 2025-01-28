@@ -10,7 +10,10 @@ export type CreateCourseRequest = {
   isPublic: boolean;
 };
 
-export type UpdateCourseRequest = FormData;
+export type UpdateCourseRequest = {
+  id: number;
+  data: FormData;
+};
 
 export type CreateCourseModuleRequest = {
   name: string;
@@ -20,8 +23,10 @@ export type CreateCourseModuleRequest = {
 
 export type UpdateCourseModuleRequest = {
   id: number;
-  name: string;
-  description?: string;
+  data: {
+    name: string;
+    description?: string;
+  };
 };
 
 export type CourseDTO = {

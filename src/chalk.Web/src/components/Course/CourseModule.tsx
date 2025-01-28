@@ -32,9 +32,9 @@ export const CourseModule = (props: CourseModuleProps) => {
 
   return (
     <Collapsible open={open} onOpenChange={setOpen} className="group/collapsible">
-      <div className="flex w-full items-center justify-between space-x-2 border-b p-2">
+      <div className="flex w-full items-center justify-between gap-x-2 border-b p-2">
         <div onClick={() => setOpen(!open)} className="flex grow items-center justify-center hover:cursor-pointer">
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center gap-x-2">
             <AlignJustifyIcon />
             <span className="text-lg">{courseModule.name}</span>
           </div>
@@ -42,24 +42,30 @@ export const CourseModule = (props: CourseModuleProps) => {
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="icon" onClick={() => console.log("hello")}>
+            <Button variant="outline" size="icon">
               <EllipsisVerticalIcon />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="mr-4 mt-1">
             <DropdownMenuItem onClick={() => dispatch(setDialog({ entity: null, type: DialogType.CreateAttachment }))}>
-              <LinkIcon />
-              Attach
+              <span className="flex items-center gap-x-2">
+                <LinkIcon />
+                <p>Attach</p>
+              </span>
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => dispatch(setDialog({ entity: courseModule, type: DialogType.UpdateCourseModule }))}
             >
-              <EditIcon />
-              Edit
+              <span className="flex items-center gap-x-2">
+                <EditIcon />
+                <p>Edit</p>
+              </span>
             </DropdownMenuItem>
             <DropdownMenuItem onClick={async () => await deleteCourseModule(courseModule.id).unwrap()}>
-              <TrashIcon />
-              Delete
+              <span className="flex items-center gap-x-2">
+                <TrashIcon />
+                <p>Delete</p>
+              </span>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

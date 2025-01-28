@@ -6,7 +6,7 @@ import { toast } from "sonner";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar.tsx";
 import { Button } from "@/components/ui/button.tsx";
-import { DialogHeader, DialogTitle } from "@/components/ui/dialog.tsx";
+import { DialogClose, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog.tsx";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form.tsx";
 import { Input } from "@/components/ui/input.tsx";
 import { Separator } from "@/components/ui/separator.tsx";
@@ -89,12 +89,18 @@ export const UpdateProfileDialog = () => {
       </DialogHeader>
       <Separator orientation="horizontal" />
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col space-y-4">
-          <div className="flex space-x-4">
-            <div className="relative aspect-square h-auto rounded-full border border-primary">
-              <Avatar className="aspect-square h-full w-full">
-                <AvatarImage src={profilePicture} alt={fullName} className="object-contain object-center" />
-                <AvatarFallback className="text-2xl">{fullName.charAt(0).toUpperCase()}</AvatarFallback>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-w-80 flex-col gap-y-4">
+          <div className="flex gap-x-4">
+            <div className="relative aspect-square w-36">
+              <Avatar className="w-full h-full">
+                <AvatarImage
+                  src={profilePicture}
+                  alt={fullName}
+                  className="rounded-full border border-primary object-contain"
+                />
+                <AvatarFallback className="rounded-full border border-primary text-2xl">
+                  {fullName.charAt(0).toUpperCase()}
+                </AvatarFallback>
               </Avatar>
               <Input
                 type="file"
@@ -103,8 +109,8 @@ export const UpdateProfileDialog = () => {
                 className="absolute top-0 h-full w-full opacity-0 hover:cursor-pointer"
               />
             </div>
-            <div className="flex grow flex-col space-y-2">
-              <div className="flex space-x-2">
+            <div className="flex grow flex-col gap-y-2">
+              <div className="flex gap-x-2">
                 <FormField
                   control={form.control}
                   name="firstName"
@@ -160,9 +166,12 @@ export const UpdateProfileDialog = () => {
               </FormItem>
             )}
           />
-          <Button type="submit" className="self-end">
-            Save
-          </Button>
+          <DialogFooter className="max-md:flex max-md:w-full max-md:flex-row max-md:justify-end max-md:gap-x-4">
+            <DialogClose asChild>
+              <Button variant="outline">Cancel</Button>
+            </DialogClose>
+            <Button>Save</Button>
+          </DialogFooter>
         </form>
       </Form>
     </>

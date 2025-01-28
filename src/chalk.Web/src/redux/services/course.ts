@@ -28,10 +28,10 @@ export const courseApi = baseApi.injectEndpoints({
     }),
     updateCourse: builder.mutation<Response<CourseResponse>, UpdateCourseRequest>({
       query: (body) => ({
-        url: "/courses",
-        method: "POST",
+        url: `/courses/${body.id}`,
+        method: "PUT",
         formData: true,
-        body: body,
+        body: body.data,
       }),
       invalidatesTags: (response) => [{ type: "course", id: response?.data.id }],
     }),
@@ -40,7 +40,6 @@ export const courseApi = baseApi.injectEndpoints({
         url: `/courses/${courseId}`,
         method: "DELETE",
       }),
-      invalidatesTags: (_, __, arg) => [{ type: "course", id: arg }],
     }),
     createCourseModule: builder.mutation<Response<CourseResponse>, CreateCourseModuleRequest>({
       query: (body) => ({
@@ -54,7 +53,7 @@ export const courseApi = baseApi.injectEndpoints({
       query: (body) => ({
         url: `/courses/modules/${body.id}`,
         method: "PUT",
-        body: body,
+        body: body.data,
       }),
       invalidatesTags: (response) => [{ type: "course", id: response?.data.id }],
     }),

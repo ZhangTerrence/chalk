@@ -9,6 +9,7 @@ import { CreateCourseModuleDialog } from "@/components/Dialogs/CreateCourseModul
 import { CreateOrganizationDialog } from "@/components/Dialogs/CreateOrganizationDialog.tsx";
 import { UpdateAccountDialog } from "@/components/Dialogs/UpdateAccountDialog.tsx";
 import { UpdateAppearanceDialog } from "@/components/Dialogs/UpdateAppearanceDialog.tsx";
+import { UpdateCourseDialog } from "@/components/Dialogs/UpdateCourseDialog.tsx";
 import { UpdateCourseModuleDialog } from "@/components/Dialogs/UpdateCourseModuleDialog.tsx";
 import { UpdateProfileDialog } from "@/components/Dialogs/UpdateProfileDialog.tsx";
 
@@ -32,6 +33,8 @@ export default function PrivateLayout() {
           return <UpdateAppearanceDialog />;
         case DialogType.CreateCourse:
           return <CreateCourseDialog />;
+        case DialogType.UpdateCourse:
+          return <UpdateCourseDialog />;
         case DialogType.CreateCourseModule:
           return <CreateCourseModuleDialog />;
         case DialogType.UpdateCourseModule:
