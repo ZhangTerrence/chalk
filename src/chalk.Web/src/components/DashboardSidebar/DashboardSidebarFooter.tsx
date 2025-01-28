@@ -5,18 +5,16 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar.tsx"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu.tsx";
 import { SidebarFooter, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/components/ui/sidebar.tsx";
 
-import type { DashboardDialogs } from "@/components/DashboardSidebar/DashboardSidebar.tsx";
-
 import { useLogoutMutation } from "@/redux/services/account.ts";
+import { setDialog } from "@/redux/slices/dialog.ts";
 import { selectUser } from "@/redux/slices/user.ts";
-import { useTypedSelector } from "@/redux/store.ts";
+import { useAppDispatch, useTypedSelector } from "@/redux/store.ts";
 
-type DashboardSidebarFooterProps = {
-  changeDialog: (type: Pick<DashboardDialogs, "type">["type"]) => void;
-};
+import { DialogType } from "@/lib/dialogType.ts";
 
-export const DashboardSidebarFooter = (props: DashboardSidebarFooterProps) => {
+export const DashboardSidebarFooter = () => {
   const user = useTypedSelector(selectUser)!;
+  const dispatch = useAppDispatch();
   const [logout] = useLogoutMutation();
   const { isMobile } = useSidebar();
 
@@ -51,15 +49,24 @@ export const DashboardSidebarFooter = (props: DashboardSidebarFooterProps) => {
             sideOffset={isMobile ? 5 : 20}
             className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
           >
-            <DropdownMenuItem onClick={() => props.changeDialog("update-account")} className="py-3">
+            <DropdownMenuItem
+              onClick={() => dispatch(setDialog({ entity: null, type: DialogType.UpdateAccount }))}
+              className="py-3"
+            >
               <SettingsIcon />
               Account
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => props.changeDialog("update-profile")} className="py-3">
+            <DropdownMenuItem
+              onClick={() => dispatch(setDialog({ entity: null, type: DialogType.UpdateProfile }))}
+              className="py-3"
+            >
               <UserIcon />
               Profile
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => props.changeDialog("update-appearance")} className="py-3">
+            <DropdownMenuItem
+              onClick={() => dispatch(setDialog({ entity: null, type: DialogType.UpdateAppearance }))}
+              className="py-3"
+            >
               <BrushIcon />
               Appearance
             </DropdownMenuItem>

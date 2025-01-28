@@ -1,6 +1,6 @@
 import baseApi from "@/redux/services/base.ts";
 
-import type { ApiResponse } from "@/lib/types/_index.ts";
+import type { Response } from "@/lib/types/_index.ts";
 import type { LoginRequest, RegisterRequest } from "@/lib/types/account.ts";
 import type { UserResponse } from "@/lib/types/user.ts";
 
@@ -13,14 +13,14 @@ export const accountApi = baseApi.injectEndpoints({
         body: body,
       }),
     }),
-    login: builder.mutation<ApiResponse<UserResponse>, LoginRequest>({
+    login: builder.mutation<Response<UserResponse>, LoginRequest>({
       query: (body) => ({
         url: "/account/login",
         method: "POST",
         body: body,
       }),
     }),
-    refresh: builder.query<ApiResponse<UserResponse>, null>({
+    refresh: builder.query<Response<UserResponse>, null>({
       query: () => ({
         url: "/account/refresh",
       }),

@@ -4,7 +4,7 @@ namespace chalk.Server.DTOs.Responses;
 
 [Serializable]
 [method: JsonConstructor]
-public record ApiResponse<T>(
+public record Response<T>(
     [property: JsonRequired]
     [property: JsonPropertyName("errors")]
     IEnumerable<ErrorDTO>? Errors,
@@ -13,7 +13,7 @@ public record ApiResponse<T>(
     T? Data
 )
 {
-    public ApiResponse(IEnumerable<string> errors)
+    public Response(IEnumerable<string> errors)
         : this(errors.Select(e => new ErrorDTO(e)), default)
     {
     }

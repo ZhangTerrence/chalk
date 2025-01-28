@@ -37,7 +37,7 @@ public class FileUploadService : IFileUploadService
         var isImage = file.ContentType.IsImage();
         if (!isImage)
         {
-            throw new ServiceException("File is not an image.", StatusCodes.Status400BadRequest);
+            throw new ServiceException("File is not an accepted image.", StatusCodes.Status400BadRequest);
         }
 
         var fileStream = new MemoryStream();

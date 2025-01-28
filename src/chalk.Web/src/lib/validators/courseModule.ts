@@ -2,7 +2,7 @@ import { z } from "zod";
 
 import { inRange } from "@/lib/utils.ts";
 
-export const AddCourseModuleSchema = z.object({
+export const CreateCourseModuleSchema = z.object({
   name: z
     .string({
       message: "The course module's name is required.",
@@ -17,5 +17,7 @@ export const AddCourseModuleSchema = z.object({
     })
     .optional(),
 });
+export const UpdateCourseModuleSchema = CreateCourseModuleSchema;
 
-export type AddCourseModuleType = z.infer<typeof AddCourseModuleSchema>;
+export type CreateCourseModuleType = z.infer<typeof CreateCourseModuleSchema>;
+export type UpdateCourseModuleType = z.infer<typeof UpdateCourseModuleSchema>;

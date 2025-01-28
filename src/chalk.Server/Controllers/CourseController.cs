@@ -42,14 +42,14 @@ public class CourseController : ControllerBase
     public async Task<IActionResult> GetCourses()
     {
         var courses = await _courseService.GetCoursesAsync();
-        return Ok(new ApiResponse<IEnumerable<CourseResponse>>(null, courses.Select(e => e.ToResponse())));
+        return Ok(new Response<IEnumerable<CourseResponse>>(null, courses.Select(e => e.ToResponse())));
     }
 
     [HttpGet("{courseId:long}")]
     public async Task<IActionResult> GetCourse([FromRoute] long courseId)
     {
         var course = await _courseService.GetCourseAsync(courseId);
-        return Ok(new ApiResponse<CourseResponse>(null, course.ToResponse()));
+        return Ok(new Response<CourseResponse>(null, course.ToResponse()));
     }
 
     [HttpPost]
@@ -58,11 +58,11 @@ public class CourseController : ControllerBase
         var validationResult = await _createCourseRequestValidator.ValidateAsync(request);
         if (!validationResult.IsValid)
         {
-            return BadRequest(new ApiResponse<object>(validationResult.GetErrorMessages()));
+            return BadRequest(new Response<object>(validationResult.GetErrorMessages()));
         }
 
         var course = await _courseService.CreateCourseAsync(User.GetUserId(), request);
-        return Created(nameof(CreateCourse), new ApiResponse<CourseResponse>(null, course.ToResponse()));
+        return Created(nameof(CreateCourse), new Response<CourseResponse>(null, course.ToResponse()));
     }
 
     [HttpPut("{courseId:long}")]
@@ -71,11 +71,11 @@ public class CourseController : ControllerBase
         var validationResult = await _updateCourseRequestValidator.ValidateAsync(request);
         if (!validationResult.IsValid)
         {
-            return BadRequest(new ApiResponse<object>(validationResult.GetErrorMessages()));
+            return BadRequest(new Response<object>(validationResult.GetErrorMessages()));
         }
 
         var course = await _courseService.UpdateCourseAsync(courseId, request);
-        return Ok(new ApiResponse<CourseResponse>(null, course.ToResponse()));
+        return Ok(new Response<CourseResponse>(null, course.ToResponse()));
     }
 
     [HttpDelete("{courseId:long}")]
@@ -91,11 +91,11 @@ public class CourseController : ControllerBase
         var validationResult = await _createCourseModuleRequestValidator.ValidateAsync(request);
         if (!validationResult.IsValid)
         {
-            return BadRequest(new ApiResponse<object>(validationResult.GetErrorMessages()));
+            return BadRequest(new Response<object>(validationResult.GetErrorMessages()));
         }
 
         var course = await _courseService.CreateCourseModuleAsync(request);
-        return Created(nameof(AddCourseModule), new ApiResponse<CourseResponse>(null, course.ToResponse()));
+        return Created(nameof(AddCourseModule), new Response<CourseResponse>(null, course.ToResponse()));
     }
 
     [HttpPut("modules/{courseModuleId:long}")]
@@ -104,18 +104,18 @@ public class CourseController : ControllerBase
         var validationResult = await _updateCourseModuleRequestValidator.ValidateAsync(request);
         if (!validationResult.IsValid)
         {
-            return BadRequest(new ApiResponse<object>(validationResult.GetErrorMessages()));
+            return BadRequest(new Response<object>(validationResult.GetErrorMessages()));
         }
 
         var course = await _courseService.UpdateCourseModuleAsync(courseModuleId, request);
-        return Ok(new ApiResponse<CourseResponse>(null, course.ToResponse()));
+        return Ok(new Response<CourseResponse>(null, course.ToResponse()));
     }
 
     [HttpDelete("modules/{courseModuleId:long}")]
     public async Task<IActionResult> DeleteCourseModule([FromRoute] long courseModuleId)
     {
         var course = await _courseService.DeleteCourseModuleAsync(courseModuleId);
-        return Ok(new ApiResponse<CourseResponse>(null, course.ToResponse()));
+        return Ok(new Response<CourseResponse>(null, course.ToResponse()));
     }
 
     [HttpPost("modules/{courseModuleId:long}/attach")]
@@ -124,10 +124,10 @@ public class CourseController : ControllerBase
         var validationResult = await _createAttachmentRequestValidator.ValidateAsync(request);
         if (!validationResult.IsValid)
         {
-            return BadRequest(new ApiResponse<object>(validationResult.GetErrorMessages()));
+            return BadRequest(new Response<object>(validationResult.GetErrorMessages()));
         }
 
         var course = await _courseService.AddCourseModuleAttachmentAsync(courseModuleId, request);
-        return Created(nameof(AddCourseModuleAttachment), new ApiResponse<CourseResponse>(null, course.ToResponse()));
+        return Created(nameof(AddCourseModuleAttachment), new Response<CourseResponse>(null, course.ToResponse()));
     }
 }

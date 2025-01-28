@@ -1,9 +1,7 @@
-import React from "react";
-
 import { DialogHeader, DialogTitle } from "@/components/ui/dialog.tsx";
 import { Separator } from "@/components/ui/separator.tsx";
 
-export const AddAttachmentDialog = () => {
+export const CreateAttachmentDialog = () => {
   return (
     <>
       <DialogHeader>

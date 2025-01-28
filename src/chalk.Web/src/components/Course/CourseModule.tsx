@@ -1,8 +1,6 @@
 import React from "react";
 
-import { AlignJustifyIcon, ChevronDownIcon, EllipsisVerticalIcon } from "lucide-react";
-
-import type { CourseModulesDialogs } from "@/pages/(private)/(dashboard)/courses/[id]/modules/page.tsx";
+import { AlignJustifyIcon, ChevronDownIcon, EditIcon, EllipsisVerticalIcon, LinkIcon, TrashIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button.tsx";
 import { Collapsible, CollapsibleContent } from "@/components/ui/collapsible.tsx";
@@ -14,17 +12,21 @@ import {
 } from "@/components/ui/dropdown-menu.tsx";
 
 import { useDeleteCourseModuleMutation } from "@/redux/services/course.ts";
+import { setDialog } from "@/redux/slices/dialog.ts";
+import { useAppDispatch } from "@/redux/store.ts";
 
+import { DialogType } from "@/lib/dialogType.ts";
 import type { CourseModuleDTO } from "@/lib/types/course.ts";
 
 type CourseModuleProps = {
   data: CourseModuleDTO;
-  changeDialog: (id: number | null, type: Pick<CourseModulesDialogs, "type">["type"]) => void;
 };
 
 export const CourseModule = (props: CourseModuleProps) => {
-  const courseModule = props.data;
+  const dispatch = useAppDispatch();
   const [deleteCourseModule] = useDeleteCourseModuleMutation();
+
+  const courseModule = props.data;
 
   const [open, setOpen] = React.useState(true);
 
@@ -45,23 +47,41 @@ export const CourseModule = (props: CourseModuleProps) => {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="mr-4 mt-1">
-            <DropdownMenuItem onClick={() => props.changeDialog(null, "add-course-module-attachment")}>
-              Add an attachment
+            <DropdownMenuItem onClick={() => dispatch(setDialog({ entity: null, type: DialogType.CreateAttachment }))}>
+              <LinkIcon />
+              Attach
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => props.changeDialog(courseModule.id, "edit-course-module")}>
-              Edit module
+            <DropdownMenuItem
+              onClick={() => dispatch(setDialog({ entity: courseModule, type: DialogType.UpdateCourseModule }))}
+            >
+              <EditIcon />
+              Edit
             </DropdownMenuItem>
             <DropdownMenuItem onClick={async () => await deleteCourseModule(courseModule.id).unwrap()}>
-              Delete module
+              <TrashIcon />
+              Delete
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <CollapsibleContent className="flex flex-col gap-y-2 py-2">
-        {courseModule.attachments.map((attachment) => {
-          return <div key={attachment.id}>{attachment.name}</div>;
-        })}
-      </CollapsibleContent>
+      {(!!courseModule.description || courseModule.attachments.length > 0) && (
+        <CollapsibleContent className="py-4">
+          <ul className="mx-3.5 flex flex-col gap-y-2 border-l px-2.5">
+            {courseModule.description && (
+              <li className="p-2">
+                <p>{courseModule.description}</p>
+              </li>
+            )}
+            {courseModule.attachments.map((attachment) => {
+              return (
+                <li key={attachment.id} className="p-2">
+                  {attachment.name}
+                </li>
+              );
+            })}
+          </ul>
+        </CollapsibleContent>
+      )}
     </Collapsible>
   );
 };

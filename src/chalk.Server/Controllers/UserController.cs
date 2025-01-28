@@ -30,14 +30,14 @@ public class UserController : ControllerBase
     public async Task<IActionResult> GetUsers()
     {
         var users = await _userService.GetUsersAsync();
-        return Ok(new ApiResponse<IEnumerable<UserResponse>>(null, users.Select(e => e.ToResponse())));
+        return Ok(new Response<IEnumerable<UserResponse>>(null, users.Select(e => e.ToResponse())));
     }
 
     [HttpGet("{userId:long}")]
     public async Task<IActionResult> GetUser([FromRoute] long userId)
     {
         var user = await _userService.GetUserAsync(userId);
-        return Ok(new ApiResponse<UserResponse>(null, user.ToResponse()));
+        return Ok(new Response<UserResponse>(null, user.ToResponse()));
     }
 
     [HttpPut]
@@ -46,11 +46,11 @@ public class UserController : ControllerBase
         var validationResult = await _updateUserRequestValidator.ValidateAsync(request);
         if (!validationResult.IsValid)
         {
-            return BadRequest(new ApiResponse<object>(validationResult.GetErrorMessages()));
+            return BadRequest(new Response<object>(validationResult.GetErrorMessages()));
         }
 
         var user = await _userService.UpdateUserAsync(User.GetUserId(), request);
-        return Ok(new ApiResponse<UserResponse>(null, user.ToResponse()));
+        return Ok(new Response<UserResponse>(null, user.ToResponse()));
     }
 
     [HttpPut("{userId:long}"), Authorize(Roles = "Admin")]
@@ -59,10 +59,10 @@ public class UserController : ControllerBase
         var validationResult = await _updateUserRequestValidator.ValidateAsync(request);
         if (!validationResult.IsValid)
         {
-            return BadRequest(new ApiResponse<object>(validationResult.GetErrorMessages()));
+            return BadRequest(new Response<object>(validationResult.GetErrorMessages()));
         }
 
         var user = await _userService.UpdateUserAsync(userId, request);
-        return Ok(new ApiResponse<UserResponse>(null, user.ToResponse()));
+        return Ok(new Response<UserResponse>(null, user.ToResponse()));
     }
 }

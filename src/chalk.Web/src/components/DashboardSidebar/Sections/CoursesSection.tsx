@@ -14,17 +14,12 @@ import {
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar.tsx";
 
-import type { DashboardDialogs } from "@/components/DashboardSidebar/DashboardSidebar.tsx";
 import { AddCourseDropdown } from "@/components/Dropdowns/AddCourseDropdown.tsx";
 
 import { selectUserCourses } from "@/redux/slices/user.ts";
 import { useTypedSelector } from "@/redux/store.ts";
 
-type CoursesSectionProps = {
-  changeDialog: (type: Pick<DashboardDialogs, "type">["type"]) => void;
-};
-
-export const CoursesSection = (props: CoursesSectionProps) => {
+export const CoursesSection = () => {
   const courses = useTypedSelector(selectUserCourses) ?? [];
   const navigate = useNavigate();
 
@@ -40,7 +35,7 @@ export const CoursesSection = (props: CoursesSectionProps) => {
         <CollapsibleContent>
           <SidebarGroupContent>
             <SidebarMenu className="gap-y-2">
-              <AddCourseDropdown changeDialog={props.changeDialog} />
+              <AddCourseDropdown />
               {courses.map((course) => (
                 <Collapsible
                   key={course.name}
@@ -67,6 +62,11 @@ export const CoursesSection = (props: CoursesSectionProps) => {
                         <SidebarMenuSubItem onClick={() => navigate(`/courses/${course.id}/modules`)}>
                           <Button variant="ghost" className="w-full justify-normal pl-2">
                             Modules
+                          </Button>
+                        </SidebarMenuSubItem>
+                        <SidebarMenuSubItem onClick={() => navigate(`/courses/${course.id}/settings`)}>
+                          <Button variant="ghost" className="w-full justify-normal pl-2">
+                            Settings
                           </Button>
                         </SidebarMenuSubItem>
                       </SidebarMenuSub>

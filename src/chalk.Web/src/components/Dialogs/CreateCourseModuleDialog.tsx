@@ -4,8 +4,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-import type { CourseModulesDialogs } from "@/pages/(private)/(dashboard)/courses/[id]/modules/page.tsx";
-
 import { Button } from "@/components/ui/button.tsx";
 import { DialogClose, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog.tsx";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form.tsx";
@@ -13,28 +11,28 @@ import { Input } from "@/components/ui/input.tsx";
 import { Separator } from "@/components/ui/separator.tsx";
 import { Textarea } from "@/components/ui/textarea.tsx";
 
-import { useAddCourseModuleMutation } from "@/redux/services/course.ts";
+import { useCreateCourseModuleMutation } from "@/redux/services/course.ts";
+import { selectDialog, setDialog } from "@/redux/slices/dialog.ts";
+import { useAppDispatch, useTypedSelector } from "@/redux/store.ts";
 
-import { AddCourseModuleSchema, type AddCourseModuleType } from "@/lib/validators/addCourseModule.ts";
+import type { CourseDTO } from "@/lib/types/course.ts";
+import { CreateCourseModuleSchema, type CreateCourseModuleType } from "@/lib/validators/courseModule.ts";
 
-type AddCourseModuleDialogProps = {
-  courseId: number;
-  changeDialog: (id: number | null, type: Pick<CourseModulesDialogs, "type">["type"]) => void;
-};
-
-export const AddCourseModuleDialog = (props: AddCourseModuleDialogProps) => {
-  const [addCourseModule, { isLoading, isSuccess }] = useAddCourseModuleMutation();
+export const CreateCourseModuleDialog = () => {
+  const dialog = useTypedSelector(selectDialog)!;
+  const dispatch = useAppDispatch();
+  const [createCourseModule, { isLoading, isSuccess }] = useCreateCourseModuleMutation();
 
   React.useEffect(() => {
     if (!isLoading && isSuccess) {
-      props.changeDialog(null, null);
+      dispatch(setDialog(null));
       form.reset();
-      toast.success("Successfully add course module.");
+      toast.success("Successfully created course module.");
     }
   }, [isLoading, isSuccess]);
 
-  const form = useForm<AddCourseModuleType>({
-    resolver: zodResolver(AddCourseModuleSchema),
+  const form = useForm<CreateCourseModuleType>({
+    resolver: zodResolver(CreateCourseModuleSchema),
     defaultValues: {
       name: "",
       description: "",
@@ -51,9 +49,9 @@ export const AddCourseModuleDialog = (props: AddCourseModuleDialogProps) => {
         <form
           onSubmit={form.handleSubmit(
             async (data) =>
-              await addCourseModule({
+              await createCourseModule({
                 ...data,
-                courseId: props.courseId,
+                courseId: (dialog.entity as CourseDTO)!.id,
               }).unwrap(),
           )}
           className="flex min-w-80 flex-col gap-y-4"
@@ -88,7 +86,7 @@ export const AddCourseModuleDialog = (props: AddCourseModuleDialogProps) => {
             <DialogClose asChild>
               <Button variant="outline">Cancel</Button>
             </DialogClose>
-            <Button>Add</Button>
+            <Button>Create</Button>
           </DialogFooter>
         </form>
       </Form>

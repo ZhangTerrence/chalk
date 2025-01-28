@@ -33,14 +33,14 @@ public class OrganizationController : ControllerBase
     public async Task<IActionResult> GetOrganizations()
     {
         var organizations = await _organizationService.GetOrganizationsAsync();
-        return Ok(new ApiResponse<IEnumerable<OrganizationResponse>>(null, organizations.Select(e => e.ToResponse())));
+        return Ok(new Response<IEnumerable<OrganizationResponse>>(null, organizations.Select(e => e.ToResponse())));
     }
 
     [HttpGet("{organizationId:long}")]
     public async Task<IActionResult> GetOrganization([FromRoute] long organizationId)
     {
         var organization = await _organizationService.GetOrganizationAsync(organizationId);
-        return Ok(new ApiResponse<OrganizationResponse>(null, organization.ToResponse()));
+        return Ok(new Response<OrganizationResponse>(null, organization.ToResponse()));
     }
 
     [HttpPost]
@@ -49,11 +49,11 @@ public class OrganizationController : ControllerBase
         var validationResult = await _createOrganizationRequestValidator.ValidateAsync(request);
         if (!validationResult.IsValid)
         {
-            return BadRequest(new ApiResponse<object>(validationResult.GetErrorMessages()));
+            return BadRequest(new Response<object>(validationResult.GetErrorMessages()));
         }
 
         var organization = await _organizationService.CreateOrganizationAsync(User.GetUserId(), request);
-        return Created(nameof(CreateOrganization), new ApiResponse<OrganizationResponse>(null, organization.ToResponse()));
+        return Created(nameof(CreateOrganization), new Response<OrganizationResponse>(null, organization.ToResponse()));
     }
 
     [HttpPut("{organizationId:long}")]
@@ -62,11 +62,11 @@ public class OrganizationController : ControllerBase
         var validationResult = await _updateOrganizationRequestValidator.ValidateAsync(request);
         if (!validationResult.IsValid)
         {
-            return BadRequest(new ApiResponse<object>(validationResult.GetErrorMessages()));
+            return BadRequest(new Response<object>(validationResult.GetErrorMessages()));
         }
 
         var organization = await _organizationService.UpdateOrganizationAsync(organizationId, request);
-        return Ok(new ApiResponse<OrganizationResponse>(null, organization.ToResponse()));
+        return Ok(new Response<OrganizationResponse>(null, organization.ToResponse()));
     }
 
     [HttpDelete("{organizationId:long}")]

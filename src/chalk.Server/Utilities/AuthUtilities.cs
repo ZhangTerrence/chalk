@@ -11,7 +11,7 @@ public static class AuthUtilities
         var id = principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (id is null)
         {
-            throw new ServiceException("Not authenticated.", StatusCodes.Status401Unauthorized);
+            throw new ServiceException("Login required.", StatusCodes.Status401Unauthorized);
         }
 
         return long.Parse(id);

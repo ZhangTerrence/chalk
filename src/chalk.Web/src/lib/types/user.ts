@@ -2,6 +2,8 @@ import type { ChannelDTO } from "@/lib/types/channel.ts";
 import type { CourseDTO } from "@/lib/types/course.ts";
 import type { OrganizationDTO } from "@/lib/types/organization.ts";
 
+export type UpdateUserRequest = FormData;
+
 export type UserDTO = {
   id: number;
   firstName: string;

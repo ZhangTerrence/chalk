@@ -1,6 +1,6 @@
 import { Helmet } from "react-helmet-async";
 
-export default function DashboardPage() {
+export default function DashboardLandingPage() {
   return (
     <>
       <Helmet>

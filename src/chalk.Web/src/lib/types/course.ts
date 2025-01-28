@@ -10,6 +10,8 @@ export type CreateCourseRequest = {
   isPublic: boolean;
 };
 
+export type UpdateCourseRequest = FormData;
+
 export type CreateCourseModuleRequest = {
   name: string;
   description?: string;

@@ -2,7 +2,7 @@ import { LoaderIcon } from "lucide-react";
 import { Helmet } from "react-helmet-async";
 import { Outlet, useParams } from "react-router-dom";
 
-import ErrorPage from "@/pages/error.tsx";
+import ErrorPage from "@/pages/ErrorPage.tsx";
 
 import { SidebarTrigger, useSidebar } from "@/components/ui/sidebar.tsx";
 

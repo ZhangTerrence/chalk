@@ -2,7 +2,7 @@ import { type PayloadAction, createSlice } from "@reduxjs/toolkit";
 
 import type { RootState } from "@/redux/store.ts";
 
-import { ColorScheme } from "@/lib/theme.ts";
+import { ColorScheme } from "@/lib/colorScheme.ts";
 
 export type ThemeState = {
   colorScheme: ColorScheme;

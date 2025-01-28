@@ -7,7 +7,7 @@ import { Switch } from "@/components/ui/switch.tsx";
 import { changeColorScheme, selectTheme, toggleDarkMode } from "@/redux/slices/theme.ts";
 import { useAppDispatch, useTypedSelector } from "@/redux/store.ts";
 
-import { ColorScheme } from "@/lib/theme.ts";
+import { ColorScheme } from "@/lib/colorScheme.ts";
 
 export const UpdateAppearanceDialog = () => {
   const theme = useTypedSelector(selectTheme);

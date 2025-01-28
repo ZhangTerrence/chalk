@@ -1,23 +1,24 @@
 import baseApi from "@/redux/services/base.ts";
 
-import type { ApiResponse } from "@/lib/types/_index.ts";
+import type { Response } from "@/lib/types/_index.ts";
 import type {
   CourseResponse,
   CreateCourseModuleRequest,
   CreateCourseRequest,
   UpdateCourseModuleRequest,
+  UpdateCourseRequest,
 } from "@/lib/types/course.ts";
 
 export const courseApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getCourse: builder.query<ApiResponse<CourseResponse>, number>({
+    getCourse: builder.query<Response<CourseResponse>, number>({
       query: (id) => ({
         url: `/courses/${id}`,
         method: "GET",
       }),
       providesTags: (response) => [{ type: "course", id: response?.data.id }],
     }),
-    createCourse: builder.mutation<ApiResponse<CourseResponse>, CreateCourseRequest>({
+    createCourse: builder.mutation<Response<CourseResponse>, CreateCourseRequest>({
       query: (body) => ({
         url: "/courses",
         method: "POST",
@@ -25,15 +26,31 @@ export const courseApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: (response) => [{ type: "course", id: response?.data.id }],
     }),
-    addCourseModule: builder.mutation<ApiResponse<CourseResponse>, CreateCourseModuleRequest>({
+    updateCourse: builder.mutation<Response<CourseResponse>, UpdateCourseRequest>({
       query: (body) => ({
-        url: `/courses/modules`,
+        url: "/courses",
+        method: "POST",
+        formData: true,
+        body: body,
+      }),
+      invalidatesTags: (response) => [{ type: "course", id: response?.data.id }],
+    }),
+    deleteCourse: builder.mutation<null, number>({
+      query: (courseId) => ({
+        url: `/courses/${courseId}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: (_, __, arg) => [{ type: "course", id: arg }],
+    }),
+    createCourseModule: builder.mutation<Response<CourseResponse>, CreateCourseModuleRequest>({
+      query: (body) => ({
+        url: "/courses/modules",
         method: "POST",
         body: body,
       }),
       invalidatesTags: (response) => [{ type: "course", id: response?.data.id }],
     }),
-    updateCourseModule: builder.mutation<ApiResponse<CourseResponse>, UpdateCourseModuleRequest>({
+    updateCourseModule: builder.mutation<Response<CourseResponse>, UpdateCourseModuleRequest>({
       query: (body) => ({
         url: `/courses/modules/${body.id}`,
         method: "PUT",
@@ -41,7 +58,7 @@ export const courseApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: (response) => [{ type: "course", id: response?.data.id }],
     }),
-    deleteCourseModule: builder.mutation<ApiResponse<CourseResponse>, number>({
+    deleteCourseModule: builder.mutation<Response<CourseResponse>, number>({
       query: (courseModuleId) => ({
         url: `/courses/modules/${courseModuleId}`,
         method: "DELETE",
@@ -54,7 +71,9 @@ export const courseApi = baseApi.injectEndpoints({
 export const {
   useGetCourseQuery,
   useCreateCourseMutation,
-  useAddCourseModuleMutation,
+  useUpdateCourseMutation,
+  useDeleteCourseMutation,
+  useCreateCourseModuleMutation,
   useUpdateCourseModuleMutation,
   useDeleteCourseModuleMutation,
 } = courseApi;

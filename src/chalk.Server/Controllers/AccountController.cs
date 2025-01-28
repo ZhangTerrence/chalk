@@ -51,24 +51,27 @@ public class AccountController : ControllerBase
         var validationResult = await _registerRequestValidator.ValidateAsync(request);
         if (!validationResult.IsValid)
         {
-            return BadRequest(new ApiResponse<object>(validationResult.GetErrorMessages()));
+            return BadRequest(new Response<object>(validationResult.GetErrorMessages()));
         }
 
         var user = request.ToEntity();
         var result = await _userManager.CreateAsync(user, request.Password);
         if (!result.Succeeded)
         {
-            return StatusCode(StatusCodes.Status500InternalServerError, new ApiResponse<object>(result.GetErrorMessages()));
+            return StatusCode(StatusCodes.Status500InternalServerError, new Response<object>(result.GetErrorMessages()));
         }
 
         var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
         var confirmationLink = Url.Action(nameof(ConfirmEmail), "Account", new { token, email = user.Email }, Request.Scheme);
         if (confirmationLink is null)
         {
-            return StatusCode(StatusCodes.Status500InternalServerError, new ApiResponse<object>(["Unable to generate confirmation link."]));
+            return StatusCode(StatusCodes.Status500InternalServerError, new Response<object>(["Unable to generate confirmation link."]));
         }
 
-        _emailService.SendEmail(request.Email, "Confirm Your Email", confirmationLink);
+        _emailService.SendEmail(request.Email, "Verify your account",
+            "Click this link to confirm your email and complete account registrations.\n" +
+            confirmationLink + "\n" +
+            "This link will expire in 24 hours.");
 
         return Created();
     }
@@ -79,13 +82,13 @@ public class AccountController : ControllerBase
         var user = await _userManager.FindByEmailAsync(email);
         if (user is null)
         {
-            return NotFound(new ApiResponse<object>(["User not found."]));
+            return NotFound(new Response<object>(["User not found."]));
         }
 
         var result = await _userManager.ConfirmEmailAsync(user, token);
         if (!result.Succeeded)
         {
-            return StatusCode(StatusCodes.Status403Forbidden, new ApiResponse<object>(result.GetErrorMessages()));
+            return StatusCode(StatusCodes.Status403Forbidden, new Response<object>(result.GetErrorMessages()));
         }
 
         await _userManager.AddToRoleAsync(user, "User");
@@ -106,31 +109,31 @@ public class AccountController : ControllerBase
         var validationResult = await _loginRequestValidator.ValidateAsync(request);
         if (!validationResult.IsValid)
         {
-            return BadRequest(new ApiResponse<object>(validationResult.GetErrorMessages()));
+            return BadRequest(new Response<object>(validationResult.GetErrorMessages()));
         }
 
         var user = await _userManager.FindByEmailAsync(request.Email);
         if (user is null)
         {
-            return NotFound(new ApiResponse<object>(["User not found."]));
+            return NotFound(new Response<object>(["User not found."]));
         }
 
         var result = await _signInManager.CheckPasswordSignInAsync(user, request.Password, true);
         if (result.IsLockedOut)
         {
-            return StatusCode(StatusCodes.Status403Forbidden, new ApiResponse<object>(["Too many failed attempted, account locked for 5 minutes."]));
+            return StatusCode(StatusCodes.Status403Forbidden, new Response<object>(["Too many failed attempts, account locked for 5 minutes."]));
         }
 
         if (!result.Succeeded)
         {
-            return StatusCode(StatusCodes.Status403Forbidden, new ApiResponse<object>(["Invalid email or password."]));
+            return StatusCode(StatusCodes.Status403Forbidden, new Response<object>(["Invalid email or password."]));
         }
 
 
         var userRoles = await _userManager.GetRolesAsync(user);
         await _signInManager.SignInWithClaimsAsync(user, true, user.CreateClaims(userRoles));
 
-        return Ok(new ApiResponse<UserResponse>(null, (await _userService.GetUserAsync(user.Id)).ToResponse()));
+        return Ok(new Response<UserResponse>(null, (await _userService.GetUserAsync(user.Id)).ToResponse()));
     }
 
     [HttpGet("refresh")]
@@ -139,12 +142,12 @@ public class AccountController : ControllerBase
         var user = await _userManager.FindByIdAsync(User.GetUserId().ToString());
         if (user is null)
         {
-            return NotFound(new ApiResponse<object>(["User not found."]));
+            return NotFound(new Response<object>(["User not found."]));
         }
 
         await _signInManager.RefreshSignInAsync(user);
 
-        return Ok(new ApiResponse<UserResponse>(null, (await _userService.GetUserAsync(user.Id)).ToResponse()));
+        return Ok(new Response<UserResponse>(null, (await _userService.GetUserAsync(user.Id)).ToResponse()));
     }
 
     [HttpDelete("logout"), Authorize]

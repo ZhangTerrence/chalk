@@ -7,6 +7,7 @@
   "importOrder": [
     "^react$",
     "<THIRD_PARTY_MODULES>",
+    "^@/pages/layouts/(.*)$",
     "^@/pages/(.*)$",
     "^@/components/ui/(.*)$",
     "^@/components/(.*)$",

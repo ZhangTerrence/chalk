@@ -4,8 +4,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-import type { CourseModulesDialogs } from "@/pages/(private)/(dashboard)/courses/[id]/modules/page.tsx";
-
 import { Button } from "@/components/ui/button.tsx";
 import { DialogClose, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog.tsx";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form.tsx";
@@ -14,30 +12,32 @@ import { Separator } from "@/components/ui/separator.tsx";
 import { Textarea } from "@/components/ui/textarea.tsx";
 
 import { useUpdateCourseModuleMutation } from "@/redux/services/course.ts";
+import { selectDialog, setDialog } from "@/redux/slices/dialog.ts";
+import { useAppDispatch, useTypedSelector } from "@/redux/store.ts";
 
-import { AddCourseModuleSchema, type AddCourseModuleType } from "@/lib/validators/addCourseModule.ts";
+import type { CourseModuleDTO } from "@/lib/types/course.ts";
+import { UpdateCourseModuleSchema, type UpdateCourseModuleType } from "@/lib/validators/courseModule.ts";
 
-type UpdateCourseModuleDialogProps = {
-  courseModuleId: number;
-  changeDialog: (id: number | null, type: Pick<CourseModulesDialogs, "type">["type"]) => void;
-};
-
-export const UpdateCourseModuleDialog = (props: UpdateCourseModuleDialogProps) => {
+export const UpdateCourseModuleDialog = () => {
+  const dialog = useTypedSelector(selectDialog)!;
+  const dispatch = useAppDispatch();
   const [updateCourseModule, { isLoading, isSuccess }] = useUpdateCourseModuleMutation();
+
+  const courseModule = (dialog.entity as CourseModuleDTO)!;
 
   React.useEffect(() => {
     if (!isLoading && isSuccess) {
-      props.changeDialog(null, null);
+      dispatch(setDialog(null));
       form.reset();
-      toast.success("Successfully add course module.");
+      toast.success("Successfully edited course module.");
     }
   }, [isLoading, isSuccess]);
 
-  const form = useForm<AddCourseModuleType>({
-    resolver: zodResolver(AddCourseModuleSchema),
+  const form = useForm<UpdateCourseModuleType>({
+    resolver: zodResolver(UpdateCourseModuleSchema),
     defaultValues: {
-      name: "",
-      description: "",
+      name: courseModule.name,
+      description: courseModule.description ?? undefined,
     },
   });
 
@@ -53,7 +53,7 @@ export const UpdateCourseModuleDialog = (props: UpdateCourseModuleDialogProps) =
             async (data) =>
               await updateCourseModule({
                 ...data,
-                id: props.courseModuleId,
+                id: courseModule.id,
               }).unwrap(),
           )}
           className="flex min-w-80 flex-col gap-y-4"

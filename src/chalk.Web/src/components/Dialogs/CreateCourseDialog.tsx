@@ -12,22 +12,19 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Separator } from "@/components/ui/separator.tsx";
 import { Textarea } from "@/components/ui/textarea.tsx";
 
-import type { DashboardDialogs } from "@/components/DashboardSidebar/DashboardSidebar.tsx";
-
 import { useCreateCourseMutation } from "@/redux/services/course.ts";
+import { setDialog } from "@/redux/slices/dialog.ts";
+import { useAppDispatch } from "@/redux/store.ts";
 
-import { CreateCourseSchema, type CreateCourseType } from "@/lib/validators/createCourse.ts";
+import { CreateCourseSchema, type CreateCourseType } from "@/lib/validators/course.ts";
 
-type CreateCourseDialogProps = {
-  changeDialog: (type: Pick<DashboardDialogs, "type">["type"]) => void;
-};
-
-export const CreateCourseDialog = (props: CreateCourseDialogProps) => {
+export const CreateCourseDialog = () => {
+  const dispatch = useAppDispatch();
   const [createCourse, { isLoading, isSuccess }] = useCreateCourseMutation();
 
   React.useEffect(() => {
     if (!isLoading && isSuccess) {
-      props.changeDialog(null);
+      dispatch(setDialog(null));
       form.reset();
       toast.success("Successfully created course.");
     }

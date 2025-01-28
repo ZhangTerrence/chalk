@@ -12,21 +12,17 @@ import { Input } from "@/components/ui/input.tsx";
 import { Separator } from "@/components/ui/separator.tsx";
 import { Textarea } from "@/components/ui/textarea.tsx";
 
-import type { DashboardDialogs } from "@/components/DashboardSidebar/DashboardSidebar.tsx";
-
 import { useUpdateUserMutation } from "@/redux/services/user.ts";
+import { setDialog } from "@/redux/slices/dialog.ts";
 import { selectUser } from "@/redux/slices/user.ts";
-import { useTypedSelector } from "@/redux/store.ts";
+import { useAppDispatch, useTypedSelector } from "@/redux/store.ts";
 
 import { getImageData } from "@/lib/utils.ts";
 import { UpdateUserSchema, type UpdateUserType } from "@/lib/validators/updateUser.ts";
 
-type UpdateProfileDialogProps = {
-  changeDialog: (type: Pick<DashboardDialogs, "type">["type"]) => void;
-};
-
-export const UpdateProfileDialog = (props: UpdateProfileDialogProps) => {
+export const UpdateProfileDialog = () => {
   const user = useTypedSelector(selectUser)!;
+  const dispatch = useAppDispatch();
   const [updateUser, { isLoading, isSuccess }] = useUpdateUserMutation();
 
   const [profilePicture, setProfilePicture] = React.useState<string | undefined>(user.profilePicture ?? undefined);
@@ -83,7 +79,7 @@ export const UpdateProfileDialog = (props: UpdateProfileDialogProps) => {
 
     await updateUser(formData).unwrap();
 
-    props.changeDialog(null);
+    dispatch(setDialog(null));
   };
 
   return (

@@ -13,15 +13,15 @@ public class ExceptionHandler : IExceptionHandler
         {
             case ServiceException e:
                 httpContext.Response.StatusCode = e.StatusCode;
-                await httpContext.Response.WriteAsJsonAsync(new ApiResponse<object>([new ErrorDTO(e.Description)], null), cancellationToken);
+                await httpContext.Response.WriteAsJsonAsync(new Response<object>([new ErrorDTO(e.Description)], null), cancellationToken);
                 return true;
             case AmazonClientException:
                 httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
-                await httpContext.Response.WriteAsJsonAsync(new ApiResponse<object>([new ErrorDTO("Error connecting to Amazon.")], null), cancellationToken);
+                await httpContext.Response.WriteAsJsonAsync(new Response<object>([new ErrorDTO("Error connecting to Amazon.")], null), cancellationToken);
                 return true;
             default:
                 httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
-                await httpContext.Response.WriteAsJsonAsync(new ApiResponse<object>([new ErrorDTO("Internal Server Error.")], null), cancellationToken);
+                await httpContext.Response.WriteAsJsonAsync(new Response<object>([new ErrorDTO("Internal Server Error.")], null), cancellationToken);
                 return true;
         }
     }

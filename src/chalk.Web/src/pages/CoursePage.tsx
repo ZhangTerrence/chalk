@@ -1,4 +1,4 @@
-import NotFoundPage from "@/pages/notFound.tsx";
+import NotFoundPage from "@/pages/NotFoundPage.tsx";
 
 import { selectCourse } from "@/redux/slices/course.ts";
 import { useTypedSelector } from "@/redux/store.ts";

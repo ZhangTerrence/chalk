@@ -3,19 +3,20 @@ import { Provider } from "react-redux";
 import { BrowserRouter, Route, Routes } from "react-router";
 import { Toaster } from "sonner";
 
-import CourseLayout from "@/pages/(private)/(dashboard)/courses/[id]/layout.tsx";
-import CourseModulesPage from "@/pages/(private)/(dashboard)/courses/[id]/modules/page.tsx";
-import CoursePage from "@/pages/(private)/(dashboard)/courses/[id]/page.tsx";
-import DashboardPage from "@/pages/(private)/(dashboard)/dashboard/page.tsx";
-import DashboardLayout from "@/pages/(private)/(dashboard)/layout.tsx";
-import CoursesPage from "@/pages/(private)/courses/page.tsx";
-import PrivateLayout from "@/pages/(private)/layout.tsx";
-import OrganizationsPage from "@/pages/(private)/organizations/page.tsx";
-import RootLayout from "@/pages/layout.tsx";
-import LoginPage from "@/pages/login/page.tsx";
-import NotFoundPage from "@/pages/notFound";
-import LandingPage from "@/pages/page.tsx";
-import RegisterPage from "@/pages/register/page.tsx";
+import CourseLayout from "@/pages/layouts/CourseLayout.tsx";
+import DashboardLayout from "@/pages/layouts/DashboardLayout.tsx";
+import PrivateLayout from "@/pages/layouts/PrivateLayout.tsx";
+import RootLayout from "@/pages/layouts/RootLayout.tsx";
+
+import CourseModulesPage from "@/pages/CourseModulesPage.tsx";
+import CoursePage from "@/pages/CoursePage.tsx";
+import CoursesPage from "@/pages/CoursesPage.tsx";
+import DashboardLandingPage from "@/pages/DashboardLandingPage.tsx";
+import LandingPage from "@/pages/LandingPage.tsx";
+import LoginPage from "@/pages/LoginPage.tsx";
+import NotFoundPage from "@/pages/NotFoundPage.tsx";
+import OrganizationsPage from "@/pages/OrganizationsPage.tsx";
+import RegisterPage from "@/pages/RegisterPage.tsx";
 
 import { store } from "@/redux/store.ts";
 
@@ -34,7 +35,7 @@ export default function App() {
             </Route>
             <Route element={<PrivateLayout />}>
               <Route element={<DashboardLayout />}>
-                <Route path="/dashboard" element={<DashboardPage />} />
+                <Route path="/dashboard" element={<DashboardLandingPage />} />
                 <Route element={<CourseLayout />}>
                   <Route path="/courses/:id/modules" element={<CourseModulesPage />} />
                   <Route path="/courses/:id" element={<CoursePage />} />

@@ -27,4 +27,7 @@ export const CreateCourseSchema = z.object({
   }),
 });
 
+export const UpdateCourseSchema = CreateCourseSchema;
+
 export type CreateCourseType = z.infer<typeof CreateCourseSchema>;
+export type UpdateCourseType = z.infer<typeof UpdateCourseSchema>;
