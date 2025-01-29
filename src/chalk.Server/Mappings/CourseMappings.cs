@@ -29,7 +29,7 @@ public static class CourseMappings
             course.Name,
             course.Code,
             course.Description,
-            course.Image,
+            course.ImageUrl,
             course.IsPublic,
             course.CreatedDate.ToString(CultureInfo.CurrentCulture),
             course.Organization?.ToDTO(),
@@ -46,33 +46,9 @@ public static class CourseMappings
             course.Name,
             course.Code,
             course.Description,
-            course.Image,
+            course.ImageUrl,
             course.IsPublic,
             course.CreatedDate.ToString(CultureInfo.CurrentCulture)
-        );
-    }
-
-    public static CourseModule ToEntity(this CreateCourseModuleRequest request, int relativeOrder)
-    {
-        return new CourseModule
-        {
-            Name = request.Name,
-            Description = request.Description,
-            RelativeOrder = relativeOrder,
-            CreatedDate = DateTime.UtcNow,
-            UpdatedDate = DateTime.UtcNow,
-        };
-    }
-
-    public static CourseModuleDTO ToDTO(this CourseModule courseModule)
-    {
-        return new CourseModuleDTO(
-            courseModule.Id,
-            courseModule.Name,
-            courseModule.Description,
-            courseModule.RelativeOrder,
-            courseModule.CreatedDate.ToString(CultureInfo.CurrentCulture),
-            courseModule.Attachments.Select(e => e.ToDTO())
         );
     }
 }

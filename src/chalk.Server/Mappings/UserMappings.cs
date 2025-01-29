@@ -31,7 +31,7 @@ public static class UserMappings
             user.LastName,
             user.DisplayName,
             user.Description,
-            user.ProfilePicture,
+            user.ImageUrl,
             user.CreatedDate.ToString(CultureInfo.CurrentCulture),
             user.DirectMessages.Select(e => e.Channel.ToDTO()),
             user.Courses.Select(e => e.Course.ToDTO()),
@@ -47,7 +47,7 @@ public static class UserMappings
             user.LastName,
             user.DisplayName,
             user.Description,
-            user.ProfilePicture,
+            user.ImageUrl,
             user.CreatedDate.ToString(CultureInfo.CurrentCulture),
             joinedDate
         );

@@ -7,12 +7,12 @@ namespace chalk.Server.DTOs.Requests;
 /// <param name="LastName">The user's last name.</param>
 /// <param name="DisplayName">The user's display name.</param>
 /// <param name="Description">The user's description.</param>
-/// <param name="ProfilePicture">The user's profile picture.</param>
+/// <param name="Image">The user's image.</param>
 /// <remarks><paramref name="FirstName"/>, <paramref name="LastName"/>, and <paramref name="DisplayName"/> are required.</remarks>
 public record UpdateUserRequest(
     string FirstName,
     string LastName,
     string DisplayName,
     string? Description,
-    IFormFile? ProfilePicture
+    IFormFile? Image
 );

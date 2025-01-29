@@ -13,38 +13,45 @@ namespace chalk.Server.Services;
 public class CourseService : ICourseService
 {
     private readonly DatabaseContext _context;
-    private readonly IFileUploadService _fileUploadService;
+    private readonly ICloudService _cloudService;
+    private readonly IFileService _fileService;
 
-    public CourseService(DatabaseContext context, IFileUploadService fileUploadService)
+    public CourseService(DatabaseContext context, ICloudService cloudService, IFileService fileService)
     {
         _context = context;
-        _fileUploadService = fileUploadService;
+        _cloudService = cloudService;
+        _fileService = fileService;
     }
 
     public async Task<IEnumerable<Course>> GetCoursesAsync()
     {
         return await _context.Courses
-            .Include(e => e.Organization).AsSingleQuery()
-            .Include(e => e.Users).ThenInclude(u => u.User).AsSingleQuery()
-            .Include(e => e.Roles).AsSingleQuery()
-            .Include(e => e.Modules).ThenInclude(e => e.Attachments).AsSingleQuery()
+            .Include(e => e.Modules).ThenInclude(e => e.Files).AsSingleQuery()
             .ToListAsync();
     }
 
     public async Task<Course> GetCourseAsync(long courseId)
     {
         var course = await _context.Courses
-            .Include(e => e.Organization).AsSingleQuery()
-            .Include(e => e.Users).ThenInclude(u => u.User).AsSingleQuery()
-            .Include(e => e.Roles).AsSingleQuery()
-            .Include(e => e.Modules).ThenInclude(e => e.Attachments).AsSingleQuery()
+            .Include(e => e.Modules).ThenInclude(e => e.Files).AsSingleQuery()
             .FirstOrDefaultAsync(e => e.Id == courseId);
         if (course is null)
         {
             throw new ServiceException("Course not found.", StatusCodes.Status404NotFound);
         }
-
         return course;
+    }
+
+    public async Task<Module> GetModuleAsync(long moduleId)
+    {
+        var courseModule = await _context.Modules
+            .Include(e => e.Files).AsSingleQuery()
+            .FirstOrDefaultAsync(e => e.Id == moduleId);
+        if (courseModule is null)
+        {
+            throw new ServiceException("Module not found.", StatusCodes.Status404NotFound);
+        }
+        return courseModule;
     }
 
     public async Task<Course> CreateCourseAsync(long userId, CreateCourseRequest request)
@@ -57,11 +64,8 @@ public class CourseService : ICourseService
 
         var course = request.ToEntity(null);
         var createdCourse = await _context.Courses.AddAsync(course);
-
-        var role = CreateRoleRequest
-            .CreateCourseRole("Instructor", null, PermissionUtilities.All, 0, course.Id)
-            .ToEntity();
-
+        var role = new CreateRoleRequest("Instructor", null, PermissionUtilities.All, 0)
+            .ToEntity(course.Id, null);
         var userCourse = new UserCourse
         {
             Status = UserStatus.Joined,
@@ -75,7 +79,6 @@ public class CourseService : ICourseService
             Role = role
         };
         userCourse.Roles.Add(userRole);
-
         course.Users.Add(userCourse);
         course.Roles.Add(role);
 
@@ -83,179 +86,88 @@ public class CourseService : ICourseService
         return await GetCourseAsync(createdCourse.Entity.Id);
     }
 
+    public async Task<Module> CreateCourseModuleAsync(long courseId, CreateModuleRequest request)
+    {
+        var course = await GetCourseAsync(courseId);
+        var module = request.ToEntity(course.Modules.Select(e => e.RelativeOrder).DefaultIfEmpty(-1).Max() + 1);
+        course.Modules.Add(module);
+        course.UpdatedDate = DateTime.UtcNow;
+
+        await _context.SaveChangesAsync();
+        return await GetModuleAsync(module.Id);
+    }
+
     public async Task<Course> UpdateCourseAsync(long courseId, UpdateCourseRequest request)
     {
-        var course = await _context.Courses.FindAsync(courseId);
-        if (course is null)
-        {
-            throw new ServiceException("Course not found.", StatusCodes.Status404NotFound);
-        }
-
+        var course = await GetCourseAsync(courseId);
         course.Name = request.Name;
         course.Code = request.Code;
         course.Description = request.Description;
         if (request.Image is not null)
         {
-            var hash = FileUtilities.S3ObjectHash("course-image", course.Id.ToString());
-            var uri = await _fileUploadService.UploadAsync(hash, request.Image);
-            course.Image = uri;
+            course.ImageUrl = await _cloudService.UploadImageAsync(Guid.NewGuid().ToString(), request.Image);
         }
-
         course.IsPublic = request.IsPublic!.Value;
         var i = 0;
-        foreach (var courseModuleId in request.Modules)
+        foreach (var moduleId in request.Modules)
         {
-            var courseModule = await _context.CourseModules.FindAsync(courseModuleId);
-            if (courseModule is null)
-            {
-                throw new ServiceException("Course module not found.", StatusCodes.Status404NotFound);
-            }
-
-            courseModule.RelativeOrder = i;
+            var module = await GetModuleAsync(moduleId);
+            module.RelativeOrder = i;
             i++;
         }
-
         course.UpdatedDate = DateTime.UtcNow;
 
         await _context.SaveChangesAsync();
         return await GetCourseAsync(course.Id);
     }
 
+    public async Task<Module> UpdateCourseModuleAsync(long courseId, long moduleId, UpdateModuleRequest request)
+    {
+        var module = await GetModuleAsync(moduleId);
+        module.Name = request.Name;
+        module.Description = request.Description;
+        module.UpdatedDate = DateTime.UtcNow;
+        var course = await GetCourseAsync(courseId);
+        course.UpdatedDate = DateTime.UtcNow;
+
+        await _context.SaveChangesAsync();
+        return await GetModuleAsync(module.Id);
+    }
+
     public async Task DeleteCourseAsync(long courseId)
     {
-        var course = await _context.Courses.FindAsync(courseId);
-        if (course is null)
+        var course = await GetCourseAsync(courseId);
+        if (course.ImageUrl is not null)
         {
-            throw new ServiceException("Course not found.", StatusCodes.Status404NotFound);
+            await _cloudService.DeleteAsync(course.ImageUrl);
         }
-
-        var hash = FileUtilities.S3ObjectHash("course-image", course.Id.ToString());
-        await _fileUploadService.DeleteAsync(hash);
-
+        foreach (var module in course.Modules)
+        {
+            await DeleteCourseModuleAsync(courseId, module.Id);
+        }
         _context.Courses.Remove(course);
 
         await _context.SaveChangesAsync();
     }
 
-    public async Task<Course> CreateCourseModuleAsync(CreateCourseModuleRequest request)
+    public async Task DeleteCourseModuleAsync(long courseId, long moduleId)
     {
-        var course = await _context.Courses
-            .Include(e => e.Modules)
-            .FirstOrDefaultAsync(e => e.Id == request.CourseId);
-        if (course is null)
+        var module = await GetModuleAsync(moduleId);
+        var course = await GetCourseAsync(courseId);
+        _context.Modules.Remove(module);
+        foreach (var e in course.Modules)
         {
-            throw new ServiceException("Course not found.", StatusCodes.Status404NotFound);
-        }
-
-        // Adds to the end
-        var relativeOrder = course.Modules.Select(e => e.RelativeOrder).DefaultIfEmpty(-1).Max() + 1;
-
-        var courseModule = request.ToEntity(relativeOrder);
-        course.Modules.Add(courseModule);
-
-        course.UpdatedDate = DateTime.UtcNow;
-
-        await _context.SaveChangesAsync();
-        return await GetCourseAsync(course.Id);
-    }
-
-    public async Task<Course> UpdateCourseModuleAsync(long courseModuleId, UpdateCourseModuleRequest request)
-    {
-        var courseModule = await _context.CourseModules.FindAsync(courseModuleId);
-        if (courseModule is null)
-        {
-            throw new ServiceException("Course module not found.", StatusCodes.Status404NotFound);
-        }
-
-        courseModule.Name = request.Name;
-        courseModule.Description = request.Description;
-        courseModule.UpdatedDate = DateTime.UtcNow;
-
-        var course = await _context.Courses.FindAsync(courseModule.CourseId);
-        if (course is null)
-        {
-            throw new ServiceException("Course not found.", StatusCodes.Status404NotFound);
-        }
-
-        course.UpdatedDate = DateTime.UtcNow;
-
-        await _context.SaveChangesAsync();
-
-        return await GetCourseAsync(course.Id);
-    }
-
-    public async Task<Course> DeleteCourseModuleAsync(long courseModuleId)
-    {
-        var courseModule = await _context.CourseModules.FindAsync(courseModuleId);
-        if (courseModule is null)
-        {
-            throw new ServiceException("Course module not found.", StatusCodes.Status404NotFound);
-        }
-
-        var course = await _context.Courses
-            .Include(e => e.Modules)
-            .FirstOrDefaultAsync(e => e.Id == courseModule.CourseId);
-        if (course is null)
-        {
-            throw new ServiceException("Course not found.", StatusCodes.Status404NotFound);
-        }
-
-        _context.CourseModules.Remove(courseModule);
-
-        foreach (var module in course.Modules)
-        {
-            if (module.RelativeOrder > courseModule.RelativeOrder)
+            if (e.RelativeOrder > module.RelativeOrder)
             {
-                module.RelativeOrder -= 1;
+                e.RelativeOrder -= 1;
             }
         }
-
+        foreach (var file in module.Files)
+        {
+            await _fileService.DeleteFile(file.Id);
+        }
         course.UpdatedDate = DateTime.UtcNow;
 
         await _context.SaveChangesAsync();
-
-        return await GetCourseAsync(course.Id);
-    }
-
-    public async Task<Course> AddCourseModuleAttachmentAsync(long courseModuleId, CreateAttachmentRequest request)
-    {
-        var courseModule = await _context.CourseModules.FindAsync(courseModuleId);
-        if (courseModule is null)
-        {
-            throw new ServiceException("Course module not found.", StatusCodes.Status404NotFound);
-        }
-
-        if (request.Origin != AttachmentOrigin.CourseModule)
-        {
-            throw new ServiceException("Incorrect origin.", StatusCodes.Status400BadRequest);
-        }
-
-        var hash = FileUtilities.S3ObjectHash("course-module-attachment", Guid.NewGuid().ToString());
-        var url = await _fileUploadService.UploadAsync(hash, request.Resource);
-
-        var attachment = new Attachment
-        {
-            Name = request.Name,
-            Description = request.Description,
-            Resource = url,
-            CreatedDate = DateTime.UtcNow,
-            UpdatedDate = DateTime.UtcNow,
-        };
-
-        _context.Attachments.Add(attachment);
-
-        courseModule.UpdatedDate = DateTime.UtcNow;
-
-        var course = await _context.Courses.FindAsync(courseModule.CourseId);
-        if (course is null)
-        {
-            throw new ServiceException("Course not found.", StatusCodes.Status404NotFound);
-        }
-
-        course.UpdatedDate = DateTime.UtcNow;
-
-        await _context.SaveChangesAsync();
-
-        return await GetCourseAsync(courseModule.CourseId);
     }
 }

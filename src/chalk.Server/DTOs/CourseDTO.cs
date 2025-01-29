@@ -18,8 +18,8 @@ public record CourseDTO(
     [property: JsonPropertyName("description")]
     string? Description,
     [property: JsonRequired]
-    [property: JsonPropertyName("image")]
-    string? Image,
+    [property: JsonPropertyName("imageUrl")]
+    string? ImageUrl,
     [property: JsonRequired]
     [property: JsonPropertyName("isPublic")]
     bool IsPublic,

@@ -3,7 +3,6 @@ using chalk.Server.Data;
 using chalk.Server.DTOs.Requests;
 using chalk.Server.Entities;
 using chalk.Server.Services.Interfaces;
-using chalk.Server.Utilities;
 using Microsoft.EntityFrameworkCore;
 
 namespace chalk.Server.Services;
@@ -11,12 +10,12 @@ namespace chalk.Server.Services;
 public class UserService : IUserService
 {
     private readonly DatabaseContext _context;
-    private readonly IFileUploadService _fileUploadService;
+    private readonly ICloudService _cloudService;
 
-    public UserService(DatabaseContext context, IFileUploadService fileUploadService)
+    public UserService(DatabaseContext context, ICloudService cloudService)
     {
         _context = context;
-        _fileUploadService = fileUploadService;
+        _cloudService = cloudService;
     }
 
     public async Task<IEnumerable<User>> GetUsersAsync()
@@ -55,11 +54,9 @@ public class UserService : IUserService
         user.LastName = request.LastName;
         user.DisplayName = request.DisplayName;
         user.Description = request.Description;
-        if (request.ProfilePicture is not null)
+        if (request.Image is not null)
         {
-            var hash = FileUtilities.S3ObjectHash("user-profile-picture", user.Id.ToString());
-            var uri = await _fileUploadService.UploadAsync(hash, request.ProfilePicture);
-            user.ProfilePicture = uri;
+            user.ImageUrl = await _cloudService.UploadImageAsync(Guid.NewGuid().ToString(), request.Image);
         }
 
         user.UpdatedDate = DateTime.UtcNow;

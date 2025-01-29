@@ -3,14 +3,14 @@ import { Outlet } from "react-router-dom";
 import { Dialog, DialogContent } from "@/components/ui/dialog.tsx";
 
 import { AuthenticationGuard } from "@/components/AuthenticationGuard.tsx";
-import { CreateAttachmentDialog } from "@/components/Dialogs/CreateAttachmentDialog.tsx";
 import { CreateCourseDialog } from "@/components/Dialogs/CreateCourseDialog.tsx";
-import { CreateCourseModuleDialog } from "@/components/Dialogs/CreateCourseModuleDialog.tsx";
+import { CreateFileDialog } from "@/components/Dialogs/CreateFileDialog.tsx";
+import { CreateModuleDialog } from "@/components/Dialogs/CreateModuleDialog.tsx";
 import { CreateOrganizationDialog } from "@/components/Dialogs/CreateOrganizationDialog.tsx";
 import { UpdateAccountDialog } from "@/components/Dialogs/UpdateAccountDialog.tsx";
 import { UpdateAppearanceDialog } from "@/components/Dialogs/UpdateAppearanceDialog.tsx";
 import { UpdateCourseDialog } from "@/components/Dialogs/UpdateCourseDialog.tsx";
-import { UpdateCourseModuleDialog } from "@/components/Dialogs/UpdateCourseModuleDialog.tsx";
+import { UpdateModuleDialog } from "@/components/Dialogs/UpdateModuleDialog.tsx";
 import { UpdateProfileDialog } from "@/components/Dialogs/UpdateProfileDialog.tsx";
 
 import { selectDialog, setDialog } from "@/redux/slices/dialog.ts";
@@ -35,14 +35,14 @@ export default function PrivateLayout() {
           return <CreateCourseDialog />;
         case DialogType.UpdateCourse:
           return <UpdateCourseDialog />;
-        case DialogType.CreateCourseModule:
-          return <CreateCourseModuleDialog />;
-        case DialogType.UpdateCourseModule:
-          return <UpdateCourseModuleDialog />;
+        case DialogType.CreateModule:
+          return <CreateModuleDialog />;
+        case DialogType.UpdateModule:
+          return <UpdateModuleDialog />;
         case DialogType.CreateOrganization:
           return <CreateOrganizationDialog />;
-        case DialogType.CreateAttachment:
-          return <CreateAttachmentDialog />;
+        case DialogType.CreateFile:
+          return <CreateFileDialog />;
         default:
           return null;
       }

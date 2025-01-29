@@ -77,11 +77,12 @@ builder.Services.AddRouting(options => options.LowercaseUrls = true);
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
 // Adds scoped services
-builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ICourseService, CourseService>();
 builder.Services.AddScoped<IOrganizationService, OrganizationService>();
-builder.Services.AddScoped<IFileUploadService, FileUploadService>();
+builder.Services.AddScoped<IFileService, FileService>();
+builder.Services.AddScoped<ICloudService, CloudService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

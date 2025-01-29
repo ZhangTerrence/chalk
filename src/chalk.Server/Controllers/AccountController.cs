@@ -123,16 +123,14 @@ public class AccountController : ControllerBase
         {
             return StatusCode(StatusCodes.Status403Forbidden, new Response<object>(["Too many failed attempts, account locked for 5 minutes."]));
         }
-
         if (!result.Succeeded)
         {
             return StatusCode(StatusCodes.Status403Forbidden, new Response<object>(["Invalid email or password."]));
         }
 
-
         var userRoles = await _userManager.GetRolesAsync(user);
-        await _signInManager.SignInWithClaimsAsync(user, true, user.CreateClaims(userRoles));
 
+        await _signInManager.SignInWithClaimsAsync(user, true, user.CreateClaims(userRoles));
         return Ok(new Response<UserResponse>(null, (await _userService.GetUserAsync(user.Id)).ToResponse()));
     }
 
@@ -146,7 +144,6 @@ public class AccountController : ControllerBase
         }
 
         await _signInManager.RefreshSignInAsync(user);
-
         return Ok(new Response<UserResponse>(null, (await _userService.GetUserAsync(user.Id)).ToResponse()));
     }
 

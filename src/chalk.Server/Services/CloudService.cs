@@ -8,22 +8,20 @@ using chalk.Server.Utilities;
 
 namespace chalk.Server.Services;
 
-public class FileUploadService : IFileUploadService
+public class CloudService : ICloudService
 {
     private const string BucketName = "chalk-s3";
     private const string Location = "us-east-1";
 
     private readonly AmazonS3Client _s3Client;
 
-    public FileUploadService(IConfiguration configuration)
+    public CloudService(IConfiguration configuration)
     {
         var chain = new CredentialProfileStoreChain();
         if (!chain.TryGetAWSCredentials(configuration["AWS_SDK:Profile"]!, out var credentials))
         {
-            throw new ServiceException("AWS credentials not found", StatusCodes.Status500InternalServerError);
+            throw new ServiceException("AWS credentials not found.", StatusCodes.Status500InternalServerError);
         }
-
-        Console.WriteLine(credentials.GetCredentials().AccountId);
 
         _s3Client = new AmazonS3Client(credentials);
     }
@@ -35,15 +33,8 @@ public class FileUploadService : IFileUploadService
             throw new ServiceException("File is too large.", StatusCodes.Status403Forbidden);
         }
 
-        var isImage = file.ContentType.IsImage();
-        if (!isImage)
-        {
-            throw new ServiceException("File is not an accepted image.", StatusCodes.Status400BadRequest);
-        }
-
         var fileStream = new MemoryStream();
         await file.CopyToAsync(fileStream);
-
         var request = new TransferUtilityUploadRequest
         {
             InputStream = fileStream,
@@ -52,11 +43,20 @@ public class FileUploadService : IFileUploadService
             CannedACL = S3CannedACL.PublicRead,
             ContentType = file.ContentType,
         };
-
         var fileTransferUtility = new TransferUtility(_s3Client);
         await fileTransferUtility.UploadAsync(request);
 
         return $"https://s3.{Location}.amazonaws.com/{BucketName}/{hash}";
+    }
+
+    public async Task<string> UploadImageAsync(string hash, IFormFile file)
+    {
+        var isImage = file.ContentType.IsImage();
+        if (!isImage)
+        {
+            throw new ServiceException("File is not an accepted image.", StatusCodes.Status400BadRequest);
+        }
+        return await UploadAsync(hash, file);
     }
 
     public async Task DeleteAsync(string hash)
@@ -66,7 +66,6 @@ public class FileUploadService : IFileUploadService
             BucketName = BucketName,
             Key = hash,
         };
-
         await _s3Client.DeleteObjectAsync(request);
     }
 }

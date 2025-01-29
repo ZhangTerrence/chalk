@@ -57,7 +57,10 @@ public class OrganizationController : ControllerBase
     }
 
     [HttpPut("{organizationId:long}")]
-    public async Task<IActionResult> UpdateOrganization([FromRoute] long organizationId, [FromBody] UpdateOrganizationRequest request)
+    public async Task<IActionResult> UpdateOrganization(
+        [FromRoute] long organizationId,
+        [FromBody] UpdateOrganizationRequest request
+    )
     {
         var validationResult = await _updateOrganizationRequestValidator.ValidateAsync(request);
         if (!validationResult.IsValid)

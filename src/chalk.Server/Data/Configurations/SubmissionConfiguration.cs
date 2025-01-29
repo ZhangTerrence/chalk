@@ -19,7 +19,7 @@ public class SubmissionConfiguration : IEntityTypeConfiguration<Submission>
         builder.Property(e => e.UpdatedDate).IsRequired();
 
         builder
-            .HasMany(e => e.Attachments)
+            .HasMany(e => e.Files)
             .WithOne()
             .HasForeignKey(e => e.SubmissionId)
             .OnDelete(DeleteBehavior.Cascade);

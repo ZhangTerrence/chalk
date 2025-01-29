@@ -11,28 +11,28 @@ import { Input } from "@/components/ui/input.tsx";
 import { Separator } from "@/components/ui/separator.tsx";
 import { Textarea } from "@/components/ui/textarea.tsx";
 
-import { useCreateCourseModuleMutation } from "@/redux/services/course.ts";
+import { useCreateModuleMutation } from "@/redux/services/course.ts";
 import { selectDialog, setDialog } from "@/redux/slices/dialog.ts";
 import { useAppDispatch, useTypedSelector } from "@/redux/store.ts";
 
 import type { CourseDTO } from "@/lib/types/course.ts";
-import { CreateCourseModuleSchema, type CreateCourseModuleType } from "@/lib/validators/courseModule.ts";
+import { CreateModuleSchema, type CreateModuleType } from "@/lib/validators/module.ts";
 
-export const CreateCourseModuleDialog = () => {
+export const CreateModuleDialog = () => {
   const dialog = useTypedSelector(selectDialog)!;
   const dispatch = useAppDispatch();
-  const [createCourseModule, { isLoading, isSuccess }] = useCreateCourseModuleMutation();
+  const [createModule, { isLoading, isSuccess }] = useCreateModuleMutation();
 
   React.useEffect(() => {
     if (!isLoading && isSuccess) {
       dispatch(setDialog(null));
       form.reset();
-      toast.success("Successfully created course module.");
+      toast.success("Successfully created module.");
     }
   }, [isLoading, isSuccess]);
 
-  const form = useForm<CreateCourseModuleType>({
-    resolver: zodResolver(CreateCourseModuleSchema),
+  const form = useForm<CreateModuleType>({
+    resolver: zodResolver(CreateModuleSchema),
     defaultValues: {
       name: "",
       description: "",
@@ -42,16 +42,16 @@ export const CreateCourseModuleDialog = () => {
   return (
     <>
       <DialogHeader>
-        <DialogTitle>Create Course Module</DialogTitle>
+        <DialogTitle>Create Module</DialogTitle>
       </DialogHeader>
       <Separator orientation="horizontal" />
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(
             async (data) =>
-              await createCourseModule({
-                ...data,
+              await createModule({
                 courseId: (dialog.entity as CourseDTO)!.id,
+                data: data,
               }).unwrap(),
           )}
           className="flex min-w-80 flex-col gap-y-4"

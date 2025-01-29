@@ -1,6 +1,7 @@
 import React from "react";
 
 import { AlignJustifyIcon, ChevronDownIcon, EditIcon, EllipsisVerticalIcon, LinkIcon, TrashIcon } from "lucide-react";
+import { NavLink } from "react-router-dom";
 
 import { Button } from "@/components/ui/button.tsx";
 import { Collapsible, CollapsibleContent } from "@/components/ui/collapsible.tsx";
@@ -11,22 +12,23 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu.tsx";
 
-import { useDeleteCourseModuleMutation } from "@/redux/services/course.ts";
+import { useDeleteModuleMutation } from "@/redux/services/course.ts";
 import { setDialog } from "@/redux/slices/dialog.ts";
 import { useAppDispatch } from "@/redux/store.ts";
 
 import { DialogType } from "@/lib/dialogType.ts";
-import type { CourseModuleDTO } from "@/lib/types/course.ts";
+import type { ModuleDTO } from "@/lib/types/course.ts";
 
 type CourseModuleProps = {
-  data: CourseModuleDTO;
+  courseId: number;
+  data: ModuleDTO;
 };
 
 export const CourseModule = (props: CourseModuleProps) => {
   const dispatch = useAppDispatch();
-  const [deleteCourseModule] = useDeleteCourseModuleMutation();
+  const [deleteModule] = useDeleteModuleMutation();
 
-  const courseModule = props.data;
+  const module = props.data;
 
   const [open, setOpen] = React.useState(true);
 
@@ -36,7 +38,7 @@ export const CourseModule = (props: CourseModuleProps) => {
         <div onClick={() => setOpen(!open)} className="flex grow items-center justify-center hover:cursor-pointer">
           <div className="flex items-center gap-x-2">
             <AlignJustifyIcon />
-            <span className="text-lg">{courseModule.name}</span>
+            <span className="text-lg">{module.name}</span>
           </div>
           <ChevronDownIcon className={`ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180`} />
         </div>
@@ -47,21 +49,30 @@ export const CourseModule = (props: CourseModuleProps) => {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="mr-4 mt-1">
-            <DropdownMenuItem onClick={() => dispatch(setDialog({ entity: null, type: DialogType.CreateAttachment }))}>
+            <DropdownMenuItem onClick={() => dispatch(setDialog({ entity: module, type: DialogType.CreateFile }))}>
               <span className="flex items-center gap-x-2">
                 <LinkIcon />
                 <p>Attach</p>
               </span>
             </DropdownMenuItem>
             <DropdownMenuItem
-              onClick={() => dispatch(setDialog({ entity: courseModule, type: DialogType.UpdateCourseModule }))}
+              onClick={() =>
+                dispatch(
+                  setDialog({
+                    entity: { ...module, courseId: props.courseId },
+                    type: DialogType.UpdateModule,
+                  }),
+                )
+              }
             >
               <span className="flex items-center gap-x-2">
                 <EditIcon />
                 <p>Edit</p>
               </span>
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={async () => await deleteCourseModule(courseModule.id).unwrap()}>
+            <DropdownMenuItem
+              onClick={async () => await deleteModule({ courseId: props.courseId, moduleId: module.id }).unwrap()}
+            >
               <span className="flex items-center gap-x-2">
                 <TrashIcon />
                 <p>Delete</p>
@@ -70,18 +81,20 @@ export const CourseModule = (props: CourseModuleProps) => {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      {(!!courseModule.description || courseModule.attachments.length > 0) && (
+      {(!!module.description || module.files.length > 0) && (
         <CollapsibleContent className="py-4">
           <ul className="mx-3.5 flex flex-col gap-y-2 border-l px-2.5">
-            {courseModule.description && (
+            {module.description && (
               <li className="p-2">
-                <p>{courseModule.description}</p>
+                <p>{module.description}</p>
               </li>
             )}
-            {courseModule.attachments.map((attachment) => {
+            {module.files.map((file) => {
               return (
-                <li key={attachment.id} className="p-2">
-                  {attachment.name}
+                <li key={file.id} className="p-2">
+                  <NavLink to={`/courses/${props.courseId}/file/${file.id}`} state={file} className="hover:underline">
+                    {file.name}
+                  </NavLink>
                 </li>
               );
             })}

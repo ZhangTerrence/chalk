@@ -31,7 +31,7 @@ export const DashboardSidebarFooter = () => {
             >
               <Avatar className="h-8 w-8 rounded-lg">
                 <AvatarImage
-                  src={user.profilePicture ?? undefined}
+                  src={user.imageUrl ?? undefined}
                   alt={fullName}
                   className="rounded-full border border-primary object-contain"
                 />

@@ -28,11 +28,11 @@ export default function CourseModulesPage() {
         {modules
           .sort((a, b) => a.relativeOrder - b.relativeOrder)
           .map((module) => {
-            return <CourseModule key={module.id} data={module} />;
+            return <CourseModule key={module.id} courseId={course.id} data={module} />;
           })}
         <Button
           variant="outline"
-          onClick={() => dispatch(setDialog({ entity: course, type: DialogType.CreateCourseModule }))}
+          onClick={() => dispatch(setDialog({ entity: course, type: DialogType.CreateModule }))}
         >
           <span className="flex items-center gap-x-2">
             <PlusIcon />

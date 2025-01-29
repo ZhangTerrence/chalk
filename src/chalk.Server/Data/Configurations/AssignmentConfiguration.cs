@@ -22,7 +22,7 @@ public class AssignmentConfiguration : IEntityTypeConfiguration<Assignment>
         builder.Property(e => e.UpdatedDate).IsRequired();
 
         builder
-            .HasMany(e => e.Attachments)
+            .HasMany(e => e.Files)
             .WithOne()
             .HasForeignKey(e => e.AssignmentId)
             .OnDelete(DeleteBehavior.Cascade);

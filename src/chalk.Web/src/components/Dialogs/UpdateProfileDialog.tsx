@@ -18,14 +18,14 @@ import { selectUser } from "@/redux/slices/user.ts";
 import { useAppDispatch, useTypedSelector } from "@/redux/store.ts";
 
 import { getImageData } from "@/lib/utils.ts";
-import { UpdateUserSchema, type UpdateUserType } from "@/lib/validators/updateUser.ts";
+import { UpdateUserSchema, type UpdateUserType } from "@/lib/validators/user.ts";
 
 export const UpdateProfileDialog = () => {
   const user = useTypedSelector(selectUser)!;
   const dispatch = useAppDispatch();
   const [updateUser, { isLoading, isSuccess }] = useUpdateUserMutation();
 
-  const [profilePicture, setProfilePicture] = React.useState<string | undefined>(user.profilePicture ?? undefined);
+  const [profilePicture, setProfilePicture] = React.useState<string | undefined>(user.imageUrl ?? undefined);
   const [uploadedProfilePicture, setUploadedProfilePicture] = React.useState<File | null>();
 
   const fullName = `${user.firstName} ${user.lastName}`;

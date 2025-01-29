@@ -11,7 +11,7 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(e => e.FirstName).HasMaxLength(31).IsRequired();
         builder.Property(e => e.LastName).HasMaxLength(31).IsRequired();
         builder.Property(e => e.DisplayName).HasMaxLength(31).IsRequired();
-        builder.Property(e => e.ProfilePicture);
+        builder.Property(e => e.ImageUrl);
         builder.Property(e => e.Description).HasMaxLength(255);
         builder.Property(e => e.CreatedDate).IsRequired();
         builder.Property(e => e.UpdatedDate).IsRequired();

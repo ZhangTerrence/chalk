@@ -12,6 +12,7 @@ import CourseModulesPage from "@/pages/CourseModulesPage.tsx";
 import CoursePage from "@/pages/CoursePage.tsx";
 import CoursesPage from "@/pages/CoursesPage.tsx";
 import DashboardLandingPage from "@/pages/DashboardLandingPage.tsx";
+import FilePage from "@/pages/FilePage.tsx";
 import LandingPage from "@/pages/LandingPage.tsx";
 import LoginPage from "@/pages/LoginPage.tsx";
 import NotFoundPage from "@/pages/NotFoundPage.tsx";
@@ -37,8 +38,9 @@ export default function App() {
               <Route element={<DashboardLayout />}>
                 <Route path="/dashboard" element={<DashboardLandingPage />} />
                 <Route element={<CourseLayout />}>
-                  <Route path="/courses/:id/modules" element={<CourseModulesPage />} />
-                  <Route path="/courses/:id" element={<CoursePage />} />
+                  <Route path="/courses/:courseId/file/:fileId" element={<FilePage />} />
+                  <Route path="/courses/:courseId/modules" element={<CourseModulesPage />} />
+                  <Route path="/courses/:courseId" element={<CoursePage />} />
                 </Route>
               </Route>
               <Route path="/courses" element={<CoursesPage />} />

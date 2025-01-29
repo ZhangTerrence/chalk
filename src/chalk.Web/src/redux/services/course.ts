@@ -3,10 +3,11 @@ import baseApi from "@/redux/services/base.ts";
 import type { Response } from "@/lib/types/_index.ts";
 import type {
   CourseResponse,
-  CreateCourseModuleRequest,
   CreateCourseRequest,
-  UpdateCourseModuleRequest,
+  CreateModuleRequest,
+  ModuleDTO,
   UpdateCourseRequest,
+  UpdateModuleRequest,
 } from "@/lib/types/course.ts";
 
 export const courseApi = baseApi.injectEndpoints({
@@ -41,28 +42,25 @@ export const courseApi = baseApi.injectEndpoints({
         method: "DELETE",
       }),
     }),
-    createCourseModule: builder.mutation<Response<CourseResponse>, CreateCourseModuleRequest>({
+    createModule: builder.mutation<Response<ModuleDTO>, CreateModuleRequest>({
       query: (body) => ({
-        url: "/courses/modules",
+        url: `/courses/${body.courseId}/modules`,
         method: "POST",
-        body: body,
+        body: body.data,
       }),
-      invalidatesTags: (response) => [{ type: "course", id: response?.data.id }],
     }),
-    updateCourseModule: builder.mutation<Response<CourseResponse>, UpdateCourseModuleRequest>({
+    updateModule: builder.mutation<Response<ModuleDTO>, UpdateModuleRequest>({
       query: (body) => ({
-        url: `/courses/modules/${body.id}`,
+        url: `/courses/${body.courseId}/modules/${body.moduleId}`,
         method: "PUT",
         body: body.data,
       }),
-      invalidatesTags: (response) => [{ type: "course", id: response?.data.id }],
     }),
-    deleteCourseModule: builder.mutation<Response<CourseResponse>, number>({
-      query: (courseModuleId) => ({
-        url: `/courses/modules/${courseModuleId}`,
+    deleteModule: builder.mutation<null, { courseId: number; moduleId: number }>({
+      query: (body) => ({
+        url: `/courses/${body.courseId}/modules/${body.moduleId}`,
         method: "DELETE",
       }),
-      invalidatesTags: (response) => [{ type: "course", id: response?.data.id }],
     }),
   }),
 });
@@ -72,7 +70,7 @@ export const {
   useCreateCourseMutation,
   useUpdateCourseMutation,
   useDeleteCourseMutation,
-  useCreateCourseModuleMutation,
-  useUpdateCourseModuleMutation,
-  useDeleteCourseModuleMutation,
+  useCreateModuleMutation,
+  useUpdateModuleMutation,
+  useDeleteModuleMutation,
 } = courseApi;

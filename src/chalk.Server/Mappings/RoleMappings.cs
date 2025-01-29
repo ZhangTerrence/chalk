@@ -6,7 +6,7 @@ namespace chalk.Server.Mappings;
 
 public static class RoleMappings
 {
-    public static Role ToEntity(this CreateRoleRequest request)
+    public static Role ToEntity(this CreateRoleRequest request, long? courseId, long? organizationId)
     {
         return new Role
         {
@@ -15,7 +15,9 @@ public static class RoleMappings
             Permissions = request.Permissions!.Value,
             RelativeRank = request.RelativeRank!.Value,
             CreatedDate = DateTime.UtcNow,
-            UpdatedDate = DateTime.UtcNow
+            UpdatedDate = DateTime.UtcNow,
+            CourseId = courseId,
+            OrganizationId = organizationId
         };
     }
 

@@ -4,7 +4,7 @@ namespace chalk.Server.DTOs;
 
 [Serializable]
 [method: JsonConstructor]
-public record AttachmentDTO(
+public record ModuleDTO(
     [property: JsonRequired]
     [property: JsonPropertyName("id")]
     long Id,
@@ -15,12 +15,12 @@ public record AttachmentDTO(
     [property: JsonPropertyName("description")]
     string? Description,
     [property: JsonRequired]
-    [property: JsonPropertyName("resource")]
-    string Resource,
+    [property: JsonPropertyName("relativeOrder")]
+    int RelativeOrder,
     [property: JsonRequired]
     [property: JsonPropertyName("createdDate")]
     string CreatedDate,
     [property: JsonRequired]
-    [property: JsonPropertyName("updatedDate")]
-    string UpdatedDate
+    [property: JsonPropertyName("files")]
+    IEnumerable<FileDTO> Files
 );

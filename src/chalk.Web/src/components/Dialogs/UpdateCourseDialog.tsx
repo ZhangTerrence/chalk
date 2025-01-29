@@ -28,7 +28,7 @@ export const UpdateCourseDialog = () => {
 
   const course = (dialog.entity as CourseResponse)!;
 
-  const [image, setImage] = React.useState<string | undefined>(course.image ?? undefined);
+  const [image, setImage] = React.useState<string | undefined>(course.imageUrl ?? undefined);
   const [uploadedImage, setUploadedImage] = React.useState<File | null>();
 
   React.useEffect(() => {
@@ -78,13 +78,13 @@ export const UpdateCourseDialog = () => {
     for (let [key, value] of Object.entries(data)) {
       formData.append(key, typeof value === "boolean" || value ? (value as string) : "");
     }
+    if (uploadedImage) {
+      formData.append("image", uploadedImage);
+    }
     formData.append(
       "modules",
       JSON.stringify(modules.sort((a, b) => a.relativeOrder - b.relativeOrder).map((e) => e.id)),
     );
-    if (uploadedImage) {
-      formData.append("image", uploadedImage);
-    }
 
     await updateCourse({ id: course.id, data: formData }).unwrap();
 

@@ -25,6 +25,6 @@ public class UpdateUserRequestValidator : AbstractValidator<UpdateUserRequest>
         RuleFor(e => e.Description)
             .MaximumLength(255)
             .WithMessage("The user's description must have at most 255 characters.");
-        RuleFor(e => e.ProfilePicture);
+        RuleFor(e => e.Image);
     }
 }

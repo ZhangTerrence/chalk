@@ -1,20 +1,21 @@
 namespace chalk.Server.Entities;
 
 /// <summary>
-/// Represents an attachment to either an assignment, submission, or course module.
+/// Represents a module within a course.
 /// </summary>
-public class Attachment
+public class Module
 {
     // Properties
     public long Id { get; set; }
     public required string Name { get; set; }
     public string? Description { get; set; }
-    public required string Resource { get; set; }
+    public required int RelativeOrder { get; set; }
     public required DateTime CreatedDate { get; set; }
     public required DateTime UpdatedDate { get; set; }
 
     // Foreign Keys
-    public long? AssignmentId { get; set; }
-    public long? SubmissionId { get; set; }
-    public long? CourseModuleId { get; set; }
+    public long CourseId { get; set; }
+
+    // Navigation Properties
+    public ICollection<File> Files { get; set; } = [];
 }

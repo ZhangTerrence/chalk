@@ -27,7 +27,7 @@ public static class OrganizationMappings
             organization.Id,
             organization.Name,
             organization.Description,
-            organization.ProfilePicture,
+            organization.ImageUrl,
             organization.IsPublic,
             organization.CreatedDate.ToString(CultureInfo.CurrentCulture),
             organization.Owner.ToDTO(organization.CreatedDate.ToString(CultureInfo.CurrentCulture)),
@@ -44,7 +44,7 @@ public static class OrganizationMappings
             organization.Id,
             organization.Name,
             organization.Description,
-            organization.ProfilePicture,
+            organization.ImageUrl,
             organization.IsPublic,
             organization.CreatedDate.ToString(CultureInfo.CurrentCulture)
         );

@@ -23,7 +23,6 @@ public class EmailService : IEmailService
     {
         var sender = new MailAddress(_senderEmail, SmtpName);
         var receiver = new MailAddress(to);
-
         var smtpClient = new SmtpClient
         {
             Host = SmtpHost,
@@ -33,11 +32,9 @@ public class EmailService : IEmailService
             UseDefaultCredentials = false,
             Credentials = new NetworkCredential(_senderEmail, _senderPassword)
         };
-
         using var message = new MailMessage(sender, receiver);
         message.Subject = subject;
         message.Body = body;
-
         smtpClient.Send(message);
     }
 }

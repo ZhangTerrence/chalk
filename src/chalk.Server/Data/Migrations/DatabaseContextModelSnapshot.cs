@@ -279,66 +279,6 @@ namespace chalk.Server.Data.Migrations
                     b.ToTable("assignment_groups", (string)null);
                 });
 
-            modelBuilder.Entity("chalk.Server.Entities.Attachment", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasColumnName("id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<long?>("AssignmentId")
-                        .HasColumnType("bigint")
-                        .HasColumnName("assignment_id");
-
-                    b.Property<long?>("CourseModuleId")
-                        .HasColumnType("bigint")
-                        .HasColumnName("course_module_id");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_date");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
-                        .HasColumnName("description");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(31)
-                        .HasColumnType("character varying(31)")
-                        .HasColumnName("name");
-
-                    b.Property<string>("Resource")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("resource");
-
-                    b.Property<long?>("SubmissionId")
-                        .HasColumnType("bigint")
-                        .HasColumnName("submission_id");
-
-                    b.Property<DateTime>("UpdatedDate")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_date");
-
-                    b.HasKey("Id")
-                        .HasName("pk_attachments");
-
-                    b.HasIndex("AssignmentId")
-                        .HasDatabaseName("ix_attachments_assignment_id");
-
-                    b.HasIndex("CourseModuleId")
-                        .HasDatabaseName("ix_attachments_course_module_id");
-
-                    b.HasIndex("SubmissionId")
-                        .HasDatabaseName("ix_attachments_submission_id");
-
-                    b.ToTable("attachments", (string)null);
-                });
-
             modelBuilder.Entity("chalk.Server.Entities.Channel", b =>
                 {
                     b.Property<long>("Id")
@@ -443,9 +383,9 @@ namespace chalk.Server.Data.Migrations
                         .HasColumnType("character varying(255)")
                         .HasColumnName("description");
 
-                    b.Property<string>("Image")
+                    b.Property<string>("ImageUrl")
                         .HasColumnType("text")
-                        .HasColumnName("image");
+                        .HasColumnName("image_url");
 
                     b.Property<bool>("IsPublic")
                         .HasColumnType("boolean")
@@ -474,7 +414,7 @@ namespace chalk.Server.Data.Migrations
                     b.ToTable("courses", (string)null);
                 });
 
-            modelBuilder.Entity("chalk.Server.Entities.CourseModule", b =>
+            modelBuilder.Entity("chalk.Server.Entities.File", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -483,9 +423,13 @@ namespace chalk.Server.Data.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
-                    b.Property<long>("CourseId")
+                    b.Property<long?>("AssignmentId")
                         .HasColumnType("bigint")
-                        .HasColumnName("course_id");
+                        .HasColumnName("assignment_id");
+
+                    b.Property<long?>("CourseModuleId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("course_module_id");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("timestamp with time zone")
@@ -496,27 +440,38 @@ namespace chalk.Server.Data.Migrations
                         .HasColumnType("character varying(255)")
                         .HasColumnName("description");
 
+                    b.Property<string>("FileUrl")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("file_url");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(31)
                         .HasColumnType("character varying(31)")
                         .HasColumnName("name");
 
-                    b.Property<int>("RelativeOrder")
-                        .HasColumnType("integer")
-                        .HasColumnName("relative_order");
+                    b.Property<long?>("SubmissionId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("submission_id");
 
                     b.Property<DateTime>("UpdatedDate")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_date");
 
                     b.HasKey("Id")
-                        .HasName("pk_course_modules");
+                        .HasName("pk_files");
 
-                    b.HasIndex("CourseId")
-                        .HasDatabaseName("ix_course_modules_course_id");
+                    b.HasIndex("AssignmentId")
+                        .HasDatabaseName("ix_files_assignment_id");
 
-                    b.ToTable("course_modules", (string)null);
+                    b.HasIndex("CourseModuleId")
+                        .HasDatabaseName("ix_files_course_module_id");
+
+                    b.HasIndex("SubmissionId")
+                        .HasDatabaseName("ix_files_submission_id");
+
+                    b.ToTable("files", (string)null);
                 });
 
             modelBuilder.Entity("chalk.Server.Entities.Message", b =>
@@ -562,6 +517,51 @@ namespace chalk.Server.Data.Migrations
                     b.ToTable("messages", (string)null);
                 });
 
+            modelBuilder.Entity("chalk.Server.Entities.Module", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("CourseId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("course_id");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_date");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("description");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(31)
+                        .HasColumnType("character varying(31)")
+                        .HasColumnName("name");
+
+                    b.Property<int>("RelativeOrder")
+                        .HasColumnType("integer")
+                        .HasColumnName("relative_order");
+
+                    b.Property<DateTime>("UpdatedDate")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_date");
+
+                    b.HasKey("Id")
+                        .HasName("pk_modules");
+
+                    b.HasIndex("CourseId")
+                        .HasDatabaseName("ix_modules_course_id");
+
+                    b.ToTable("modules", (string)null);
+                });
+
             modelBuilder.Entity("chalk.Server.Entities.Organization", b =>
                 {
                     b.Property<long>("Id")
@@ -580,6 +580,10 @@ namespace chalk.Server.Data.Migrations
                         .HasColumnType("character varying(255)")
                         .HasColumnName("description");
 
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("text")
+                        .HasColumnName("image_url");
+
                     b.Property<bool>("IsPublic")
                         .HasColumnType("boolean")
                         .HasColumnName("is_public");
@@ -593,10 +597,6 @@ namespace chalk.Server.Data.Migrations
                     b.Property<long>("OwnerId")
                         .HasColumnType("bigint")
                         .HasColumnName("owner_id");
-
-                    b.Property<string>("ProfilePicture")
-                        .HasColumnType("text")
-                        .HasColumnName("profile_picture");
 
                     b.Property<DateTime>("UpdatedDate")
                         .HasColumnType("timestamp with time zone")
@@ -793,6 +793,10 @@ namespace chalk.Server.Data.Migrations
                         .HasColumnType("character varying(31)")
                         .HasColumnName("first_name");
 
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("text")
+                        .HasColumnName("image_url");
+
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasMaxLength(31)
@@ -828,10 +832,6 @@ namespace chalk.Server.Data.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("boolean")
                         .HasColumnName("phone_number_confirmed");
-
-                    b.Property<string>("ProfilePicture")
-                        .HasColumnType("text")
-                        .HasColumnName("profile_picture");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text")
@@ -1050,27 +1050,6 @@ namespace chalk.Server.Data.Migrations
                         .HasConstraintName("fk_assignment_groups_courses_course_id");
                 });
 
-            modelBuilder.Entity("chalk.Server.Entities.Attachment", b =>
-                {
-                    b.HasOne("chalk.Server.Entities.Assignment", null)
-                        .WithMany("Attachments")
-                        .HasForeignKey("AssignmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .HasConstraintName("fk_attachments_assignments_assignment_id");
-
-                    b.HasOne("chalk.Server.Entities.CourseModule", null)
-                        .WithMany("Attachments")
-                        .HasForeignKey("CourseModuleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .HasConstraintName("fk_attachments_course_modules_course_module_id");
-
-                    b.HasOne("chalk.Server.Entities.Submission", null)
-                        .WithMany("Attachments")
-                        .HasForeignKey("SubmissionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .HasConstraintName("fk_attachments_submissions_submission_id");
-                });
-
             modelBuilder.Entity("chalk.Server.Entities.Channel", b =>
                 {
                     b.HasOne("chalk.Server.Entities.Course", null)
@@ -1107,14 +1086,25 @@ namespace chalk.Server.Data.Migrations
                     b.Navigation("Organization");
                 });
 
-            modelBuilder.Entity("chalk.Server.Entities.CourseModule", b =>
+            modelBuilder.Entity("chalk.Server.Entities.File", b =>
                 {
-                    b.HasOne("chalk.Server.Entities.Course", null)
-                        .WithMany("Modules")
-                        .HasForeignKey("CourseId")
+                    b.HasOne("chalk.Server.Entities.Assignment", null)
+                        .WithMany("Files")
+                        .HasForeignKey("AssignmentId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_course_modules_courses_course_id");
+                        .HasConstraintName("fk_files_assignments_assignment_id");
+
+                    b.HasOne("chalk.Server.Entities.Module", null)
+                        .WithMany("Files")
+                        .HasForeignKey("CourseModuleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasConstraintName("fk_files_modules_course_module_id");
+
+                    b.HasOne("chalk.Server.Entities.Submission", null)
+                        .WithMany("Files")
+                        .HasForeignKey("SubmissionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasConstraintName("fk_files_submissions_submission_id");
                 });
 
             modelBuilder.Entity("chalk.Server.Entities.Message", b =>
@@ -1132,6 +1122,16 @@ namespace chalk.Server.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_messages_user_channels_user_id_channel_id");
+                });
+
+            modelBuilder.Entity("chalk.Server.Entities.Module", b =>
+                {
+                    b.HasOne("chalk.Server.Entities.Course", null)
+                        .WithMany("Modules")
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_modules_courses_course_id");
                 });
 
             modelBuilder.Entity("chalk.Server.Entities.Organization", b =>
@@ -1279,7 +1279,7 @@ namespace chalk.Server.Data.Migrations
 
             modelBuilder.Entity("chalk.Server.Entities.Assignment", b =>
                 {
-                    b.Navigation("Attachments");
+                    b.Navigation("Files");
 
                     b.Navigation("Submissions");
                 });
@@ -1313,9 +1313,9 @@ namespace chalk.Server.Data.Migrations
                     b.Navigation("Users");
                 });
 
-            modelBuilder.Entity("chalk.Server.Entities.CourseModule", b =>
+            modelBuilder.Entity("chalk.Server.Entities.Module", b =>
                 {
-                    b.Navigation("Attachments");
+                    b.Navigation("Files");
                 });
 
             modelBuilder.Entity("chalk.Server.Entities.Organization", b =>
@@ -1333,7 +1333,7 @@ namespace chalk.Server.Data.Migrations
 
             modelBuilder.Entity("chalk.Server.Entities.Submission", b =>
                 {
-                    b.Navigation("Attachments");
+                    b.Navigation("Files");
                 });
 
             modelBuilder.Entity("chalk.Server.Entities.User", b =>

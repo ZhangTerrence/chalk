@@ -18,8 +18,8 @@ public record CourseResponse(
     [property: JsonPropertyName("description")]
     string? Description,
     [property: JsonRequired]
-    [property: JsonPropertyName("image")]
-    string? Image,
+    [property: JsonPropertyName("imageUrl")]
+    string? ImageUrl,
     [property: JsonRequired]
     [property: JsonPropertyName("isPublic")]
     bool IsPublic,
@@ -37,5 +37,5 @@ public record CourseResponse(
     IEnumerable<RoleDTO> Roles,
     [property: JsonRequired]
     [property: JsonPropertyName("modules")]
-    IEnumerable<CourseModuleDTO> Modules
+    IEnumerable<ModuleDTO> Modules
 );

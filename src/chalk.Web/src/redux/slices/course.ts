@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 import { courseApi } from "@/redux/services/course.ts";
+import { fileApi } from "@/redux/services/file.ts";
 import type { RootState } from "@/redux/store.ts";
 
 import type { CourseResponse } from "@/lib/types/course.ts";
@@ -16,9 +17,32 @@ export const courseSlice = createSlice({
     builder.addMatcher(courseApi.endpoints.createCourse.matchFulfilled, (_, { payload }) => payload.data);
     builder.addMatcher(courseApi.endpoints.updateCourse.matchFulfilled, (_, { payload }) => payload.data);
     builder.addMatcher(courseApi.endpoints.deleteCourse.matchFulfilled, () => null);
-    builder.addMatcher(courseApi.endpoints.createCourseModule.matchFulfilled, (_, { payload }) => payload.data);
-    builder.addMatcher(courseApi.endpoints.updateCourseModule.matchFulfilled, (_, { payload }) => payload.data);
-    builder.addMatcher(courseApi.endpoints.deleteCourseModule.matchFulfilled, (_, { payload }) => payload.data);
+    builder.addMatcher(courseApi.endpoints.createModule.matchFulfilled, (state, { payload }) => {
+      if (state) {
+        state.modules = [...state.modules, payload.data];
+      }
+    });
+    builder.addMatcher(courseApi.endpoints.updateModule.matchFulfilled, (state, { payload }) => {
+      if (state) {
+        const modules = [...state.modules];
+        const index = modules.map((e) => e.id).indexOf(payload.data.id);
+        modules[index] = payload.data;
+        state.modules = modules;
+      }
+    });
+    builder.addMatcher(courseApi.endpoints.deleteModule.matchFulfilled, (state, { meta }) => {
+      if (state) {
+        state.modules = state.modules.filter((e) => e.id !== meta.arg.originalArgs.moduleId);
+      }
+    });
+    builder.addMatcher(fileApi.endpoints.createFileForModule.matchFulfilled, (state, { payload }) => {
+      if (state) {
+        const modules = [...state.modules];
+        const index = modules.map((e) => e.id).indexOf(payload.data.id);
+        modules[index] = payload.data;
+        state.modules = modules;
+      }
+    });
   },
 });
 

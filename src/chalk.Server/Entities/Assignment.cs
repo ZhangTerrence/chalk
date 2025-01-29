@@ -19,6 +19,6 @@ public class Assignment
     public long AssignmentGroupId { get; set; }
 
     // Navigation Properties
-    public ICollection<Attachment> Attachments { get; set; } = [];
+    public ICollection<File> Files { get; set; } = [];
     public ICollection<Submission> Submissions { get; set; } = [];
 }

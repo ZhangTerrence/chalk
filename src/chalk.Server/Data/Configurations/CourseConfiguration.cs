@@ -16,7 +16,7 @@ public class CourseConfiguration : IEntityTypeConfiguration<Course>
         builder.Property(e => e.Name).HasMaxLength(31).IsRequired();
         builder.Property(e => e.Code).HasMaxLength(31);
         builder.Property(e => e.Description).HasMaxLength(255);
-        builder.Property(e => e.Image);
+        builder.Property(e => e.ImageUrl);
         builder.Property(e => e.IsPublic).IsRequired();
         builder.Property(e => e.CreatedDate).IsRequired();
         builder.Property(e => e.UpdatedDate).IsRequired();

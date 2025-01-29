@@ -4,9 +4,9 @@ export enum DialogType {
   UpdateAppearance,
   CreateCourse,
   UpdateCourse,
-  CreateCourseModule,
-  UpdateCourseModule,
+  CreateModule,
+  UpdateModule,
   CreateOrganization,
   UpdateOrganization,
-  CreateAttachment,
+  CreateFile,
 }

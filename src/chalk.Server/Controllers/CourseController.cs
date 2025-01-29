@@ -1,3 +1,4 @@
+using chalk.Server.DTOs;
 using chalk.Server.DTOs.Requests;
 using chalk.Server.DTOs.Responses;
 using chalk.Server.Mappings;
@@ -17,25 +18,22 @@ public class CourseController : ControllerBase
 
     private readonly IValidator<CreateCourseRequest> _createCourseRequestValidator;
     private readonly IValidator<UpdateCourseRequest> _updateCourseRequestValidator;
-    private readonly IValidator<CreateCourseModuleRequest> _createCourseModuleRequestValidator;
-    private readonly IValidator<UpdateCourseModuleRequest> _updateCourseModuleRequestValidator;
-    private readonly IValidator<CreateAttachmentRequest> _createAttachmentRequestValidator;
+    private readonly IValidator<CreateModuleRequest> _createModuleRequestValidator;
+    private readonly IValidator<UpdateModuleRequest> _updateModuleRequestValidator;
 
     public CourseController(
         ICourseService courseService,
         IValidator<CreateCourseRequest> createCourseRequestValidator,
         IValidator<UpdateCourseRequest> updateCourseRequestValidator,
-        IValidator<CreateCourseModuleRequest> createCourseModuleRequestValidator,
-        IValidator<UpdateCourseModuleRequest> updateCourseModuleRequestValidator,
-        IValidator<CreateAttachmentRequest> createAttachmentRequestValidator
+        IValidator<CreateModuleRequest> createModuleRequestValidator,
+        IValidator<UpdateModuleRequest> updateModuleRequestValidator
     )
     {
         _courseService = courseService;
         _createCourseRequestValidator = createCourseRequestValidator;
         _updateCourseRequestValidator = updateCourseRequestValidator;
-        _createCourseModuleRequestValidator = createCourseModuleRequestValidator;
-        _updateCourseModuleRequestValidator = updateCourseModuleRequestValidator;
-        _createAttachmentRequestValidator = createAttachmentRequestValidator;
+        _createModuleRequestValidator = createModuleRequestValidator;
+        _updateModuleRequestValidator = updateModuleRequestValidator;
     }
 
     [HttpGet]
@@ -65,6 +63,19 @@ public class CourseController : ControllerBase
         return Created(nameof(CreateCourse), new Response<CourseResponse>(null, course.ToResponse()));
     }
 
+    [HttpPost("{courseId:long}/modules")]
+    public async Task<IActionResult> CreateModule([FromRoute] long courseId, [FromBody] CreateModuleRequest request)
+    {
+        var validationResult = await _createModuleRequestValidator.ValidateAsync(request);
+        if (!validationResult.IsValid)
+        {
+            return BadRequest(new Response<object>(validationResult.GetErrorMessages()));
+        }
+
+        var module = await _courseService.CreateCourseModuleAsync(courseId, request);
+        return Created(nameof(CreateModule), new Response<ModuleDTO>(null, module.ToDTO()));
+    }
+
     [HttpPut("{courseId:long}")]
     public async Task<IActionResult> UpdateCourse([FromRoute] long courseId, [FromForm] UpdateCourseRequest request)
     {
@@ -78,6 +89,23 @@ public class CourseController : ControllerBase
         return Ok(new Response<CourseResponse>(null, course.ToResponse()));
     }
 
+    [HttpPut("{courseId:long}/modules/{moduleId:long}")]
+    public async Task<IActionResult> UpdateCourseModule(
+        [FromRoute] long courseId,
+        [FromRoute] long moduleId,
+        [FromBody] UpdateModuleRequest request
+    )
+    {
+        var validationResult = await _updateModuleRequestValidator.ValidateAsync(request);
+        if (!validationResult.IsValid)
+        {
+            return BadRequest(new Response<object>(validationResult.GetErrorMessages()));
+        }
+
+        var module = await _courseService.UpdateCourseModuleAsync(courseId, moduleId, request);
+        return Ok(new Response<ModuleDTO>(null, module.ToDTO()));
+    }
+
     [HttpDelete("{courseId:long}")]
     public async Task<IActionResult> DeleteCourse([FromRoute] long courseId)
     {
@@ -85,49 +113,10 @@ public class CourseController : ControllerBase
         return NoContent();
     }
 
-    [HttpPost("modules")]
-    public async Task<IActionResult> AddCourseModule([FromBody] CreateCourseModuleRequest request)
+    [HttpDelete("{courseId:long}/modules/{moduleId:long}")]
+    public async Task<IActionResult> DeleteCourseModule([FromRoute] long courseId, [FromRoute] long moduleId)
     {
-        var validationResult = await _createCourseModuleRequestValidator.ValidateAsync(request);
-        if (!validationResult.IsValid)
-        {
-            return BadRequest(new Response<object>(validationResult.GetErrorMessages()));
-        }
-
-        var course = await _courseService.CreateCourseModuleAsync(request);
-        return Created(nameof(AddCourseModule), new Response<CourseResponse>(null, course.ToResponse()));
-    }
-
-    [HttpPut("modules/{courseModuleId:long}")]
-    public async Task<IActionResult> UpdateCourseModule([FromRoute] long courseModuleId, [FromBody] UpdateCourseModuleRequest request)
-    {
-        var validationResult = await _updateCourseModuleRequestValidator.ValidateAsync(request);
-        if (!validationResult.IsValid)
-        {
-            return BadRequest(new Response<object>(validationResult.GetErrorMessages()));
-        }
-
-        var course = await _courseService.UpdateCourseModuleAsync(courseModuleId, request);
-        return Ok(new Response<CourseResponse>(null, course.ToResponse()));
-    }
-
-    [HttpDelete("modules/{courseModuleId:long}")]
-    public async Task<IActionResult> DeleteCourseModule([FromRoute] long courseModuleId)
-    {
-        var course = await _courseService.DeleteCourseModuleAsync(courseModuleId);
-        return Ok(new Response<CourseResponse>(null, course.ToResponse()));
-    }
-
-    [HttpPost("modules/{courseModuleId:long}/attach")]
-    public async Task<IActionResult> AddCourseModuleAttachment([FromRoute] long courseModuleId, [FromBody] CreateAttachmentRequest request)
-    {
-        var validationResult = await _createAttachmentRequestValidator.ValidateAsync(request);
-        if (!validationResult.IsValid)
-        {
-            return BadRequest(new Response<object>(validationResult.GetErrorMessages()));
-        }
-
-        var course = await _courseService.AddCourseModuleAttachmentAsync(courseModuleId, request);
-        return Created(nameof(AddCourseModuleAttachment), new Response<CourseResponse>(null, course.ToResponse()));
+        await _courseService.DeleteCourseModuleAsync(courseId, moduleId);
+        return NoContent();
     }
 }

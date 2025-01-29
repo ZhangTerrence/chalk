@@ -10,7 +10,7 @@ export type UserDTO = {
   lastName: string;
   displayName: string;
   description: string | null;
-  profilePicture: string | null;
+  imageUrl: string | null;
   createdDate: string;
   joinedDate: string | null;
 };
@@ -22,7 +22,7 @@ export type UserResponse = {
   lastName: string;
   displayName: string;
   description: string | null;
-  profilePicture: string | null;
+  imageUrl: string | null;
   createdDate: string;
   directMessages: ChannelDTO[];
   courses: CourseDTO[];

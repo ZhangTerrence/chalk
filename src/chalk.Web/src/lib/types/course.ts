@@ -1,7 +1,4 @@
-import type { AttachmentDTO } from "@/lib/types/attachment.ts";
-import type { OrganizationDTO } from "@/lib/types/organization.ts";
-import type { RoleDTO } from "@/lib/types/role.ts";
-import type { UserDTO } from "@/lib/types/user.ts";
+import type { FileDTO } from "@/lib/types/file.ts";
 
 export type CreateCourseRequest = {
   name: string;
@@ -15,14 +12,17 @@ export type UpdateCourseRequest = {
   data: FormData;
 };
 
-export type CreateCourseModuleRequest = {
-  name: string;
-  description?: string;
+export type CreateModuleRequest = {
   courseId: number;
+  data: {
+    name: string;
+    description?: string;
+  };
 };
 
-export type UpdateCourseModuleRequest = {
-  id: number;
+export type UpdateModuleRequest = {
+  courseId: number;
+  moduleId: number;
   data: {
     name: string;
     description?: string;
@@ -39,13 +39,13 @@ export type CourseDTO = {
   createdDate: string;
 };
 
-export type CourseModuleDTO = {
+export type ModuleDTO = {
   id: number;
   name: string;
   description: string | null;
   relativeOrder: number;
   createdDate: string;
-  attachments: AttachmentDTO[];
+  files: FileDTO[];
 };
 
 export type CourseResponse = {
@@ -53,11 +53,8 @@ export type CourseResponse = {
   name: string;
   code: string | null;
   description: string | null;
-  image: string | null;
+  imageUrl: string | null;
   isPublic: boolean;
   createdDate: string;
-  organization?: OrganizationDTO;
-  users: UserDTO[];
-  roles: RoleDTO[];
-  modules: CourseModuleDTO[];
+  modules: ModuleDTO[];
 };

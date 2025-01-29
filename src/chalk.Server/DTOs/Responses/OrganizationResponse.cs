@@ -15,8 +15,8 @@ public record OrganizationResponse(
     [property: JsonPropertyName("description")]
     string? Description,
     [property: JsonRequired]
-    [property: JsonPropertyName("profilePicture")]
-    string? ProfilePicture,
+    [property: JsonPropertyName("imageUrl")]
+    string? ImageUrl,
     [property: JsonRequired]
     [property: JsonPropertyName("isPublic")]
     bool IsPublic,

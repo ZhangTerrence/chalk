@@ -3,6 +3,7 @@ using chalk.Server.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using File = chalk.Server.Entities.File;
 
 namespace chalk.Server.Data;
 
@@ -15,12 +16,12 @@ public class DatabaseContext : IdentityDbContext<User, IdentityRole<long>, long>
 
     public DbSet<Assignment> Assignments { get; set; }
     public DbSet<AssignmentGroup> AssignmentGroups { get; set; }
-    public DbSet<Attachment> Attachments { get; set; }
     public DbSet<Channel> Channels { get; set; }
     public DbSet<ChannelRolePermission> ChannelRolePermissions { get; set; }
     public DbSet<Course> Courses { get; set; }
-    public DbSet<CourseModule> CourseModules { get; set; }
+    public DbSet<File> Files { get; set; }
     public DbSet<Message> Messages { get; set; }
+    public DbSet<Module> Modules { get; set; }
     public DbSet<Organization> Organizations { get; set; }
     public DbSet<Role> AppRoles { get; set; }
     public DbSet<Submission> Submissions { get; set; }
@@ -44,12 +45,12 @@ public class DatabaseContext : IdentityDbContext<User, IdentityRole<long>, long>
 
         new AssignmentConfiguration().Configure(builder.Entity<Assignment>());
         new AssignmentGroupConfiguration().Configure(builder.Entity<AssignmentGroup>());
-        new AttachmentConfiguration().Configure(builder.Entity<Attachment>());
         new ChannelConfiguration().Configure(builder.Entity<Channel>());
         new ChannelRolePermissionConfiguration().Configure(builder.Entity<ChannelRolePermission>());
         new CourseConfiguration().Configure(builder.Entity<Course>());
-        new CourseModuleConfiguration().Configure(builder.Entity<CourseModule>());
+        new FileConfiguration().Configure(builder.Entity<File>());
         new MessageConfiguration().Configure(builder.Entity<Message>());
+        new ModuleConfiguration().Configure(builder.Entity<Module>());
         new OrganizationConfiguration().Configure(builder.Entity<Organization>());
         new RoleConfiguration().Configure(builder.Entity<Role>());
         new SubmissionConfiguration().Configure(builder.Entity<Submission>());

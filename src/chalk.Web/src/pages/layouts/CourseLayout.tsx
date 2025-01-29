@@ -9,10 +9,10 @@ import { SidebarTrigger, useSidebar } from "@/components/ui/sidebar.tsx";
 import { useGetCourseQuery } from "@/redux/services/course.ts";
 
 export default function CourseLayout() {
-  const { id } = useParams();
+  const { courseId } = useParams();
   const { isMobile } = useSidebar();
 
-  const { data, isFetching } = useGetCourseQuery(Number.parseInt(id ?? ""), {
+  const { data, isFetching } = useGetCourseQuery(Number.parseInt(courseId ?? ""), {
     refetchOnMountOrArgChange: true,
   });
 
