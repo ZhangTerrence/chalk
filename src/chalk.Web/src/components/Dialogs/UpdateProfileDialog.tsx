@@ -25,16 +25,10 @@ export const UpdateProfileDialog = () => {
   const dispatch = useAppDispatch();
   const [updateUser, { isLoading, isSuccess }] = useUpdateUserMutation();
 
-  const [profilePicture, setProfilePicture] = React.useState<string | undefined>(user.imageUrl ?? undefined);
-  const [uploadedProfilePicture, setUploadedProfilePicture] = React.useState<File | null>();
+  const [image, setImage] = React.useState<string | undefined>(user.imageUrl ?? undefined);
+  const [uploadedImage, setUploadedImage] = React.useState<File | null>();
 
   const fullName = `${user.firstName} ${user.lastName}`;
-
-  React.useEffect(() => {
-    if (!isLoading && isSuccess) {
-      toast.success("Successfully updated profile.");
-    }
-  }, [isLoading, isSuccess]);
 
   const form = useForm<UpdateUserType>({
     resolver: zodResolver(UpdateUserSchema),
@@ -42,9 +36,17 @@ export const UpdateProfileDialog = () => {
       firstName: user.firstName,
       lastName: user.lastName,
       displayName: user.displayName,
-      description: user.description ?? "",
+      description: user.description ?? undefined,
     },
   });
+
+  React.useEffect(() => {
+    if (!isLoading && isSuccess) {
+      dispatch(setDialog(null));
+      form.reset();
+      toast.success("Successfully updated profile.");
+    }
+  }, [isLoading, isSuccess]);
 
   const onFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { files, displayUrl } = getImageData(event);
@@ -53,8 +55,8 @@ export const UpdateProfileDialog = () => {
       return;
     }
 
-    setProfilePicture(displayUrl);
-    setUploadedProfilePicture(files.item(0)!);
+    setImage(displayUrl);
+    setUploadedImage(files.item(0)!);
   };
 
   const onSubmit = async (data: UpdateUserType) => {
@@ -62,19 +64,20 @@ export const UpdateProfileDialog = () => {
       user.firstName === data.firstName &&
       user.lastName === data.lastName &&
       user.displayName === data.displayName &&
-      (user.description ?? "") === data.description &&
-      !uploadedProfilePicture
+      (user.description ?? undefined) === data.description &&
+      !uploadedImage
     ) {
+      dispatch(setDialog(null));
       return;
     }
 
     const formData = new FormData();
 
     for (let [key, value] of Object.entries(data)) {
-      formData.append(key, value);
+      formData.append(key, value ?? "");
     }
-    if (uploadedProfilePicture) {
-      formData.append("profilePicture", uploadedProfilePicture);
+    if (uploadedImage) {
+      formData.append("image", uploadedImage);
     }
 
     await updateUser(formData).unwrap();
@@ -93,11 +96,7 @@ export const UpdateProfileDialog = () => {
           <div className="flex gap-x-4">
             <div className="relative aspect-square w-36">
               <Avatar className="w-full h-full">
-                <AvatarImage
-                  src={profilePicture}
-                  alt={fullName}
-                  className="rounded-full border border-primary object-contain"
-                />
+                <AvatarImage src={image} alt={fullName} className="rounded-full border border-primary object-contain" />
                 <AvatarFallback className="rounded-full border border-primary text-2xl">
                   {fullName.charAt(0).toUpperCase()}
                 </AvatarFallback>

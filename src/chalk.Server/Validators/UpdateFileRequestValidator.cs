@@ -7,6 +7,14 @@ public class UpdateFileRequestValidator : AbstractValidator<UpdateFileRequest>
 {
     public UpdateFileRequestValidator()
     {
+        RuleFor(e => e.For)
+            .NotNull()
+            .WithMessage("Must specify whether the file is for either a module, assignment, or submission.")
+            .IsInEnum()
+            .WithMessage("Invalid choice.");
+        RuleFor(e => e.EntityId)
+            .NotNull()
+            .WithMessage("Must specify the id of the module, assignment, or submission.");
         RuleFor(e => e.Name)
             .NotEmpty()
             .WithMessage("The file's name is required.")
@@ -15,11 +23,11 @@ public class UpdateFileRequestValidator : AbstractValidator<UpdateFileRequest>
         RuleFor(e => e.Description)
             .MaximumLength(255)
             .WithMessage("The file's description must have at most 255 characters.");
-        RuleFor(e => e.UpdatedFile)
+        RuleFor(e => e.FileChanged)
             .NotNull()
             .WithMessage("Must specify whether the file has been changed.");
-        RuleFor(e => e.File)
-            .NotEmpty()
-            .WithMessage("The file is required.");
+        RuleFor(e => e.NewFile)
+            .NotEmpty().When(e => e.FileChanged != null && e.FileChanged!.Value)
+            .WithMessage("The new file is required.");
     }
 }

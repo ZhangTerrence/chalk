@@ -22,14 +22,6 @@ export const CreateCourseDialog = () => {
   const dispatch = useAppDispatch();
   const [createCourse, { isLoading, isSuccess }] = useCreateCourseMutation();
 
-  React.useEffect(() => {
-    if (!isLoading && isSuccess) {
-      dispatch(setDialog(null));
-      form.reset();
-      toast.success("Successfully created course.");
-    }
-  }, [isLoading, isSuccess]);
-
   const form = useForm<CreateCourseType>({
     resolver: zodResolver(CreateCourseSchema),
     defaultValues: {
@@ -39,6 +31,14 @@ export const CreateCourseDialog = () => {
       isPublic: false,
     },
   });
+
+  React.useEffect(() => {
+    if (!isLoading && isSuccess) {
+      dispatch(setDialog(null));
+      form.reset();
+      toast.success("Successfully created course.");
+    }
+  }, [isLoading, isSuccess]);
 
   return (
     <>

@@ -1,11 +1,10 @@
 using chalk.Server.Configurations;
 using chalk.Server.Data;
 using chalk.Server.DTOs.Requests;
-using chalk.Server.Entities;
 using chalk.Server.Mappings;
 using chalk.Server.Services.Interfaces;
+using chalk.Server.Shared;
 using Microsoft.EntityFrameworkCore;
-using File = chalk.Server.Entities.File;
 
 namespace chalk.Server.Services;
 
@@ -20,50 +19,83 @@ public class FileService : IFileService
         _cloudService = cloudService;
     }
 
-    public async Task<Module> CreateFileForModule(long moduleId, CreateFileRequest request)
+    public async Task<T> CreateFile<T>(CreateFileRequest request)
     {
-        var module = await _context.Modules
-            .Include(e => e.Files)
-            .FirstOrDefaultAsync(e => e.Id == moduleId);
-        if (module is null)
+        switch (request.For)
         {
-            throw new ServiceException("Module not found.", StatusCodes.Status404NotFound);
+            case For.Module:
+            {
+                var module = await _context.Modules
+                    .Include(e => e.Files)
+                    .FirstOrDefaultAsync(e => e.Id == request.EntityId);
+                if (module is null)
+                {
+                    throw new ServiceException("Module not found.", StatusCodes.Status404NotFound);
+                }
+
+                var course = await _context.Courses.FindAsync(module.CourseId);
+                if (course is null)
+                {
+                    throw new ServiceException("Course not found.", StatusCodes.Status404NotFound);
+                }
+
+                var url = await _cloudService.UploadAsync(Guid.NewGuid().ToString(), request.File);
+                var file = request.ToEntity(url);
+                module.Files.Add(file);
+                module.UpdatedDate = DateTime.UtcNow;
+                course.UpdatedDate = DateTime.UtcNow;
+
+                await _context.SaveChangesAsync();
+                return (T)Convert.ChangeType(module, typeof(T));
+            }
+            default:
+                throw new NotImplementedException();
         }
-
-        var course = await _context.Courses.FindAsync(module.CourseId);
-        if (course is null)
-        {
-            throw new ServiceException("Course not found.", StatusCodes.Status404NotFound);
-        }
-
-        var url = await _cloudService.UploadAsync(Guid.NewGuid().ToString(), request.File);
-        var file = request.ToEntity(url);
-        module.Files.Add(file);
-        module.UpdatedDate = DateTime.UtcNow;
-        course.UpdatedDate = DateTime.UtcNow;
-
-        await _context.SaveChangesAsync();
-        return module;
     }
 
-    public async Task<File> UpdateFile(long fileId, UpdateFileRequest request)
+    public async Task<T> UpdateFile<T>(long fileId, UpdateFileRequest request)
     {
-        var file = await _context.Files.FindAsync(fileId);
-        if (file is null)
+        switch (request.For)
         {
-            throw new ServiceException("File not found.", StatusCodes.Status404NotFound);
-        }
+            case For.Module:
+            {
+                var module = await _context.Modules
+                    .Include(e => e.Files)
+                    .FirstOrDefaultAsync(e => e.Id == request.EntityId);
+                if (module is null)
+                {
+                    throw new ServiceException("Module not found.", StatusCodes.Status404NotFound);
+                }
 
-        file.Name = request.Name;
-        file.Description = request.Description;
-        if (request.UpdatedFile!.Value)
-        {
-            file.FileUrl = await _cloudService.UploadAsync(Guid.NewGuid().ToString(), request.File);
-        }
-        file.UpdatedDate = DateTime.UtcNow;
+                var course = await _context.Courses.FindAsync(module.CourseId);
+                if (course is null)
+                {
+                    throw new ServiceException("Course not found.", StatusCodes.Status404NotFound);
+                }
 
-        await _context.SaveChangesAsync();
-        return file;
+                var file = await _context.Files.FindAsync(fileId);
+                if (file is null)
+                {
+                    throw new ServiceException("File not found.", StatusCodes.Status404NotFound);
+                }
+
+                file.Name = request.Name;
+                file.Description = request.Description;
+                if (request.FileChanged!.Value)
+                {
+                    await _cloudService.DeleteAsync(file.FileUrl);
+                    file.FileUrl = await _cloudService.UploadAsync(Guid.NewGuid().ToString(), request.NewFile!);
+                }
+                file.UpdatedDate = DateTime.UtcNow;
+                module.UpdatedDate = DateTime.UtcNow;
+                course.UpdatedDate = DateTime.UtcNow;
+
+                await _context.SaveChangesAsync();
+                return (T)Convert.ChangeType(module, typeof(T));
+            }
+            default:
+                throw new NotImplementedException();
+        }
     }
 
     public async Task DeleteFile(long fileId)

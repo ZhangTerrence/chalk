@@ -31,14 +31,6 @@ export const UpdateCourseDialog = () => {
   const [image, setImage] = React.useState<string | undefined>(course.imageUrl ?? undefined);
   const [uploadedImage, setUploadedImage] = React.useState<File | null>();
 
-  React.useEffect(() => {
-    if (!isLoading && isSuccess) {
-      dispatch(setDialog(null));
-      form.reset();
-      toast.success("Successfully edited course.");
-    }
-  }, [isLoading, isSuccess]);
-
   const form = useForm<UpdateCourseType>({
     resolver: zodResolver(UpdateCourseSchema),
     defaultValues: {
@@ -48,6 +40,14 @@ export const UpdateCourseDialog = () => {
       isPublic: course.isPublic,
     },
   });
+
+  React.useEffect(() => {
+    if (!isLoading && isSuccess) {
+      dispatch(setDialog(null));
+      form.reset();
+      toast.success("Successfully edited course.");
+    }
+  }, [isLoading, isSuccess]);
 
   const onFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { files, displayUrl } = getImageData(event);
@@ -63,11 +63,12 @@ export const UpdateCourseDialog = () => {
   const onSubmit = async (data: UpdateCourseType) => {
     if (
       course.name === data.name &&
-      (course.code ?? "") === data.code &&
-      (course.description ?? "") === data.description &&
+      (course.code ?? undefined) === data.code &&
+      (course.description ?? undefined) === data.description &&
       course.isPublic === data.isPublic &&
       !uploadedImage
     ) {
+      dispatch(setDialog(null));
       return;
     }
 
@@ -76,7 +77,7 @@ export const UpdateCourseDialog = () => {
     const formData = new FormData();
 
     for (let [key, value] of Object.entries(data)) {
-      formData.append(key, typeof value === "boolean" || value ? (value as string) : "");
+      formData.append(key, typeof value === "boolean" || value ? value.toString() : "");
     }
     if (uploadedImage) {
       formData.append("image", uploadedImage);

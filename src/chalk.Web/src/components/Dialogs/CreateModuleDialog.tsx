@@ -23,14 +23,6 @@ export const CreateModuleDialog = () => {
   const dispatch = useAppDispatch();
   const [createModule, { isLoading, isSuccess }] = useCreateModuleMutation();
 
-  React.useEffect(() => {
-    if (!isLoading && isSuccess) {
-      dispatch(setDialog(null));
-      form.reset();
-      toast.success("Successfully created module.");
-    }
-  }, [isLoading, isSuccess]);
-
   const form = useForm<CreateModuleType>({
     resolver: zodResolver(CreateModuleSchema),
     defaultValues: {
@@ -38,6 +30,14 @@ export const CreateModuleDialog = () => {
       description: "",
     },
   });
+
+  React.useEffect(() => {
+    if (!isLoading && isSuccess) {
+      dispatch(setDialog(null));
+      form.reset();
+      toast.success("Successfully created module.");
+    }
+  }, [isLoading, isSuccess]);
 
   return (
     <>

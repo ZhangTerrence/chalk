@@ -6,5 +6,5 @@ public interface ICloudService
 
     public Task<string> UploadImageAsync(string hash, IFormFile file);
 
-    public Task DeleteAsync(string hash);
+    public Task DeleteAsync(string url);
 }

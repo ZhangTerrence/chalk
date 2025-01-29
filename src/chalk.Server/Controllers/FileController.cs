@@ -1,8 +1,10 @@
 using chalk.Server.DTOs;
 using chalk.Server.DTOs.Requests;
 using chalk.Server.DTOs.Responses;
+using chalk.Server.Entities;
 using chalk.Server.Mappings;
 using chalk.Server.Services.Interfaces;
+using chalk.Server.Shared;
 using chalk.Server.Utilities;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
@@ -30,8 +32,8 @@ public class FileController : ControllerBase
         _updateFileRequestValidator = updateFileRequestValidator;
     }
 
-    [HttpPost("modules/{moduleId:long}")]
-    public async Task<IActionResult> CreateModuleFile([FromRoute] long moduleId, [FromForm] CreateFileRequest request)
+    [HttpPost]
+    public async Task<IActionResult> CreateFile([FromForm] CreateFileRequest request)
     {
         var validationResult = await _createFileRequestValidator.ValidateAsync(request);
         if (!validationResult.IsValid)
@@ -39,8 +41,14 @@ public class FileController : ControllerBase
             return BadRequest(new Response<object>(validationResult.GetErrorMessages()));
         }
 
-        var module = await _fileService.CreateFileForModule(moduleId, request);
-        return Ok(new Response<ModuleDTO>(null, module.ToDTO()));
+        switch (request.For)
+        {
+            case For.Module:
+                var module = await _fileService.CreateFile<Module>(request);
+                return Ok(new Response<ModuleDTO>(null, module.ToDTO()));
+            default:
+                throw new NotImplementedException();
+        }
     }
 
     [HttpPut("{fileId:long}")]
@@ -52,7 +60,20 @@ public class FileController : ControllerBase
             return BadRequest(new Response<object>(validationResult.GetErrorMessages()));
         }
 
-        var file = await _fileService.UpdateFile(fileId, request);
-        return Ok(new Response<FileDTO>(null, file.ToDTO()));
+        switch (request.For)
+        {
+            case For.Module:
+                var module = await _fileService.UpdateFile<Module>(fileId, request);
+                return Ok(new Response<ModuleDTO>(null, module.ToDTO()));
+            default:
+                throw new NotImplementedException();
+        }
+    }
+
+    [HttpDelete("{fileId:long}")]
+    public async Task<IActionResult> DeleteModuleFile([FromRoute] long fileId)
+    {
+        await _fileService.DeleteFile(fileId);
+        return NoContent();
     }
 }

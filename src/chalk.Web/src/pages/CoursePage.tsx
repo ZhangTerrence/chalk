@@ -45,6 +45,9 @@ export default function CoursePage() {
         <p>Delete</p>
       </Button>
       <div className="flex flex-col items-center gap-y-4">
+        {course.imageUrl && (
+          <img src={course.imageUrl} alt={`${course.name} image`} className="w-60 h-60 border border-primary" />
+        )}
         <h1 className="text-2xl">
           <strong>
             {course.code ? course.code + " - " : ""} {course.name}

@@ -141,7 +141,7 @@ public class CourseService : ICourseService
         {
             await _cloudService.DeleteAsync(course.ImageUrl);
         }
-        foreach (var module in course.Modules)
+        foreach (var module in course.Modules.ToList())
         {
             await DeleteCourseModuleAsync(courseId, module.Id);
         }
@@ -155,14 +155,11 @@ public class CourseService : ICourseService
         var module = await GetModuleAsync(moduleId);
         var course = await GetCourseAsync(courseId);
         _context.Modules.Remove(module);
-        foreach (var e in course.Modules)
+        foreach (var e in course.Modules.ToList().Where(e => e.RelativeOrder > module.RelativeOrder))
         {
-            if (e.RelativeOrder > module.RelativeOrder)
-            {
-                e.RelativeOrder -= 1;
-            }
+            e.RelativeOrder -= 1;
         }
-        foreach (var file in module.Files)
+        foreach (var file in module.Files.ToList())
         {
             await _fileService.DeleteFile(file.Id);
         }

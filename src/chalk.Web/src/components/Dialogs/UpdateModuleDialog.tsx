@@ -25,14 +25,6 @@ export const UpdateModuleDialog = () => {
 
   const module = (dialog.entity as ModuleDTO & { courseId: number })!;
 
-  React.useEffect(() => {
-    if (!isLoading && isSuccess) {
-      dispatch(setDialog(null));
-      form.reset();
-      toast.success("Successfully edited module.");
-    }
-  }, [isLoading, isSuccess]);
-
   const form = useForm<UpdateModuleType>({
     resolver: zodResolver(UpdateModuleSchema),
     defaultValues: {
@@ -41,8 +33,17 @@ export const UpdateModuleDialog = () => {
     },
   });
 
+  React.useEffect(() => {
+    if (!isLoading && isSuccess) {
+      dispatch(setDialog(null));
+      form.reset();
+      toast.success("Successfully edited module.");
+    }
+  }, [isLoading, isSuccess]);
+
   const onSubmit = async (data: UpdateModuleType) => {
-    if (module.name === data.name && module.description === data.description) {
+    if (module.name === data.name && (module.description ?? undefined) === data.description) {
+      dispatch(setDialog(null));
       return;
     }
 

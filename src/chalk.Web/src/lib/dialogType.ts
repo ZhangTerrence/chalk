@@ -9,4 +9,5 @@ export enum DialogType {
   CreateOrganization,
   UpdateOrganization,
   CreateFile,
+  UpdateFile,
 }

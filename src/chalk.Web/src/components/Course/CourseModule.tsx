@@ -13,11 +13,13 @@ import {
 } from "@/components/ui/dropdown-menu.tsx";
 
 import { useDeleteModuleMutation } from "@/redux/services/course.ts";
+import { useDeleteFileMutation } from "@/redux/services/file.ts";
 import { setDialog } from "@/redux/slices/dialog.ts";
 import { useAppDispatch } from "@/redux/store.ts";
 
 import { DialogType } from "@/lib/dialogType.ts";
 import type { ModuleDTO } from "@/lib/types/course.ts";
+import { For } from "@/lib/types/file.ts";
 
 type CourseModuleProps = {
   courseId: number;
@@ -27,6 +29,7 @@ type CourseModuleProps = {
 export const CourseModule = (props: CourseModuleProps) => {
   const dispatch = useAppDispatch();
   const [deleteModule] = useDeleteModuleMutation();
+  const [deleteFile] = useDeleteFileMutation();
 
   const module = props.data;
 
@@ -91,10 +94,38 @@ export const CourseModule = (props: CourseModuleProps) => {
             )}
             {module.files.map((file) => {
               return (
-                <li key={file.id} className="p-2">
+                <li key={file.id} className="p-2 flex justify-between items-center">
                   <NavLink to={`/courses/${props.courseId}/file/${file.id}`} state={file} className="hover:underline">
                     {file.name}
                   </NavLink>
+                  <div className="flex gap-x-2">
+                    <Button
+                      size="icon"
+                      onClick={() =>
+                        dispatch(
+                          setDialog({
+                            entity: { ...file, moduleId: module.id },
+                            type: DialogType.UpdateFile,
+                          }),
+                        )
+                      }
+                    >
+                      <EditIcon />
+                    </Button>
+                    <Button
+                      variant="destructive"
+                      size="icon"
+                      onClick={async () =>
+                        await deleteFile({
+                          for: For.Module,
+                          entityId: module.id,
+                          fileId: file.id,
+                        }).unwrap()
+                      }
+                    >
+                      <TrashIcon />
+                    </Button>
+                  </div>
                 </li>
               );
             })}

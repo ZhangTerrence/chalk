@@ -1,5 +1,13 @@
-export type CreateFileRequest = {
-  entityId: number;
+export enum For {
+  Module,
+  Assignment,
+  Submission,
+}
+
+export type CreateFileRequest = FormData;
+
+export type UpdateFileRequest = {
+  id: number;
   data: FormData;
 };
 

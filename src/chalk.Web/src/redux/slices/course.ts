@@ -4,7 +4,8 @@ import { courseApi } from "@/redux/services/course.ts";
 import { fileApi } from "@/redux/services/file.ts";
 import type { RootState } from "@/redux/store.ts";
 
-import type { CourseResponse } from "@/lib/types/course.ts";
+import type { CourseResponse, ModuleDTO } from "@/lib/types/course.ts";
+import { For } from "@/lib/types/file.ts";
 
 export type CourseState = CourseResponse | null;
 
@@ -35,12 +36,45 @@ export const courseSlice = createSlice({
         state.modules = state.modules.filter((e) => e.id !== meta.arg.originalArgs.moduleId);
       }
     });
-    builder.addMatcher(fileApi.endpoints.createFileForModule.matchFulfilled, (state, { payload }) => {
+    builder.addMatcher(fileApi.endpoints.createFile.matchFulfilled, (state, { payload, meta }) => {
       if (state) {
-        const modules = [...state.modules];
-        const index = modules.map((e) => e.id).indexOf(payload.data.id);
-        modules[index] = payload.data;
-        state.modules = modules;
+        const args = Object.fromEntries(meta.arg.originalArgs.entries());
+        if (args["for"] === For.Module.toString()) {
+          const data = payload.data as ModuleDTO;
+          const modules = [...state.modules];
+          const index = modules.map((e) => e.id).indexOf(data.id);
+          modules[index] = data;
+          state.modules = modules;
+        }
+      }
+    });
+    builder.addMatcher(fileApi.endpoints.updateFile.matchFulfilled, (state, { payload, meta }) => {
+      if (state) {
+        const args = Object.fromEntries(meta.arg.originalArgs.data.entries());
+        if (args["for"] === For.Module.toString()) {
+          const data = payload.data as ModuleDTO;
+          const modules = [...state.modules];
+          const index = modules.map((e) => e.id).indexOf(data.id);
+          modules[index] = data;
+          state.modules = modules;
+        }
+      }
+    });
+    builder.addMatcher(fileApi.endpoints.deleteFile.matchFulfilled, (state, { meta }) => {
+      if (state) {
+        const args = meta.arg.originalArgs;
+        if (args.for === For.Module) {
+          state.modules = state.modules.map((e) => {
+            if (e.id === args.entityId) {
+              return {
+                ...e,
+                files: e.files.filter((f) => f.id !== args.fileId),
+              };
+            } else {
+              return e;
+            }
+          });
+        }
       }
     });
   },

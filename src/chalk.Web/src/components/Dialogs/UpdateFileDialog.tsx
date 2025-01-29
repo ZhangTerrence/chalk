@@ -12,29 +12,28 @@ import { Label } from "@/components/ui/label.tsx";
 import { Separator } from "@/components/ui/separator.tsx";
 import { Textarea } from "@/components/ui/textarea.tsx";
 
-import { useCreateFileMutation } from "@/redux/services/file.ts";
+import { useUpdateFileMutation } from "@/redux/services/file.ts";
 import { selectDialog, setDialog } from "@/redux/slices/dialog.ts";
 import { useAppDispatch, useTypedSelector } from "@/redux/store.ts";
 
-import type { ModuleDTO } from "@/lib/types/course.ts";
-import { For } from "@/lib/types/file.ts";
+import { type FileDTO, For } from "@/lib/types/file.ts";
 import { getImageData } from "@/lib/utils.ts";
-import { CreateFileSchema, type CreateFileType } from "@/lib/validators/file.ts";
+import { UpdateFileSchema, type UpdateFileType } from "@/lib/validators/file.ts";
 
-export const CreateFileDialog = () => {
+export const UpdateFileDialog = () => {
   const dialog = useTypedSelector(selectDialog)!;
   const dispatch = useAppDispatch();
-  const [createFile, { isLoading, isSuccess }] = useCreateFileMutation();
+  const [updateFile, { isLoading, isSuccess }] = useUpdateFileMutation();
 
-  const module = dialog.entity as ModuleDTO;
+  const file = (dialog.entity as FileDTO & { moduleId: number })!;
 
   const [uploadedFile, setUploadedFile] = React.useState<File | null>();
 
-  const form = useForm<CreateFileType>({
-    resolver: zodResolver(CreateFileSchema),
+  const form = useForm<UpdateFileType>({
+    resolver: zodResolver(UpdateFileSchema),
     defaultValues: {
-      name: "",
-      description: "",
+      name: file.name,
+      description: file.description ?? undefined,
     },
   });
 
@@ -42,7 +41,7 @@ export const CreateFileDialog = () => {
     if (!isLoading && isSuccess) {
       dispatch(setDialog(null));
       form.reset();
-      toast.success("Successfully created file for module.");
+      toast.success("Successfully edit file.");
     }
   }, [isLoading, isSuccess]);
 
@@ -56,21 +55,28 @@ export const CreateFileDialog = () => {
     setUploadedFile(files.item(0)!);
   };
 
-  const onSubmit = async (data: CreateFileType) => {
-    if (!uploadedFile) {
+  const onSubmit = async (data: UpdateFileType) => {
+    if (file.name === data.name && (file.description ?? undefined) === data.description && !uploadedFile) {
+      dispatch(setDialog(null));
       return;
     }
 
     const formData = new FormData();
 
     for (let [key, value] of Object.entries(data)) {
-      formData.append(key, value);
+      formData.append(key, value ?? "");
     }
     formData.append("for", For.Module.toString());
-    formData.append("entityId", module.id.toString());
-    formData.append("file", uploadedFile);
+    formData.append("entityId", file.moduleId.toString());
+    formData.append("fileChanged", (!!uploadedFile).toString());
+    if (uploadedFile) {
+      formData.append("newFile", uploadedFile);
+    }
 
-    await createFile(formData).unwrap();
+    await updateFile({
+      id: file.id,
+      data: formData,
+    }).unwrap();
 
     dispatch(setDialog(null));
   };
@@ -78,7 +84,7 @@ export const CreateFileDialog = () => {
   return (
     <>
       <DialogHeader>
-        <DialogTitle>Create File</DialogTitle>
+        <DialogTitle>Edit File</DialogTitle>
       </DialogHeader>
       <Separator orientation="horizontal" />
       <Form {...form}>
@@ -117,7 +123,7 @@ export const CreateFileDialog = () => {
             <DialogClose asChild>
               <Button variant="outline">Cancel</Button>
             </DialogClose>
-            <Button>Create</Button>
+            <Button>Edit</Button>
           </DialogFooter>
         </form>
       </Form>

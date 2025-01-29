@@ -10,6 +10,7 @@ import { CreateOrganizationDialog } from "@/components/Dialogs/CreateOrganizatio
 import { UpdateAccountDialog } from "@/components/Dialogs/UpdateAccountDialog.tsx";
 import { UpdateAppearanceDialog } from "@/components/Dialogs/UpdateAppearanceDialog.tsx";
 import { UpdateCourseDialog } from "@/components/Dialogs/UpdateCourseDialog.tsx";
+import { UpdateFileDialog } from "@/components/Dialogs/UpdateFileDialog.tsx";
 import { UpdateModuleDialog } from "@/components/Dialogs/UpdateModuleDialog.tsx";
 import { UpdateProfileDialog } from "@/components/Dialogs/UpdateProfileDialog.tsx";
 
@@ -43,6 +44,8 @@ export default function PrivateLayout() {
           return <CreateOrganizationDialog />;
         case DialogType.CreateFile:
           return <CreateFileDialog />;
+        case DialogType.UpdateFile:
+          return <UpdateFileDialog />;
         default:
           return null;
       }

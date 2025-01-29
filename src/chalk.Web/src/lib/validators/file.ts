@@ -17,5 +17,7 @@ export const CreateFileSchema = z.object({
     })
     .optional(),
 });
+export const UpdateFileSchema = CreateFileSchema;
 
 export type CreateFileType = z.infer<typeof CreateFileSchema>;
+export type UpdateFileType = z.infer<typeof UpdateFileSchema>;

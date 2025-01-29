@@ -19,11 +19,13 @@ export const accountApi = baseApi.injectEndpoints({
         method: "POST",
         body: body,
       }),
+      invalidatesTags: (response) => [{ type: "user", id: response?.data.id }],
     }),
     refresh: builder.query<Response<UserResponse>, null>({
       query: () => ({
         url: "/account/refresh",
       }),
+      providesTags: (response) => [{ type: "user", id: response?.data.id }],
     }),
     logout: builder.mutation<null, null>({
       query: () => ({

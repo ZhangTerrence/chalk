@@ -59,12 +59,12 @@ public class CloudService : ICloudService
         return await UploadAsync(hash, file);
     }
 
-    public async Task DeleteAsync(string hash)
+    public async Task DeleteAsync(string url)
     {
         var request = new DeleteObjectRequest
         {
             BucketName = BucketName,
-            Key = hash,
+            Key = url.Split("/").Last(),
         };
         await _s3Client.DeleteObjectAsync(request);
     }
