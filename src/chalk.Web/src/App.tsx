@@ -20,6 +20,7 @@ import OrganizationsPage from "@/pages/OrganizationsPage.tsx";
 import RegisterPage from "@/pages/RegisterPage.tsx";
 
 import { store } from "@/redux/store.ts";
+import CourseAssignmentPage from "@/pages/CourseAssignmentPage.tsx";
 
 export default function App() {
   const context = {};
@@ -39,7 +40,9 @@ export default function App() {
                 <Route path="/dashboard" element={<DashboardLandingPage />} />
                 <Route element={<CourseLayout />}>
                   <Route path="/courses/:courseId/file/:fileId" element={<FilePage />} />
+                  <Route path="/courses/:courseId/assignments" element={<CourseAssignmentPage />} />
                   <Route path="/courses/:courseId/modules" element={<CourseModulesPage />} />
+                  <Route path="/courses/:courseId/channels" element={<CourseModulesPage />} />
                   <Route path="/courses/:courseId" element={<CoursePage />} />
                 </Route>
               </Route>

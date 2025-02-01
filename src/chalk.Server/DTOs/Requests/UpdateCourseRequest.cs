@@ -8,13 +8,11 @@ namespace chalk.Server.DTOs.Requests;
 /// <param name="Description">The course's description.</param>
 /// <param name="Image">The course's image.</param>
 /// <param name="IsPublic">Whether the course is public.</param>
-/// <param name="Modules">The course's modules in order.</param>
 /// <remarks><paramref name="Name"/> and <paramref name="IsPublic"/> are required.</remarks>
 public record UpdateCourseRequest(
     string Name,
     string? Code,
     string? Description,
     IFormFile? Image,
-    bool? IsPublic,
-    IEnumerable<long> Modules
+    bool? IsPublic
 );

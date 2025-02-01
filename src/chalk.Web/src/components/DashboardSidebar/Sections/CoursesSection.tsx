@@ -58,9 +58,19 @@ export const CoursesSection = () => {
                             Home
                           </Button>
                         </SidebarMenuSubItem>
+                        <SidebarMenuSubItem onClick={() => navigate(`/courses/${course.id}/assignments`)}>
+                          <Button variant="ghost" className="w-full justify-normal pl-2">
+                            Assignments
+                          </Button>
+                        </SidebarMenuSubItem>
                         <SidebarMenuSubItem onClick={() => navigate(`/courses/${course.id}/modules`)}>
                           <Button variant="ghost" className="w-full justify-normal pl-2">
                             Modules
+                          </Button>
+                        </SidebarMenuSubItem>
+                        <SidebarMenuSubItem onClick={() => navigate(`/courses/${course.id}/channels`)}>
+                          <Button variant="ghost" className="w-full justify-normal pl-2">
+                            Channels
                           </Button>
                         </SidebarMenuSubItem>
                       </SidebarMenuSub>

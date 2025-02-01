@@ -7,16 +7,44 @@ export type CreateCourseRequest = {
   isPublic: boolean;
 };
 
-export type UpdateCourseRequest = {
-  id: number;
-  data: FormData;
-};
-
 export type CreateModuleRequest = {
   courseId: number;
   data: {
     name: string;
     description?: string;
+  };
+};
+
+export type CreateAssignmentGroupRequest = {
+  courseId: number;
+  data: {
+    name: string;
+    description?: string;
+    weight: number;
+  };
+};
+
+export type CreateAssignmentRequest = {
+  courseId: number;
+  assignmentGroupId: number;
+  data: {
+    name: string;
+    description?: string;
+    isOpen: boolean;
+    dueDate?: Date;
+    allowedAttempts?: number;
+  };
+};
+
+export type UpdateCourseRequest = {
+  id: number;
+  data: FormData;
+};
+
+export type ReorderModulesRequest = {
+  courseId: number;
+  data: {
+    modules: number[];
   };
 };
 
@@ -48,6 +76,24 @@ export type ModuleDTO = {
   files: FileDTO[];
 };
 
+export type AssignmentGroupDTO = {
+  id: number;
+  name: string;
+  description: string | null;
+  assignments: AssignmentDTO[];
+};
+
+export type AssignmentDTO = {
+  id: number;
+  name: string;
+  description: string | null;
+  isOpen: boolean;
+  dueDate: string | null;
+  allowedAttempts: number | null;
+  createdDate: string;
+  updatedDate: string;
+};
+
 export type CourseResponse = {
   id: number;
   name: string;
@@ -57,4 +103,5 @@ export type CourseResponse = {
   isPublic: boolean;
   createdDate: string;
   modules: ModuleDTO[];
+  assignmentGroups: AssignmentGroupDTO[];
 };

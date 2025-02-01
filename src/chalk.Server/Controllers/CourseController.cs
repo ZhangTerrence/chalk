@@ -17,22 +17,31 @@ public class CourseController : ControllerBase
     private readonly ICourseService _courseService;
 
     private readonly IValidator<CreateCourseRequest> _createCourseRequestValidator;
-    private readonly IValidator<UpdateCourseRequest> _updateCourseRequestValidator;
     private readonly IValidator<CreateModuleRequest> _createModuleRequestValidator;
+    private readonly IValidator<CreateAssignmentGroupRequest> _createAssignmentGroupRequestValidator;
+    private readonly IValidator<CreateAssignmentRequest> _createAssignmentRequestValidator;
+    private readonly IValidator<UpdateCourseRequest> _updateCourseRequestValidator;
+    private readonly IValidator<ReorderModulesRequest> _reorderModulesRequestValidator;
     private readonly IValidator<UpdateModuleRequest> _updateModuleRequestValidator;
 
     public CourseController(
         ICourseService courseService,
         IValidator<CreateCourseRequest> createCourseRequestValidator,
-        IValidator<UpdateCourseRequest> updateCourseRequestValidator,
         IValidator<CreateModuleRequest> createModuleRequestValidator,
+        IValidator<CreateAssignmentGroupRequest> createAssignmentGroupRequestValidator,
+        IValidator<CreateAssignmentRequest> createAssignmentRequestValidator,
+        IValidator<UpdateCourseRequest> updateCourseRequestValidator,
+        IValidator<ReorderModulesRequest> reorderModulesRequestValidator,
         IValidator<UpdateModuleRequest> updateModuleRequestValidator
     )
     {
         _courseService = courseService;
         _createCourseRequestValidator = createCourseRequestValidator;
-        _updateCourseRequestValidator = updateCourseRequestValidator;
         _createModuleRequestValidator = createModuleRequestValidator;
+        _createAssignmentGroupRequestValidator = createAssignmentGroupRequestValidator;
+        _createAssignmentRequestValidator = createAssignmentRequestValidator;
+        _updateCourseRequestValidator = updateCourseRequestValidator;
+        _reorderModulesRequestValidator = reorderModulesRequestValidator;
         _updateModuleRequestValidator = updateModuleRequestValidator;
     }
 
@@ -72,8 +81,41 @@ public class CourseController : ControllerBase
             return BadRequest(new Response<object>(validationResult.GetErrorMessages()));
         }
 
-        var module = await _courseService.CreateCourseModuleAsync(courseId, request);
+        var module = await _courseService.CreateModuleAsync(courseId, request);
         return Created(nameof(CreateModule), new Response<ModuleDTO>(null, module.ToDTO()));
+    }
+
+    [HttpPost("{courseId:long}/assignment-groups")]
+    public async Task<IActionResult> CreateAssignmentGroup(
+        [FromRoute] long courseId,
+        [FromBody] CreateAssignmentGroupRequest request
+    )
+    {
+        var validationResult = await _createAssignmentGroupRequestValidator.ValidateAsync(request);
+        if (!validationResult.IsValid)
+        {
+            return BadRequest(new Response<object>(validationResult.GetErrorMessages()));
+        }
+
+        var assignmentGroup = await _courseService.CreateAssignmentGroupAsync(courseId, request);
+        return Created(nameof(CreateAssignmentGroup), new Response<AssignmentGroupDTO>(null, assignmentGroup.ToDTO()));
+    }
+
+    [HttpPost("{courseId:long}/assignment-groups/{assignmentGroupId:long}")]
+    public async Task<IActionResult> CreateAssignment(
+        [FromRoute] long courseId,
+        [FromRoute] long assignmentGroupId,
+        [FromBody] CreateAssignmentRequest request
+    )
+    {
+        var validationResult = await _createAssignmentRequestValidator.ValidateAsync(request);
+        if (!validationResult.IsValid)
+        {
+            return BadRequest(new Response<object>(validationResult.GetErrorMessages()));
+        }
+
+        var assignment = await _courseService.CreateAssignmentAsync(courseId, assignmentGroupId, request);
+        return Created(nameof(CreateAssignment), new Response<AssignmentDTO>(null, assignment.ToDTO()));
     }
 
     [HttpPut("{courseId:long}")]
@@ -86,6 +128,19 @@ public class CourseController : ControllerBase
         }
 
         var course = await _courseService.UpdateCourseAsync(courseId, request);
+        return Ok(new Response<CourseResponse>(null, course.ToResponse()));
+    }
+
+    [HttpPut("{courseId:long}/modules")]
+    public async Task<IActionResult> ReorderModules([FromRoute] long courseId, [FromForm] ReorderModulesRequest request)
+    {
+        var validationResult = await _reorderModulesRequestValidator.ValidateAsync(request);
+        if (!validationResult.IsValid)
+        {
+            return BadRequest(new Response<object>(validationResult.GetErrorMessages()));
+        }
+
+        var course = await _courseService.ReorderModulesAsync(courseId, request);
         return Ok(new Response<CourseResponse>(null, course.ToResponse()));
     }
 
@@ -102,7 +157,7 @@ public class CourseController : ControllerBase
             return BadRequest(new Response<object>(validationResult.GetErrorMessages()));
         }
 
-        var module = await _courseService.UpdateCourseModuleAsync(courseId, moduleId, request);
+        var module = await _courseService.UpdateModuleAsync(courseId, moduleId, request);
         return Ok(new Response<ModuleDTO>(null, module.ToDTO()));
     }
 
@@ -116,7 +171,7 @@ public class CourseController : ControllerBase
     [HttpDelete("{courseId:long}/modules/{moduleId:long}")]
     public async Task<IActionResult> DeleteCourseModule([FromRoute] long courseId, [FromRoute] long moduleId)
     {
-        await _courseService.DeleteCourseModuleAsync(courseId, moduleId);
+        await _courseService.DeleteModuleAsync(courseId, moduleId);
         return NoContent();
     }
 }

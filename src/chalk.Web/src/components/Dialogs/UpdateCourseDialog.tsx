@@ -72,8 +72,6 @@ export const UpdateCourseDialog = () => {
       return;
     }
 
-    const modules = [...course.modules];
-
     const formData = new FormData();
 
     for (let [key, value] of Object.entries(data)) {
@@ -82,10 +80,6 @@ export const UpdateCourseDialog = () => {
     if (uploadedImage) {
       formData.append("image", uploadedImage);
     }
-    formData.append(
-      "modules",
-      JSON.stringify(modules.sort((a, b) => a.relativeOrder - b.relativeOrder).map((e) => e.id)),
-    );
 
     await updateCourse({ id: course.id, data: formData }).unwrap();
 
@@ -102,7 +96,7 @@ export const UpdateCourseDialog = () => {
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-w-80 flex-col gap-y-4">
           <div className="flex gap-x-4">
             <div className="relative aspect-square w-36">
-              <Avatar className="w-full h-full">
+              <Avatar className="h-full w-full">
                 <AvatarImage
                   src={image}
                   alt={course.name}

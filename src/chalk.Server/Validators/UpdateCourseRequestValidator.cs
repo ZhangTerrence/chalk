@@ -22,6 +22,5 @@ public class UpdateCourseRequestValidator : AbstractValidator<UpdateCourseReques
         RuleFor(e => e.IsPublic)
             .NotNull()
             .WithMessage("Must specify whether the course is public.");
-        RuleFor(e => e.Modules);
     }
 }

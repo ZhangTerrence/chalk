@@ -21,7 +21,7 @@ public class CreateRoleRequestValidator : AbstractValidator<CreateRoleRequest>
         RuleFor(e => e.RelativeRank)
             .NotNull()
             .WithMessage("Must specify the role's rank.")
-            .Must(e => e!.Value >= 0)
+            .GreaterThanOrEqualTo(0).When(e => e.RelativeRank.HasValue)
             .WithMessage("The role's relative rank must be zero or positive.");
     }
 }

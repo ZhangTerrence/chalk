@@ -1,10 +1,10 @@
 using System.Text.Json.Serialization;
 
-namespace chalk.Server.DTOs.Responses;
+namespace chalk.Server.DTOs;
 
 [Serializable]
 [method: JsonConstructor]
-public record OrganizationResponse(
+public record AssignmentDTO(
     [property: JsonRequired]
     [property: JsonPropertyName("id")]
     long Id,
@@ -15,12 +15,18 @@ public record OrganizationResponse(
     [property: JsonPropertyName("description")]
     string? Description,
     [property: JsonRequired]
-    [property: JsonPropertyName("imageUrl")]
-    string? ImageUrl,
+    [property: JsonPropertyName("isOpen")]
+    bool IsOpen,
     [property: JsonRequired]
-    [property: JsonPropertyName("isPublic")]
-    bool IsPublic,
+    [property: JsonPropertyName("dueDate")]
+    string? DueDate,
+    [property: JsonRequired]
+    [property: JsonPropertyName("allowedAttempts")]
+    int? AllowedAttempts,
     [property: JsonRequired]
     [property: JsonPropertyName("createdDate")]
-    string CreatedDate
+    string CreatedDate,
+    [property: JsonRequired]
+    [property: JsonPropertyName("updatedDate")]
+    string UpdatedDate
 );

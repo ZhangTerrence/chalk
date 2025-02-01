@@ -26,8 +26,64 @@ export const CreateCourseSchema = z.object({
     message: "Must specify whether the course is public.",
   }),
 });
-
 export const UpdateCourseSchema = CreateCourseSchema;
+
+export const CreateAssignmentGroupSchema = z.object({
+  name: z
+    .string({
+      message: "The assignment group's name is required.",
+    })
+    .refine((e) => inRange(e.length, 3, 31), {
+      message: "The assignment group's name must have between 3 and 31 characters.",
+    }),
+  description: z
+    .string()
+    .max(255, {
+      message: "The assignment group's description must have at most 255 characters.",
+    })
+    .optional(),
+  weight: z
+    .number({
+      message: "The assignment group's weight is required.",
+    })
+    .lte(100, {
+      message: "The assignment group's weight must be less than 100%.",
+    }),
+});
+export const CreateAssignmentSchema = z.object({
+  name: z
+    .string({
+      message: "The assignment's name is required.",
+    })
+    .refine((e) => inRange(e.length, 3, 31), {
+      message: "The assignment's name must have between 3 and 31 characters.",
+    }),
+  description: z
+    .string()
+    .max(255, {
+      message: "The assignment's description must have at most 255 characters.",
+    })
+    .optional(),
+  isOpen: z.boolean({
+    message: "Must specify whether the assignment is open for submission.",
+  }),
+  dueDate: z
+    .date()
+    .min(new Date(), {
+      message: "The assignment's due date must be after the current date.",
+    })
+    .optional()
+    .or(z.literal(undefined)),
+  allowedAttempts: z
+    .number()
+    .refine((e) => (e > -1 ? e >= 1 : true), {
+      message: "The assignment's maximum allowed attempts must be greater than or equal to 1.",
+    })
+    .optional()
+    .or(z.literal(undefined)),
+});
 
 export type CreateCourseType = z.infer<typeof CreateCourseSchema>;
 export type UpdateCourseType = z.infer<typeof UpdateCourseSchema>;
+export type CreateAssignmentGroupType = z.infer<typeof CreateAssignmentGroupSchema>;
+export type CreateAssignmentType = z.infer<typeof CreateAssignmentSchema>;

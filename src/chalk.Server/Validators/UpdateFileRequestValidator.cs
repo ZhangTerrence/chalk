@@ -27,7 +27,7 @@ public class UpdateFileRequestValidator : AbstractValidator<UpdateFileRequest>
             .NotNull()
             .WithMessage("Must specify whether the file has been changed.");
         RuleFor(e => e.NewFile)
-            .NotEmpty().When(e => e.FileChanged != null && e.FileChanged!.Value)
+            .NotEmpty().When(e => e.FileChanged.HasValue && e.FileChanged.Value)
             .WithMessage("The new file is required.");
     }
 }

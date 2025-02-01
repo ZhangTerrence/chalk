@@ -3,6 +3,8 @@ import { Outlet } from "react-router-dom";
 import { Dialog, DialogContent } from "@/components/ui/dialog.tsx";
 
 import { AuthenticationGuard } from "@/components/AuthenticationGuard.tsx";
+import { CreateAssignmentDialog } from "@/components/Dialogs/CreateAssignmentDialog.tsx";
+import { CreateAssignmentGroupDialog } from "@/components/Dialogs/CreateAssignmentGroupDialog.tsx";
 import { CreateCourseDialog } from "@/components/Dialogs/CreateCourseDialog.tsx";
 import { CreateFileDialog } from "@/components/Dialogs/CreateFileDialog.tsx";
 import { CreateModuleDialog } from "@/components/Dialogs/CreateModuleDialog.tsx";
@@ -40,6 +42,10 @@ export default function PrivateLayout() {
           return <CreateModuleDialog />;
         case DialogType.UpdateModule:
           return <UpdateModuleDialog />;
+        case DialogType.CreateAssignmentGroup:
+          return <CreateAssignmentGroupDialog />;
+        case DialogType.CreateAssignment:
+          return <CreateAssignmentDialog />;
         case DialogType.CreateOrganization:
           return <CreateOrganizationDialog />;
         case DialogType.CreateFile:

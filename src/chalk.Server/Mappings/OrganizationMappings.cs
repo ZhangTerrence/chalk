@@ -29,12 +29,7 @@ public static class OrganizationMappings
             organization.Description,
             organization.ImageUrl,
             organization.IsPublic,
-            organization.CreatedDate.ToString(CultureInfo.CurrentCulture),
-            organization.Owner.ToDTO(organization.CreatedDate.ToString(CultureInfo.CurrentCulture)),
-            organization.Users.Select(e => e.User.ToDTO(e.JoinedDate?.ToString(CultureInfo.CurrentCulture))),
-            organization.Roles.Select(e => e.ToDTO()),
-            organization.Channels.Select(e => e.ToDTO()),
-            organization.Courses.Select(e => e.ToDTO())
+            organization.CreatedDate.ToString(CultureInfo.CurrentCulture)
         );
     }
 

@@ -27,6 +27,7 @@ public class CourseService : ICourseService
     {
         return await _context.Courses
             .Include(e => e.Modules).ThenInclude(e => e.Files).AsSingleQuery()
+            .Include(e => e.AssignmentGroups).ThenInclude(e => e.Assignments).AsSingleQuery()
             .ToListAsync();
     }
 
@@ -34,6 +35,7 @@ public class CourseService : ICourseService
     {
         var course = await _context.Courses
             .Include(e => e.Modules).ThenInclude(e => e.Files).AsSingleQuery()
+            .Include(e => e.AssignmentGroups).ThenInclude(e => e.Assignments).AsSingleQuery()
             .FirstOrDefaultAsync(e => e.Id == courseId);
         if (course is null)
         {
@@ -52,6 +54,31 @@ public class CourseService : ICourseService
             throw new ServiceException("Module not found.", StatusCodes.Status404NotFound);
         }
         return courseModule;
+    }
+
+    public async Task<AssignmentGroup> GetAssignmentGroupAsync(long assignmentGroupId)
+    {
+        var assignmentGroup = await _context.AssignmentGroups
+            .Include(e => e.Assignments).AsSingleQuery()
+            .FirstOrDefaultAsync(e => e.Id == assignmentGroupId);
+        if (assignmentGroup is null)
+        {
+            throw new ServiceException("Assignment group not found.", StatusCodes.Status404NotFound);
+        }
+        return assignmentGroup;
+    }
+
+    public async Task<Assignment> GetAssignmentAsync(long assignmentId)
+    {
+        var assignment = await _context.Assignments
+            .Include(e => e.Files).AsSingleQuery()
+            .Include(e => e.Submissions).AsSingleQuery()
+            .FirstOrDefaultAsync(e => e.Id == assignmentId);
+        if (assignment is null)
+        {
+            throw new ServiceException("Assignment not found.", StatusCodes.Status404NotFound);
+        }
+        return assignment;
     }
 
     public async Task<Course> CreateCourseAsync(long userId, CreateCourseRequest request)
@@ -86,7 +113,7 @@ public class CourseService : ICourseService
         return await GetCourseAsync(createdCourse.Entity.Id);
     }
 
-    public async Task<Module> CreateCourseModuleAsync(long courseId, CreateModuleRequest request)
+    public async Task<Module> CreateModuleAsync(long courseId, CreateModuleRequest request)
     {
         var course = await GetCourseAsync(courseId);
         var module = request.ToEntity(course.Modules.Select(e => e.RelativeOrder).DefaultIfEmpty(-1).Max() + 1);
@@ -95,6 +122,29 @@ public class CourseService : ICourseService
 
         await _context.SaveChangesAsync();
         return await GetModuleAsync(module.Id);
+    }
+
+    public async Task<AssignmentGroup> CreateAssignmentGroupAsync(long courseId, CreateAssignmentGroupRequest request)
+    {
+        var course = await GetCourseAsync(courseId);
+        var assignmentGroup = request.ToEntity(course.Id);
+        course.AssignmentGroups.Add(assignmentGroup);
+        course.UpdatedDate = DateTime.UtcNow;
+
+        await _context.SaveChangesAsync();
+        return await GetAssignmentGroupAsync(assignmentGroup.Id);
+    }
+
+    public async Task<Assignment> CreateAssignmentAsync(long courseId, long assignmentGroupId, CreateAssignmentRequest request)
+    {
+        var course = await GetCourseAsync(courseId);
+        var assignmentGroup = await GetAssignmentGroupAsync(assignmentGroupId);
+        var assignment = request.ToEntity(assignmentGroup.Id);
+        assignmentGroup.Assignments.Add(assignment);
+        course.UpdatedDate = DateTime.UtcNow;
+
+        await _context.SaveChangesAsync();
+        return await GetAssignmentAsync(assignment.Id);
     }
 
     public async Task<Course> UpdateCourseAsync(long courseId, UpdateCourseRequest request)
@@ -108,6 +158,14 @@ public class CourseService : ICourseService
             course.ImageUrl = await _cloudService.UploadImageAsync(Guid.NewGuid().ToString(), request.Image);
         }
         course.IsPublic = request.IsPublic!.Value;
+        course.UpdatedDate = DateTime.UtcNow;
+
+        await _context.SaveChangesAsync();
+        return await GetCourseAsync(course.Id);
+    }
+
+    public async Task<Course> ReorderModulesAsync(long courseId, ReorderModulesRequest request)
+    {
         var i = 0;
         foreach (var moduleId in request.Modules)
         {
@@ -115,13 +173,12 @@ public class CourseService : ICourseService
             module.RelativeOrder = i;
             i++;
         }
-        course.UpdatedDate = DateTime.UtcNow;
-
         await _context.SaveChangesAsync();
-        return await GetCourseAsync(course.Id);
+
+        return await GetCourseAsync(courseId);
     }
 
-    public async Task<Module> UpdateCourseModuleAsync(long courseId, long moduleId, UpdateModuleRequest request)
+    public async Task<Module> UpdateModuleAsync(long courseId, long moduleId, UpdateModuleRequest request)
     {
         var module = await GetModuleAsync(moduleId);
         module.Name = request.Name;
@@ -143,14 +200,14 @@ public class CourseService : ICourseService
         }
         foreach (var module in course.Modules.ToList())
         {
-            await DeleteCourseModuleAsync(courseId, module.Id);
+            await DeleteModuleAsync(courseId, module.Id);
         }
         _context.Courses.Remove(course);
 
         await _context.SaveChangesAsync();
     }
 
-    public async Task DeleteCourseModuleAsync(long courseId, long moduleId)
+    public async Task DeleteModuleAsync(long courseId, long moduleId)
     {
         var module = await GetModuleAsync(moduleId);
         var course = await GetCourseAsync(courseId);

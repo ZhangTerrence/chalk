@@ -7,7 +7,7 @@ public class UpdateModuleRequestValidator : AbstractValidator<UpdateModuleReques
 {
     public UpdateModuleRequestValidator()
     {
-        RuleFor(x => x.Name)
+        RuleFor(e => e.Name)
             .NotEmpty()
             .WithMessage("The module's name is required.")
             .Length(3, 31)

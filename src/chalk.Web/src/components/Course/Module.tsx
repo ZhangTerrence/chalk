@@ -21,12 +21,12 @@ import { DialogType } from "@/lib/dialogType.ts";
 import type { ModuleDTO } from "@/lib/types/course.ts";
 import { For } from "@/lib/types/file.ts";
 
-type CourseModuleProps = {
+type ModuleProps = {
   courseId: number;
   data: ModuleDTO;
 };
 
-export const CourseModule = (props: CourseModuleProps) => {
+export const Module = (props: ModuleProps) => {
   const dispatch = useAppDispatch();
   const [deleteModule] = useDeleteModuleMutation();
   const [deleteFile] = useDeleteFileMutation();
@@ -54,7 +54,7 @@ export const CourseModule = (props: CourseModuleProps) => {
           <DropdownMenuContent className="mr-4 mt-1">
             <DropdownMenuItem onClick={() => dispatch(setDialog({ entity: module, type: DialogType.CreateFile }))}>
               <span className="flex items-center gap-x-2">
-                <LinkIcon />
+                <LinkIcon size={20} />
                 <p>Attach</p>
               </span>
             </DropdownMenuItem>
@@ -69,7 +69,7 @@ export const CourseModule = (props: CourseModuleProps) => {
               }
             >
               <span className="flex items-center gap-x-2">
-                <EditIcon />
+                <EditIcon size={20} />
                 <p>Edit</p>
               </span>
             </DropdownMenuItem>
@@ -77,7 +77,7 @@ export const CourseModule = (props: CourseModuleProps) => {
               onClick={async () => await deleteModule({ courseId: props.courseId, moduleId: module.id }).unwrap()}
             >
               <span className="flex items-center gap-x-2">
-                <TrashIcon />
+                <TrashIcon size={20} />
                 <p>Delete</p>
               </span>
             </DropdownMenuItem>

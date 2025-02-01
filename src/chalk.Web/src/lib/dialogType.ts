@@ -6,6 +6,8 @@ export enum DialogType {
   UpdateCourse,
   CreateModule,
   UpdateModule,
+  CreateAssignmentGroup,
+  CreateAssignment,
   CreateOrganization,
   UpdateOrganization,
   CreateFile,

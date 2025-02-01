@@ -32,10 +32,8 @@ public static class CourseMappings
             course.ImageUrl,
             course.IsPublic,
             course.CreatedDate.ToString(CultureInfo.CurrentCulture),
-            course.Organization?.ToDTO(),
-            course.Users.Select(e => e.User.ToDTO(e.JoinedDate?.ToString(CultureInfo.CurrentCulture))),
-            course.Roles.Select(e => e.ToDTO()),
-            course.Modules.Select(e => e.ToDTO())
+            course.Modules.Select(e => e.ToDTO()),
+            course.AssignmentGroups.Select(e => e.ToDTO())
         );
     }
 

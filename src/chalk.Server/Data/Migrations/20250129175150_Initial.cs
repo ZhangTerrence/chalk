@@ -39,7 +39,7 @@ namespace chalk.Server.Data.Migrations
                     last_name = table.Column<string>(type: "character varying(31)", maxLength: 31, nullable: false),
                     display_name = table.Column<string>(type: "character varying(31)", maxLength: 31, nullable: false),
                     description = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
-                    profile_picture = table.Column<string>(type: "text", nullable: true),
+                    image_url = table.Column<string>(type: "text", nullable: true),
                     created_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     updated_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     user_name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
@@ -91,7 +91,7 @@ namespace chalk.Server.Data.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     name = table.Column<string>(type: "character varying(31)", maxLength: 31, nullable: false),
                     description = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
-                    profile_picture = table.Column<string>(type: "text", nullable: true),
+                    image_url = table.Column<string>(type: "text", nullable: true),
                     is_public = table.Column<bool>(type: "boolean", nullable: false),
                     created_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     updated_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
@@ -202,7 +202,7 @@ namespace chalk.Server.Data.Migrations
                     name = table.Column<string>(type: "character varying(31)", maxLength: 31, nullable: false),
                     code = table.Column<string>(type: "character varying(31)", maxLength: 31, nullable: true),
                     description = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
-                    image = table.Column<string>(type: "text", nullable: true),
+                    image_url = table.Column<string>(type: "text", nullable: true),
                     is_public = table.Column<bool>(type: "boolean", nullable: false),
                     created_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     updated_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
@@ -251,6 +251,8 @@ namespace chalk.Server.Data.Migrations
                 {
                     id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    name = table.Column<string>(type: "character varying(31)", maxLength: 31, nullable: false),
+                    description = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
                     weight = table.Column<int>(type: "integer", nullable: false),
                     course_id = table.Column<long>(type: "bigint", nullable: false)
                 },
@@ -296,7 +298,7 @@ namespace chalk.Server.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "course_modules",
+                name: "modules",
                 columns: table => new
                 {
                     id = table.Column<long>(type: "bigint", nullable: false)
@@ -310,9 +312,9 @@ namespace chalk.Server.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_course_modules", x => x.id);
+                    table.PrimaryKey("pk_modules", x => x.id);
                     table.ForeignKey(
-                        name: "fk_course_modules_courses_course_id",
+                        name: "fk_modules_courses_course_id",
                         column: x => x.course_id,
                         principalTable: "courses",
                         principalColumn: "id",
@@ -563,14 +565,14 @@ namespace chalk.Server.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "attachments",
+                name: "files",
                 columns: table => new
                 {
                     id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     name = table.Column<string>(type: "character varying(31)", maxLength: 31, nullable: false),
                     description = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
-                    resource = table.Column<string>(type: "text", nullable: false),
+                    file_url = table.Column<string>(type: "text", nullable: false),
                     created_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     updated_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     assignment_id = table.Column<long>(type: "bigint", nullable: true),
@@ -579,21 +581,21 @@ namespace chalk.Server.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_attachments", x => x.id);
+                    table.PrimaryKey("pk_files", x => x.id);
                     table.ForeignKey(
-                        name: "fk_attachments_assignments_assignment_id",
+                        name: "fk_files_assignments_assignment_id",
                         column: x => x.assignment_id,
                         principalTable: "assignments",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "fk_attachments_course_modules_course_module_id",
+                        name: "fk_files_modules_course_module_id",
                         column: x => x.course_module_id,
-                        principalTable: "course_modules",
+                        principalTable: "modules",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "fk_attachments_submissions_submission_id",
+                        name: "fk_files_submissions_submission_id",
                         column: x => x.submission_id,
                         principalTable: "submissions",
                         principalColumn: "id",
@@ -620,21 +622,6 @@ namespace chalk.Server.Data.Migrations
                 column: "assignment_group_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_attachments_assignment_id",
-                table: "attachments",
-                column: "assignment_id");
-
-            migrationBuilder.CreateIndex(
-                name: "ix_attachments_course_module_id",
-                table: "attachments",
-                column: "course_module_id");
-
-            migrationBuilder.CreateIndex(
-                name: "ix_attachments_submission_id",
-                table: "attachments",
-                column: "submission_id");
-
-            migrationBuilder.CreateIndex(
                 name: "ix_channel_role_permissions_channel_id",
                 table: "channel_role_permissions",
                 column: "channel_id");
@@ -650,14 +637,24 @@ namespace chalk.Server.Data.Migrations
                 column: "organization_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_course_modules_course_id",
-                table: "course_modules",
-                column: "course_id");
-
-            migrationBuilder.CreateIndex(
                 name: "ix_courses_organization_id",
                 table: "courses",
                 column: "organization_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_files_assignment_id",
+                table: "files",
+                column: "assignment_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_files_course_module_id",
+                table: "files",
+                column: "course_module_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_files_submission_id",
+                table: "files",
+                column: "submission_id");
 
             migrationBuilder.CreateIndex(
                 name: "ix_messages_channel_id",
@@ -668,6 +665,11 @@ namespace chalk.Server.Data.Migrations
                 name: "ix_messages_user_id_channel_id",
                 table: "messages",
                 columns: new[] { "user_id", "channel_id" });
+
+            migrationBuilder.CreateIndex(
+                name: "ix_modules_course_id",
+                table: "modules",
+                column: "course_id");
 
             migrationBuilder.CreateIndex(
                 name: "ix_organizations_owner_id",
@@ -771,10 +773,10 @@ namespace chalk.Server.Data.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "attachments");
+                name: "channel_role_permissions");
 
             migrationBuilder.DropTable(
-                name: "channel_role_permissions");
+                name: "files");
 
             migrationBuilder.DropTable(
                 name: "messages");
@@ -801,7 +803,7 @@ namespace chalk.Server.Data.Migrations
                 name: "user_tokens");
 
             migrationBuilder.DropTable(
-                name: "course_modules");
+                name: "modules");
 
             migrationBuilder.DropTable(
                 name: "submissions");

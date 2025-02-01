@@ -11,15 +11,25 @@ public interface ICourseService
 
     public Task<Module> GetModuleAsync(long moduleId);
 
+    public Task<AssignmentGroup> GetAssignmentGroupAsync(long assignmentGroupId);
+
+    public Task<Assignment> GetAssignmentAsync(long assignmentId);
+
     public Task<Course> CreateCourseAsync(long userId, CreateCourseRequest request);
 
-    public Task<Module> CreateCourseModuleAsync(long courseId, CreateModuleRequest request);
+    public Task<Module> CreateModuleAsync(long courseId, CreateModuleRequest request);
+
+    public Task<AssignmentGroup> CreateAssignmentGroupAsync(long courseId, CreateAssignmentGroupRequest request);
+
+    public Task<Assignment> CreateAssignmentAsync(long courseId, long assignmentGroupId, CreateAssignmentRequest request);
 
     public Task<Course> UpdateCourseAsync(long courseId, UpdateCourseRequest request);
 
-    public Task<Module> UpdateCourseModuleAsync(long courseId, long moduleId, UpdateModuleRequest request);
+    public Task<Course> ReorderModulesAsync(long courseId, ReorderModulesRequest request);
+
+    public Task<Module> UpdateModuleAsync(long courseId, long moduleId, UpdateModuleRequest request);
 
     public Task DeleteCourseAsync(long courseId);
 
-    public Task DeleteCourseModuleAsync(long courseId, long moduleId);
+    public Task DeleteModuleAsync(long courseId, long moduleId);
 }

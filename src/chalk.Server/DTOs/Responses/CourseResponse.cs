@@ -27,15 +27,9 @@ public record CourseResponse(
     [property: JsonPropertyName("createdDate")]
     string CreatedDate,
     [property: JsonRequired]
-    [property: JsonPropertyName("organization")]
-    OrganizationDTO? Organization,
-    [property: JsonRequired]
-    [property: JsonPropertyName("users")]
-    IEnumerable<UserDTO> Users,
-    [property: JsonRequired]
-    [property: JsonPropertyName("roles")]
-    IEnumerable<RoleDTO> Roles,
-    [property: JsonRequired]
     [property: JsonPropertyName("modules")]
-    IEnumerable<ModuleDTO> Modules
+    IEnumerable<ModuleDTO> Modules,
+    [property: JsonRequired]
+    [property: JsonPropertyName("assignmentGroups")]
+    IEnumerable<AssignmentGroupDTO> AssignmentGroups
 );

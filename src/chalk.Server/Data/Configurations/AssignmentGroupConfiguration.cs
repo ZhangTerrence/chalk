@@ -13,6 +13,8 @@ public class AssignmentGroupConfiguration : IEntityTypeConfiguration<AssignmentG
         builder.HasKey(e => e.Id);
 
         builder.Property(e => e.Id).ValueGeneratedOnAdd();
+        builder.Property(e => e.Name).HasMaxLength(31).IsRequired();
+        builder.Property(e => e.Description).HasMaxLength(255);
         builder.Property(e => e.Weight).IsRequired();
 
         builder
