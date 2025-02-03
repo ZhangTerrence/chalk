@@ -80,6 +80,7 @@ export type AssignmentGroupDTO = {
   id: number;
   name: string;
   description: string | null;
+  weight: number;
   assignments: AssignmentDTO[];
 };
 

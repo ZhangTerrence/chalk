@@ -15,6 +15,9 @@ public record AssignmentGroupDTO(
     [property: JsonPropertyName("description")]
     string? Description,
     [property: JsonRequired]
+    [property: JsonPropertyName("weight")]
+    int Weight,
+    [property: JsonRequired]
     [property: JsonPropertyName("assignments")]
     IEnumerable<AssignmentDTO> Assignments
 );

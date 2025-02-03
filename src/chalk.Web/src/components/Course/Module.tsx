@@ -1,6 +1,6 @@
 import React from "react";
 
-import { AlignJustifyIcon, ChevronDownIcon, EditIcon, EllipsisVerticalIcon, LinkIcon, TrashIcon } from "lucide-react";
+import { ChevronDownIcon, EditIcon, EllipsisVerticalIcon, LinkIcon, TrashIcon } from "lucide-react";
 import { NavLink } from "react-router-dom";
 
 import { Button } from "@/components/ui/button.tsx";
@@ -39,10 +39,7 @@ export const Module = (props: ModuleProps) => {
     <Collapsible open={open} onOpenChange={setOpen} className="group/collapsible">
       <div className="flex w-full items-center justify-between gap-x-2 border-b p-2">
         <div onClick={() => setOpen(!open)} className="flex grow items-center justify-center hover:cursor-pointer">
-          <div className="flex items-center gap-x-2">
-            <AlignJustifyIcon />
-            <span className="text-lg">{module.name}</span>
-          </div>
+          <p className="text-lg">{module.name}</p>
           <ChevronDownIcon className={`ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180`} />
         </div>
         <DropdownMenu>

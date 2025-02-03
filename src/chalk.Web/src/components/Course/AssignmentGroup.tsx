@@ -34,7 +34,10 @@ export const AssignmentGroup = (props: AssignmentGroupProps) => {
     <Collapsible open={open} onOpenChange={setOpen} className="group/collapsible">
       <div className="flex w-full items-center justify-between gap-x-2 border-b p-2">
         <div onClick={() => setOpen(!open)} className="flex grow items-center justify-center hover:cursor-pointer">
-          <span className="text-lg">{assignmentGroup.name}</span>
+          <div className="flex space-x-2 text-lg">
+            <p>{assignmentGroup.name}</p>
+            <p>{assignmentGroup.weight}%</p>
+          </div>
           <ChevronDownIcon className={`ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180`} />
         </div>
         <DropdownMenu>
@@ -73,7 +76,7 @@ export const AssignmentGroup = (props: AssignmentGroupProps) => {
             {assignmentGroup.assignments.map((assignment) => {
               return (
                 <li key={assignment.id} className="p-2 flex justify-between items-center">
-                  <NavLink to={`/courses/${props.courseId}/assignment/${assignment.id}`} className="hover:underline">
+                  <NavLink to={`/courses/${props.courseId}/assignments/${assignment.id}`} className="hover:underline">
                     {assignment.name}
                   </NavLink>
                 </li>

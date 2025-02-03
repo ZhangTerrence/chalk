@@ -24,6 +24,7 @@ public static class AssignmentMappings
             assignmentGroup.Id,
             assignmentGroup.Name,
             assignmentGroup.Description,
+            assignmentGroup.Weight,
             assignmentGroup.Assignments.Select(e => e.ToDTO())
         );
     }

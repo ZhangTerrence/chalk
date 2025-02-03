@@ -132,7 +132,7 @@ public class CourseController : ControllerBase
     }
 
     [HttpPut("{courseId:long}/modules")]
-    public async Task<IActionResult> ReorderModules([FromRoute] long courseId, [FromForm] ReorderModulesRequest request)
+    public async Task<IActionResult> ReorderModules([FromRoute] long courseId, [FromBody] ReorderModulesRequest request)
     {
         var validationResult = await _reorderModulesRequestValidator.ValidateAsync(request);
         if (!validationResult.IsValid)
