@@ -48,6 +48,37 @@ public class FileService : IFileService
                 await _context.SaveChangesAsync();
                 return (T)Convert.ChangeType(module, typeof(T));
             }
+            case For.Assignment:
+            {
+                var assignment = _context.Assignments
+                    .Include(e => e.Files)
+                    .FirstOrDefault(e => e.Id == request.EntityId);
+                if (assignment is null)
+                {
+                    throw new ServiceException("Assignment not found.", StatusCodes.Status404NotFound);
+                }
+
+                var assignmentGroup = await _context.AssignmentGroups.FindAsync(assignment.AssignmentGroupId);
+                if (assignmentGroup is null)
+                {
+                    throw new ServiceException("Assignment group not found.", StatusCodes.Status404NotFound);
+                }
+
+                var course = await _context.Courses.FindAsync(assignmentGroup.CourseId);
+                if (course is null)
+                {
+                    throw new ServiceException("Course not found.", StatusCodes.Status404NotFound);
+                }
+
+                var url = await _cloudService.UploadAsync(Guid.NewGuid().ToString(), request.File);
+                var file = request.ToEntity(url);
+                assignment.Files.Add(file);
+                assignment.UpdatedDate = DateTime.UtcNow;
+                course.UpdatedDate = DateTime.UtcNow;
+
+                await _context.SaveChangesAsync();
+                return (T)Convert.ChangeType(assignment, typeof(T));
+            }
             default:
                 throw new NotImplementedException();
         }
@@ -92,6 +123,48 @@ public class FileService : IFileService
 
                 await _context.SaveChangesAsync();
                 return (T)Convert.ChangeType(module, typeof(T));
+            }
+            case For.Assignment:
+            {
+                var assignment = _context.Assignments
+                    .Include(e => e.Files)
+                    .FirstOrDefault(e => e.Id == request.EntityId);
+                if (assignment is null)
+                {
+                    throw new ServiceException("Assignment not found.", StatusCodes.Status404NotFound);
+                }
+
+                var assignmentGroup = await _context.AssignmentGroups.FindAsync(assignment.AssignmentGroupId);
+                if (assignmentGroup is null)
+                {
+                    throw new ServiceException("Assignment group not found.", StatusCodes.Status404NotFound);
+                }
+
+                var course = await _context.Courses.FindAsync(assignmentGroup.CourseId);
+                if (course is null)
+                {
+                    throw new ServiceException("Course not found.", StatusCodes.Status404NotFound);
+                }
+
+                var file = await _context.Files.FindAsync(fileId);
+                if (file is null)
+                {
+                    throw new ServiceException("File not found.", StatusCodes.Status404NotFound);
+                }
+
+                file.Name = request.Name;
+                file.Description = request.Description;
+                if (request.FileChanged!.Value)
+                {
+                    await _cloudService.DeleteAsync(file.FileUrl);
+                    file.FileUrl = await _cloudService.UploadAsync(Guid.NewGuid().ToString(), request.NewFile!);
+                }
+                file.UpdatedDate = DateTime.UtcNow;
+                assignment.UpdatedDate = DateTime.UtcNow;
+                course.UpdatedDate = DateTime.UtcNow;
+                
+                await _context.SaveChangesAsync();
+                return (T)Convert.ChangeType(assignment, typeof(T));
             }
             default:
                 throw new NotImplementedException();

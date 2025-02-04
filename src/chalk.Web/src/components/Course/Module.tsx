@@ -49,7 +49,16 @@ export const Module = (props: ModuleProps) => {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="mr-4 mt-1">
-            <DropdownMenuItem onClick={() => dispatch(setDialog({ entity: module, type: DialogType.CreateFile }))}>
+            <DropdownMenuItem
+              onClick={() =>
+                dispatch(
+                  setDialog({
+                    entity: { ...module, for: For.Module },
+                    type: DialogType.CreateFile,
+                  }),
+                )
+              }
+            >
               <span className="flex items-center gap-x-2">
                 <LinkIcon size={20} />
                 <p>Attach</p>
@@ -101,7 +110,7 @@ export const Module = (props: ModuleProps) => {
                       onClick={() =>
                         dispatch(
                           setDialog({
-                            entity: { ...file, moduleId: module.id },
+                            entity: { ...file, for: For.Module, entityId: module.id },
                             type: DialogType.UpdateFile,
                           }),
                         )

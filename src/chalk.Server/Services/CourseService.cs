@@ -35,7 +35,8 @@ public class CourseService : ICourseService
     {
         var course = await _context.Courses
             .Include(e => e.Modules).ThenInclude(e => e.Files).AsSingleQuery()
-            .Include(e => e.AssignmentGroups).ThenInclude(e => e.Assignments).AsSingleQuery()
+            .Include(e => e.AssignmentGroups).ThenInclude(e => e.Assignments).ThenInclude(e => e.Files).AsSingleQuery()
+            .Include(e => e.AssignmentGroups).ThenInclude(e => e.Assignments).ThenInclude(e => e.Submissions).AsSingleQuery()
             .FirstOrDefaultAsync(e => e.Id == courseId);
         if (course is null)
         {
@@ -59,7 +60,8 @@ public class CourseService : ICourseService
     public async Task<AssignmentGroup> GetAssignmentGroupAsync(long assignmentGroupId)
     {
         var assignmentGroup = await _context.AssignmentGroups
-            .Include(e => e.Assignments).AsSingleQuery()
+            .Include(e => e.Assignments).ThenInclude(e => e.Files).AsSingleQuery()
+            .Include(e => e.Assignments).ThenInclude(e => e.Submissions).AsSingleQuery()
             .FirstOrDefaultAsync(e => e.Id == assignmentGroupId);
         if (assignmentGroup is null)
         {

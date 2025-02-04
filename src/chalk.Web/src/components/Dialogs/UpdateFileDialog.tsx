@@ -25,7 +25,7 @@ export const UpdateFileDialog = () => {
   const dispatch = useAppDispatch();
   const [updateFile, { isLoading, isSuccess }] = useUpdateFileMutation();
 
-  const file = (dialog.entity as FileDTO & { moduleId: number })!;
+  const file = (dialog.entity as FileDTO & { for: For; entityId: number })!;
 
   const [uploadedFile, setUploadedFile] = React.useState<File | null>();
 
@@ -41,7 +41,7 @@ export const UpdateFileDialog = () => {
     if (!isLoading && isSuccess) {
       dispatch(setDialog(null));
       form.reset();
-      toast.success("Successfully edit file.");
+      toast.success("Successfully edited file.");
     }
   }, [isLoading, isSuccess]);
 
@@ -66,8 +66,8 @@ export const UpdateFileDialog = () => {
     for (let [key, value] of Object.entries(data)) {
       formData.append(key, value ?? "");
     }
-    formData.append("for", For.Module.toString());
-    formData.append("entityId", file.moduleId.toString());
+    formData.append("for", file.for.toString());
+    formData.append("entityId", file.entityId.toString());
     formData.append("fileChanged", (!!uploadedFile).toString());
     if (uploadedFile) {
       formData.append("newFile", uploadedFile);

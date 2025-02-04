@@ -53,6 +53,7 @@ public static class AssignmentMappings
             assignment.IsOpen,
             assignment.DueDate?.ToString(CultureInfo.CurrentCulture),
             assignment.AllowedAttempts,
+            assignment.Files.Select(e => e.ToDTO()),
             assignment.CreatedDate.ToString(CultureInfo.CurrentCulture),
             assignment.UpdatedDate.ToString(CultureInfo.CurrentCulture)
         );

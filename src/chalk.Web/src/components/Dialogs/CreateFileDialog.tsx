@@ -26,7 +26,7 @@ export const CreateFileDialog = () => {
   const dispatch = useAppDispatch();
   const [createFile, { isLoading, isSuccess }] = useCreateFileMutation();
 
-  const module = dialog.entity as ModuleDTO;
+  const entity = dialog.entity as ModuleDTO & { for: For };
 
   const [uploadedFile, setUploadedFile] = React.useState<File | null>();
 
@@ -42,7 +42,7 @@ export const CreateFileDialog = () => {
     if (!isLoading && isSuccess) {
       dispatch(setDialog(null));
       form.reset();
-      toast.success("Successfully created file for module.");
+      toast.success("Successfully created file.");
     }
   }, [isLoading, isSuccess]);
 
@@ -66,8 +66,8 @@ export const CreateFileDialog = () => {
     for (let [key, value] of Object.entries(data)) {
       formData.append(key, value);
     }
-    formData.append("for", For.Module.toString());
-    formData.append("entityId", module.id.toString());
+    formData.append("for", entity.for.toString());
+    formData.append("entityId", entity.id.toString());
     formData.append("file", uploadedFile);
 
     await createFile(formData).unwrap();

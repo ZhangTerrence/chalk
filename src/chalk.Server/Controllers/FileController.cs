@@ -46,13 +46,16 @@ public class FileController : ControllerBase
             case For.Module:
                 var module = await _fileService.CreateFile<Module>(request);
                 return Ok(new Response<ModuleDTO>(null, module.ToDTO()));
+            case For.Assignment:
+                var assignment = await _fileService.CreateFile<Assignment>(request);
+                return Ok(new Response<AssignmentDTO>(null, assignment.ToDTO()));
             default:
                 throw new NotImplementedException();
         }
     }
 
     [HttpPut("{fileId:long}")]
-    public async Task<IActionResult> UpdateModuleFile([FromRoute] long fileId, [FromForm] UpdateFileRequest request)
+    public async Task<IActionResult> UpdateFile([FromRoute] long fileId, [FromForm] UpdateFileRequest request)
     {
         var validationResult = await _updateFileRequestValidator.ValidateAsync(request);
         if (!validationResult.IsValid)
@@ -65,6 +68,9 @@ public class FileController : ControllerBase
             case For.Module:
                 var module = await _fileService.UpdateFile<Module>(fileId, request);
                 return Ok(new Response<ModuleDTO>(null, module.ToDTO()));
+            case For.Assignment:
+                var assignment = await _fileService.UpdateFile<Assignment>(fileId, request);
+                return Ok(new Response<AssignmentDTO>(null, assignment.ToDTO()));
             default:
                 throw new NotImplementedException();
         }

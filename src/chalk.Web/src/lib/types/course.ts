@@ -114,6 +114,7 @@ export type AssignmentDTO = {
   isOpen: boolean;
   dueDate: string | null;
   allowedAttempts: number | null;
+  files: FileDTO[];
   createdDate: string;
   updatedDate: string;
 };

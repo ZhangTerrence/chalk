@@ -28,6 +28,10 @@ export default function CourseModulesPage() {
 
   const [modules, setModules] = React.useState([...course.modules].sort((a, b) => a.relativeOrder - b.relativeOrder));
 
+  React.useEffect(() => {
+    setModules(course.modules);
+  }, [course]);
+
   const onDragEnd = (result: DropResult) => {
     if (result.combine) {
       const newModules = [...modules];

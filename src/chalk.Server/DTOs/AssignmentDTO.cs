@@ -24,6 +24,9 @@ public record AssignmentDTO(
     [property: JsonPropertyName("allowedAttempts")]
     int? AllowedAttempts,
     [property: JsonRequired]
+    [property: JsonPropertyName("files")]
+    IEnumerable<FileDTO> Files,
+    [property: JsonRequired]
     [property: JsonPropertyName("createdDate")]
     string CreatedDate,
     [property: JsonRequired]

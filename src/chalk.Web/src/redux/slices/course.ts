@@ -4,7 +4,7 @@ import { courseApi } from "@/redux/services/course.ts";
 import { fileApi } from "@/redux/services/file.ts";
 import type { RootState } from "@/redux/store.ts";
 
-import type { CourseResponse, ModuleDTO } from "@/lib/types/course.ts";
+import type { AssignmentDTO, CourseResponse, ModuleDTO } from "@/lib/types/course.ts";
 import { For } from "@/lib/types/file.ts";
 
 export type CourseState = CourseResponse | null;
@@ -26,10 +26,27 @@ export const courseSlice = createSlice({
         const args = Object.fromEntries(meta.arg.originalArgs.entries());
         if (args["for"] === For.Module.toString()) {
           const data = payload.data as ModuleDTO;
-          const modules = [...state.modules];
-          const index = modules.map((e) => e.id).indexOf(data.id);
-          modules[index] = data;
-          state.modules = modules;
+          state.modules = state.modules.map((module) => {
+            if (module.id === data.id) {
+              return data;
+            } else {
+              return module;
+            }
+          });
+        } else if (args["for"] === For.Assignment.toString()) {
+          const data = payload.data as AssignmentDTO;
+          state.assignmentGroups = state.assignmentGroups.map((assignmentGroup) => {
+            return {
+              ...assignmentGroup,
+              assignments: assignmentGroup.assignments.map((assignment) => {
+                if (assignment.id === Number.parseInt(args["entityId"].toString())) {
+                  return data;
+                } else {
+                  return assignment;
+                }
+              }),
+            };
+          });
         }
       }
     });
@@ -73,8 +90,8 @@ export const courseSlice = createSlice({
             return;
           }
           assignmentGroup.assignments[index] = payload.data;
-          state.assignmentGroups = assignmentGroups;
         }
+        state.assignmentGroups = assignmentGroups;
       }
     });
     builder.addMatcher(fileApi.endpoints.updateFile.matchFulfilled, (state, { payload, meta }) => {
@@ -82,10 +99,27 @@ export const courseSlice = createSlice({
         const args = Object.fromEntries(meta.arg.originalArgs.data.entries());
         if (args["for"] === For.Module.toString()) {
           const data = payload.data as ModuleDTO;
-          const modules = [...state.modules];
-          const index = modules.map((e) => e.id).indexOf(data.id);
-          modules[index] = data;
-          state.modules = modules;
+          state.modules = state.modules.map((module) => {
+            if (module.id === data.id) {
+              return data;
+            } else {
+              return module;
+            }
+          });
+        } else if (args["for"] === For.Assignment.toString()) {
+          const data = payload.data as AssignmentDTO;
+          state.assignmentGroups = state.assignmentGroups.map((assignmentGroup) => {
+            return {
+              ...assignmentGroup,
+              assignments: assignmentGroup.assignments.map((assignment) => {
+                if (assignment.id === Number.parseInt(args["entityId"].toString())) {
+                  return data;
+                } else {
+                  return assignment;
+                }
+              }),
+            };
+          });
         }
       }
     });
@@ -108,6 +142,22 @@ export const courseSlice = createSlice({
             } else {
               return e;
             }
+          });
+        } else if (args.for === For.Assignment) {
+          state.assignmentGroups = state.assignmentGroups.map((assignmentGroup) => {
+            return {
+              ...assignmentGroup,
+              assignments: assignmentGroup.assignments.map((assignment) => {
+                if (assignment.id === args.entityId) {
+                  return {
+                    ...assignment,
+                    files: assignment.files.filter((file) => file.id !== args.fileId),
+                  };
+                } else {
+                  return assignment;
+                }
+              }),
+            };
           });
         }
       }
