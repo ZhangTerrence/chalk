@@ -48,7 +48,14 @@ export const CreateCourseDialog = () => {
       <Separator orientation="horizontal" />
       <Form {...form}>
         <form
-          onSubmit={form.handleSubmit(async (data) => await createCourse(data).unwrap())}
+          onSubmit={form.handleSubmit(
+            async (data) =>
+              await createCourse({
+                ...data,
+                code: !!data.code ? data.code : undefined,
+                description: !!data.description ? data.description : undefined,
+              }).unwrap(),
+          )}
           className="flex min-w-80 flex-col gap-y-4"
         >
           <FormField

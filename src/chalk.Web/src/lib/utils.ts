@@ -22,8 +22,15 @@ export function mergeButtonRefs<T extends HTMLButtonElement>(
   };
 }
 
-export function inRange(n: number, min: number, max: number) {
-  return min <= n && n <= max;
+export function inRange(n: number, min?: number, max?: number) {
+  let bool = true;
+  if (min) {
+    bool &&= min <= n;
+  }
+  if (max) {
+    bool &&= n <= max;
+  }
+  return bool;
 }
 
 export function getImageData(event: React.ChangeEvent<HTMLInputElement>) {

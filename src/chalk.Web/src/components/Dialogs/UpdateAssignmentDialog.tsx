@@ -16,29 +16,29 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Separator } from "@/components/ui/separator.tsx";
 import { Textarea } from "@/components/ui/textarea.tsx";
 
-import { useCreateAssignmentMutation } from "@/redux/services/course.ts";
+import { useUpdateAssignmentMutation } from "@/redux/services/course.ts";
 import { selectDialog, setDialog } from "@/redux/slices/dialog.ts";
 import { useAppDispatch, useTypedSelector } from "@/redux/store.ts";
 
 import type { AssignmentDTO } from "@/lib/types/course.ts";
 import { cn } from "@/lib/utils.ts";
-import { CreateAssignmentSchema, type CreateAssignmentType } from "@/lib/validators/course.ts";
+import { UpdateAssignmentSchema, type UpdateAssignmentType } from "@/lib/validators/course.ts";
 
-export const CreateAssignmentDialog = () => {
+export const UpdateAssignmentDialog = () => {
   const dialog = useTypedSelector(selectDialog)!;
   const dispatch = useAppDispatch();
-  const [createAssignment, { isLoading, isSuccess }] = useCreateAssignmentMutation();
+  const [updateAssignment, { isLoading, isSuccess }] = useUpdateAssignmentMutation();
 
-  const assignment = dialog.entity as AssignmentDTO & { courseId: number };
+  const assignment = dialog.entity as AssignmentDTO & { courseId: number; assignmentGroupId: number };
 
-  const form = useForm<CreateAssignmentType>({
-    resolver: zodResolver(CreateAssignmentSchema),
+  const form = useForm<UpdateAssignmentType>({
+    resolver: zodResolver(UpdateAssignmentSchema),
     defaultValues: {
-      name: "",
-      description: "",
-      isOpen: true,
-      dueDate: undefined,
-      allowedAttempts: "",
+      name: assignment.name,
+      description: assignment.description ?? undefined,
+      isOpen: assignment.isOpen,
+      dueDate: assignment.dueDate ? new Date(assignment.dueDate) : undefined,
+      allowedAttempts: assignment.allowedAttempts?.toString(),
     },
   });
 
@@ -46,34 +46,45 @@ export const CreateAssignmentDialog = () => {
     if (!isLoading && isSuccess) {
       dispatch(setDialog(null));
       form.reset();
-      toast.success("Successfully created assignment.");
+      toast.success("Successfully edited assignment.");
     }
   }, [isLoading, isSuccess]);
+
+  const onSubmit = async (data: UpdateAssignmentType) => {
+    if (
+      assignment.name === data.name &&
+      (assignment.description ?? undefined) === data.description &&
+      assignment.isOpen === data.isOpen &&
+      (assignment.dueDate ? new Date(assignment.dueDate).getTime() : undefined) === data.dueDate?.getTime() &&
+      assignment.allowedAttempts === (data.allowedAttempts ? Number.parseInt(data.allowedAttempts) : null)
+    ) {
+      dispatch(setDialog(null));
+      return;
+    }
+
+    await updateAssignment({
+      courseId: assignment.courseId,
+      assignmentGroupId: assignment.assignmentGroupId,
+      assignmentId: assignment.id,
+      data: {
+        ...data,
+        description: !!data.description ? data.description : undefined,
+        allowedAttempts:
+          !!data.allowedAttempts && !Number.isNaN(Number.parseInt(data.allowedAttempts))
+            ? Number.parseInt(data.allowedAttempts)
+            : undefined,
+      },
+    }).unwrap();
+  };
 
   return (
     <>
       <DialogHeader>
-        <DialogTitle>Create Assignment</DialogTitle>
+        <DialogTitle>Edit Assignment</DialogTitle>
       </DialogHeader>
       <Separator orientation="horizontal" />
       <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(async (data) => {
-            await createAssignment({
-              courseId: assignment.courseId,
-              assignmentGroupId: assignment.id,
-              data: {
-                ...data,
-                description: !!data.description ? data.description : undefined,
-                allowedAttempts:
-                  !!data.allowedAttempts && !Number.isNaN(Number.parseInt(data.allowedAttempts))
-                    ? Number.parseInt(data.allowedAttempts)
-                    : undefined,
-              },
-            }).unwrap();
-          })}
-          className="flex min-w-80 flex-col gap-y-4"
-        >
+        <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-w-80 flex-col gap-y-4">
           <FormField
             control={form.control}
             name="name"
@@ -178,7 +189,7 @@ export const CreateAssignmentDialog = () => {
             <DialogClose asChild>
               <Button variant="outline">Cancel</Button>
             </DialogClose>
-            <Button>Create</Button>
+            <Button>Edit</Button>
           </DialogFooter>
         </form>
       </Form>

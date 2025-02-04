@@ -46,10 +46,15 @@ export const CreateAssignmentGroupSchema = z.object({
     .number({
       message: "The assignment group's weight is required.",
     })
+    .gte(0, {
+      message: "The assignment group's weight must be greater than or equal to 0%.",
+    })
     .lte(100, {
       message: "The assignment group's weight must be less than 100%.",
     }),
 });
+export const UpdateAssignmentGroupSchema = CreateAssignmentGroupSchema;
+
 export const CreateAssignmentSchema = z.object({
   name: z
     .string({
@@ -75,15 +80,27 @@ export const CreateAssignmentSchema = z.object({
     .optional()
     .or(z.literal(undefined)),
   allowedAttempts: z
-    .number()
-    .refine((e) => (e > -1 ? e >= 1 : true), {
-      message: "The assignment's maximum allowed attempts must be greater than or equal to 1.",
-    })
+    .string()
+    .refine(
+      (e) => {
+        if (!e) {
+          return true;
+        }
+        const value = Number.parseInt(e);
+        return !Number.isNaN(value) && inRange(value, 1);
+      },
+      {
+        message: "The assignment's maximum allowed attempts must be greater than or equal to 1.",
+      },
+    )
     .optional()
     .or(z.literal(undefined)),
 });
+export const UpdateAssignmentSchema = CreateAssignmentSchema;
 
 export type CreateCourseType = z.infer<typeof CreateCourseSchema>;
 export type UpdateCourseType = z.infer<typeof UpdateCourseSchema>;
 export type CreateAssignmentGroupType = z.infer<typeof CreateAssignmentGroupSchema>;
+export type UpdateAssignmentGroupType = z.infer<typeof UpdateAssignmentGroupSchema>;
 export type CreateAssignmentType = z.infer<typeof CreateAssignmentSchema>;
+export type UpdateAssignmentType = z.infer<typeof UpdateAssignmentSchema>;

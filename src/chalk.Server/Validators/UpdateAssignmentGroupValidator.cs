@@ -3,9 +3,9 @@ using FluentValidation;
 
 namespace chalk.Server.Validators;
 
-public class CreateAssignmentGroupValidator : AbstractValidator<CreateAssignmentGroupRequest>
+public class UpdateAssignmentGroupValidator : AbstractValidator<UpdateAssignmentGroupRequest>
 {
-    public CreateAssignmentGroupValidator()
+    public UpdateAssignmentGroupValidator()
     {
         RuleFor(e => e.Name)
             .NotEmpty()

@@ -11,6 +11,8 @@ import { CreateModuleDialog } from "@/components/Dialogs/CreateModuleDialog.tsx"
 import { CreateOrganizationDialog } from "@/components/Dialogs/CreateOrganizationDialog.tsx";
 import { UpdateAccountDialog } from "@/components/Dialogs/UpdateAccountDialog.tsx";
 import { UpdateAppearanceDialog } from "@/components/Dialogs/UpdateAppearanceDialog.tsx";
+import { UpdateAssignmentDialog } from "@/components/Dialogs/UpdateAssignmentDialog.tsx";
+import { UpdateAssignmentGroupDialog } from "@/components/Dialogs/UpdateAssignmentGroupDialog.tsx";
 import { UpdateCourseDialog } from "@/components/Dialogs/UpdateCourseDialog.tsx";
 import { UpdateFileDialog } from "@/components/Dialogs/UpdateFileDialog.tsx";
 import { UpdateModuleDialog } from "@/components/Dialogs/UpdateModuleDialog.tsx";
@@ -46,6 +48,10 @@ export default function PrivateLayout() {
           return <CreateAssignmentGroupDialog />;
         case DialogType.CreateAssignment:
           return <CreateAssignmentDialog />;
+        case DialogType.UpdateAssignmentGroup:
+          return <UpdateAssignmentGroupDialog />;
+        case DialogType.UpdateAssignment:
+          return <UpdateAssignmentDialog />;
         case DialogType.CreateOrganization:
           return <CreateOrganizationDialog />;
         case DialogType.CreateFile:

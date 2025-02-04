@@ -57,6 +57,29 @@ export type UpdateModuleRequest = {
   };
 };
 
+export type UpdateAssignmentGroupRequest = {
+  courseId: number;
+  assignmentGroupId: number;
+  data: {
+    name: string;
+    description?: string;
+    weight: number;
+  };
+};
+
+export type UpdateAssignmentRequest = {
+  courseId: number;
+  assignmentGroupId: number;
+  assignmentId: number;
+  data: {
+    name: string;
+    description?: string;
+    isOpen: boolean;
+    dueDate?: Date;
+    allowedAttempts?: number;
+  };
+};
+
 export type CourseDTO = {
   id: number;
   name: string;

@@ -29,7 +29,15 @@ public interface ICourseService
 
     public Task<Module> UpdateModuleAsync(long courseId, long moduleId, UpdateModuleRequest request);
 
+    public Task<AssignmentGroup> UpdateAssignmentGroupAsync(long courseId, long assignmentGroupId, UpdateAssignmentGroupRequest request);
+
+    public Task<Assignment> UpdateAssignmentAsync(long courseId, long assignmentGroupId, long assignmentId, UpdateAssignmentRequest request);
+
     public Task DeleteCourseAsync(long courseId);
 
     public Task DeleteModuleAsync(long courseId, long moduleId);
+
+    public Task DeleteAssignmentGroupAsync(long courseId, long assignmentGroupId);
+
+    public Task DeleteAssignmentAsync(long courseId, long assignmentGroupId, long assignmentId);
 }

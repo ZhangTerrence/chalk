@@ -138,6 +138,12 @@ public class CourseService : ICourseService
     public async Task<Assignment> CreateAssignmentAsync(long courseId, long assignmentGroupId, CreateAssignmentRequest request)
     {
         var course = await GetCourseAsync(courseId);
+        var aggregateWeight = course.AssignmentGroups.Aggregate(0, (n, e) => n + e.Weight);
+        if (aggregateWeight != 100)
+        {
+            throw new ServiceException("Sum of assignment group weights must be 100%.", StatusCodes.Status400BadRequest);
+        }
+
         var assignmentGroup = await GetAssignmentGroupAsync(assignmentGroupId);
         var assignment = request.ToEntity(assignmentGroup.Id);
         assignmentGroup.Assignments.Add(assignment);
@@ -191,6 +197,35 @@ public class CourseService : ICourseService
         return await GetModuleAsync(module.Id);
     }
 
+    public async Task<AssignmentGroup> UpdateAssignmentGroupAsync(long courseId, long assignmentGroupId, UpdateAssignmentGroupRequest request)
+    {
+        var assignmentGroup = await GetAssignmentGroupAsync(assignmentGroupId);
+        assignmentGroup.Name = request.Name;
+        assignmentGroup.Description = request.Description;
+        assignmentGroup.Weight = request.Weight!.Value;
+        var course = await GetCourseAsync(courseId);
+        course.UpdatedDate = DateTime.UtcNow;
+
+        await _context.SaveChangesAsync();
+        return await GetAssignmentGroupAsync(assignmentGroup.Id);
+    }
+
+    public async Task<Assignment> UpdateAssignmentAsync(long courseId, long assignmentGroupId, long assignmentId, UpdateAssignmentRequest request)
+    {
+        var assignment = await GetAssignmentAsync(assignmentId);
+        assignment.Name = request.Name;
+        assignment.Description = request.Description;
+        assignment.IsOpen = request.IsOpen!.Value;
+        assignment.DueDate = request.DueDate;
+        assignment.AllowedAttempts = request.AllowedAttempts;
+        assignment.UpdatedDate = DateTime.UtcNow;
+        var course = await GetCourseAsync(courseId);
+        course.UpdatedDate = DateTime.UtcNow;
+
+        await _context.SaveChangesAsync();
+        return await GetAssignmentAsync(assignment.Id);
+    }
+
     public async Task DeleteCourseAsync(long courseId)
     {
         var course = await GetCourseAsync(courseId);
@@ -220,6 +255,35 @@ public class CourseService : ICourseService
         {
             await _fileService.DeleteFile(file.Id);
         }
+        course.UpdatedDate = DateTime.UtcNow;
+
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task DeleteAssignmentGroupAsync(long courseId, long assignmentGroupId)
+    {
+        var assignmentGroup = await GetAssignmentGroupAsync(assignmentGroupId);
+        var course = await GetCourseAsync(courseId);
+        _context.AssignmentGroups.Remove(assignmentGroup);
+        foreach (var assignment in assignmentGroup.Assignments.ToList())
+        {
+            await DeleteAssignmentAsync(courseId, assignmentGroup.Id, assignment.Id);
+        }
+        course.UpdatedDate = DateTime.UtcNow;
+
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task DeleteAssignmentAsync(long courseId, long assignmentGroupId, long assignmentId)
+    {
+        var assignment = await GetAssignmentAsync(assignmentId);
+        var course = await GetCourseAsync(courseId);
+        _context.Assignments.Remove(assignment);
+        foreach (var file in assignment.Files.ToList())
+        {
+            await _fileService.DeleteFile(file.Id);
+        }
+        // TODO - Delete submissions
         course.UpdatedDate = DateTime.UtcNow;
 
         await _context.SaveChangesAsync();

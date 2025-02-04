@@ -23,12 +23,14 @@ export default function CourseAssignmentPage() {
   const assignmentGroups = [...course.assignmentGroups];
 
   return (
-    <div className="flex h-full w-full flex-col gap-y-4">
-      {assignmentGroups
-        .sort((a, b) => a.name.localeCompare(b.name))
-        .map((assignmentGroup) => {
-          return <AssignmentGroup key={assignmentGroup.id} courseId={course.id} data={assignmentGroup} />;
-        })}
+    <div className="flex h-full w-full flex-col gap-y-4 justify-between">
+      <div className="flex flex-col gap-y-4">
+        {assignmentGroups
+          .sort((a, b) => b.weight - a.weight)
+          .map((assignmentGroup) => {
+            return <AssignmentGroup key={assignmentGroup.id} courseId={course.id} data={assignmentGroup} />;
+          })}
+      </div>
       <Button
         variant="outline"
         onClick={() => dispatch(setDialog({ entity: course, type: DialogType.CreateAssignmentGroup }))}

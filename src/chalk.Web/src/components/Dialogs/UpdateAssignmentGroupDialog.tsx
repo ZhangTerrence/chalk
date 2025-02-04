@@ -11,23 +11,26 @@ import { Input } from "@/components/ui/input.tsx";
 import { Separator } from "@/components/ui/separator.tsx";
 import { Textarea } from "@/components/ui/textarea.tsx";
 
-import { useCreateModuleMutation } from "@/redux/services/course.ts";
+import { useUpdateAssignmentGroupMutation } from "@/redux/services/course.ts";
 import { selectDialog, setDialog } from "@/redux/slices/dialog.ts";
 import { useAppDispatch, useTypedSelector } from "@/redux/store.ts";
 
-import type { CourseDTO } from "@/lib/types/course.ts";
-import { CreateModuleSchema, type CreateModuleType } from "@/lib/validators/module.ts";
+import type { AssignmentGroupDTO } from "@/lib/types/course.ts";
+import { UpdateAssignmentGroupSchema, type UpdateAssignmentGroupType } from "@/lib/validators/course.ts";
 
-export const CreateModuleDialog = () => {
+export const UpdateAssignmentGroupDialog = () => {
   const dialog = useTypedSelector(selectDialog)!;
   const dispatch = useAppDispatch();
-  const [createModule, { isLoading, isSuccess }] = useCreateModuleMutation();
+  const [updateAssignmentGroup, { isLoading, isSuccess }] = useUpdateAssignmentGroupMutation();
 
-  const form = useForm<CreateModuleType>({
-    resolver: zodResolver(CreateModuleSchema),
+  const assignmentGroup = (dialog.entity as AssignmentGroupDTO & { courseId: number })!;
+
+  const form = useForm<UpdateAssignmentGroupType>({
+    resolver: zodResolver(UpdateAssignmentGroupSchema),
     defaultValues: {
-      name: "",
-      description: "",
+      name: assignmentGroup.name,
+      description: assignmentGroup.description ?? undefined,
+      weight: assignmentGroup.weight,
     },
   });
 
@@ -35,26 +38,24 @@ export const CreateModuleDialog = () => {
     if (!isLoading && isSuccess) {
       dispatch(setDialog(null));
       form.reset();
-      toast.success("Successfully created module.");
+      toast.success("Successfully edited assignment group.");
     }
   }, [isLoading, isSuccess]);
 
   return (
     <>
       <DialogHeader>
-        <DialogTitle>Create Module</DialogTitle>
+        <DialogTitle>Edit Assignment Group</DialogTitle>
       </DialogHeader>
       <Separator orientation="horizontal" />
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(
             async (data) =>
-              await createModule({
-                courseId: (dialog.entity as CourseDTO)!.id,
-                data: {
-                  ...data,
-                  description: !!data.description ? data.description : undefined,
-                },
+              await updateAssignmentGroup({
+                courseId: assignmentGroup.courseId,
+                assignmentGroupId: assignmentGroup.id,
+                data: data,
               }).unwrap(),
           )}
           className="flex min-w-80 flex-col gap-y-4"
@@ -85,11 +86,31 @@ export const CreateModuleDialog = () => {
               </FormItem>
             )}
           />
+          <FormField
+            control={form.control}
+            name="weight"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Weight</FormLabel>
+                <FormControl>
+                  <Input
+                    type="number"
+                    min={0}
+                    max={100}
+                    {...field}
+                    onChange={(e) => field.onChange(parseInt(e.target.value))}
+                    className="max-h-40"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <DialogFooter className="max-md:flex max-md:w-full max-md:flex-row max-md:justify-end max-md:gap-x-4">
             <DialogClose asChild>
               <Button variant="outline">Cancel</Button>
             </DialogClose>
-            <Button>Create</Button>
+            <Button>Edit</Button>
           </DialogFooter>
         </form>
       </Form>

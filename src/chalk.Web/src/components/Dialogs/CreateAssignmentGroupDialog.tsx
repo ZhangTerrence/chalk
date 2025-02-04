@@ -43,7 +43,7 @@ export const CreateAssignmentGroupDialog = () => {
   return (
     <>
       <DialogHeader>
-        <DialogTitle>Create Assignment</DialogTitle>
+        <DialogTitle>Create Assignment Group</DialogTitle>
       </DialogHeader>
       <Separator orientation="horizontal" />
       <Form {...form}>
@@ -52,7 +52,10 @@ export const CreateAssignmentGroupDialog = () => {
             async (data) =>
               await createAssignmentGroup({
                 courseId: (dialog.entity as CourseDTO)!.id,
-                data: data,
+                data: {
+                  ...data,
+                  description: !!data.description ? data.description : undefined,
+                },
               }).unwrap(),
           )}
           className="flex min-w-80 flex-col gap-y-4"

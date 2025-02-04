@@ -56,6 +56,27 @@ export const courseSlice = createSlice({
         state.modules = modules;
       }
     });
+    builder.addMatcher(courseApi.endpoints.updateAssignmentGroup.matchFulfilled, (state, { payload }) => {
+      if (state) {
+        const assignmentGroups = [...state.assignmentGroups];
+        const index = assignmentGroups.map((e) => e.id).indexOf(payload.data.id);
+        assignmentGroups[index] = payload.data;
+        state.assignmentGroups = assignmentGroups;
+      }
+    });
+    builder.addMatcher(courseApi.endpoints.updateAssignment.matchFulfilled, (state, { payload }) => {
+      if (state) {
+        const assignmentGroups = [...state.assignmentGroups];
+        for (const assignmentGroup of assignmentGroups) {
+          const index = assignmentGroup.assignments.map((e) => e.id).indexOf(payload.data.id);
+          if (index < 0) {
+            return;
+          }
+          assignmentGroup.assignments[index] = payload.data;
+          state.assignmentGroups = assignmentGroups;
+        }
+      }
+    });
     builder.addMatcher(fileApi.endpoints.updateFile.matchFulfilled, (state, { payload, meta }) => {
       if (state) {
         const args = Object.fromEntries(meta.arg.originalArgs.data.entries());
@@ -88,6 +109,21 @@ export const courseSlice = createSlice({
               return e;
             }
           });
+        }
+      }
+    });
+    builder.addMatcher(courseApi.endpoints.deleteAssignmentGroup.matchFulfilled, (state, { meta }) => {
+      if (state) {
+        state.assignmentGroups = state.assignmentGroups.filter((e) => e.id !== meta.arg.originalArgs.assignmentGroupId);
+      }
+    });
+    builder.addMatcher(courseApi.endpoints.deleteAssignment.matchFulfilled, (state, { meta }) => {
+      if (state) {
+        const assignmentGroups = [...state.assignmentGroups];
+        for (let i = 0; i < assignmentGroups.length; i++) {
+          assignmentGroups[i].assignments = assignmentGroups[i].assignments.filter(
+            (e) => e.id !== meta.arg.originalArgs.assignmentId,
+          );
         }
       }
     });

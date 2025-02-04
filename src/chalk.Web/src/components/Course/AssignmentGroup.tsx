@@ -1,6 +1,6 @@
 import React from "react";
 
-import { ChevronDownIcon, EllipsisVerticalIcon, PlusIcon } from "lucide-react";
+import { ChevronDownIcon, EditIcon, EllipsisVerticalIcon, PlusIcon, TrashIcon } from "lucide-react";
 import { NavLink } from "react-router-dom";
 
 import { Button } from "@/components/ui/button.tsx";
@@ -12,6 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu.tsx";
 
+import { useDeleteAssignmentGroupMutation, useDeleteAssignmentMutation } from "@/redux/services/course.ts";
 import { setDialog } from "@/redux/slices/dialog.ts";
 import { useAppDispatch } from "@/redux/store.ts";
 
@@ -25,6 +26,8 @@ type AssignmentGroupProps = {
 
 export const AssignmentGroup = (props: AssignmentGroupProps) => {
   const dispatch = useAppDispatch();
+  const [deleteAssignmentGroup] = useDeleteAssignmentGroupMutation();
+  const [deleteAssignment] = useDeleteAssignmentMutation();
 
   const assignmentGroup = props.data;
 
@@ -62,6 +65,34 @@ export const AssignmentGroup = (props: AssignmentGroupProps) => {
                 <p>Add</p>
               </span>
             </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() =>
+                dispatch(
+                  setDialog({
+                    entity: { ...assignmentGroup, courseId: props.courseId },
+                    type: DialogType.UpdateAssignmentGroup,
+                  }),
+                )
+              }
+            >
+              <span className="flex items-center gap-x-2">
+                <EditIcon size={20} />
+                <p>Edit</p>
+              </span>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={async () =>
+                await deleteAssignmentGroup({
+                  courseId: props.courseId,
+                  assignmentGroupId: assignmentGroup.id,
+                }).unwrap()
+              }
+            >
+              <span className="flex items-center gap-x-2">
+                <TrashIcon size={20} />
+                <p>Delete</p>
+              </span>
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
@@ -79,6 +110,34 @@ export const AssignmentGroup = (props: AssignmentGroupProps) => {
                   <NavLink to={`/courses/${props.courseId}/assignments/${assignment.id}`} className="hover:underline">
                     {assignment.name}
                   </NavLink>
+                  <div className="flex gap-x-2">
+                    <Button
+                      size="icon"
+                      onClick={() =>
+                        dispatch(
+                          setDialog({
+                            entity: { ...assignment, courseId: props.courseId, assignmentGroupId: assignmentGroup.id },
+                            type: DialogType.UpdateAssignment,
+                          }),
+                        )
+                      }
+                    >
+                      <EditIcon />
+                    </Button>
+                    <Button
+                      variant="destructive"
+                      size="icon"
+                      onClick={async () =>
+                        await deleteAssignment({
+                          courseId: props.courseId,
+                          assignmentGroupId: assignmentGroup.id,
+                          assignmentId: assignment.id,
+                        }).unwrap()
+                      }
+                    >
+                      <TrashIcon />
+                    </Button>
+                  </div>
                 </li>
               );
             })}

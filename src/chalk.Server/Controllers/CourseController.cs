@@ -23,6 +23,8 @@ public class CourseController : ControllerBase
     private readonly IValidator<UpdateCourseRequest> _updateCourseRequestValidator;
     private readonly IValidator<ReorderModulesRequest> _reorderModulesRequestValidator;
     private readonly IValidator<UpdateModuleRequest> _updateModuleRequestValidator;
+    private readonly IValidator<UpdateAssignmentGroupRequest> _updateAssignmentGroupRequestValidator;
+    private readonly IValidator<UpdateAssignmentRequest> _updateAssignmentRequestValidator;
 
     public CourseController(
         ICourseService courseService,
@@ -32,7 +34,9 @@ public class CourseController : ControllerBase
         IValidator<CreateAssignmentRequest> createAssignmentRequestValidator,
         IValidator<UpdateCourseRequest> updateCourseRequestValidator,
         IValidator<ReorderModulesRequest> reorderModulesRequestValidator,
-        IValidator<UpdateModuleRequest> updateModuleRequestValidator
+        IValidator<UpdateModuleRequest> updateModuleRequestValidator,
+        IValidator<UpdateAssignmentGroupRequest> updateAssignmentGroupRequestValidator,
+        IValidator<UpdateAssignmentRequest> updateAssignmentRequestValidator
     )
     {
         _courseService = courseService;
@@ -43,6 +47,8 @@ public class CourseController : ControllerBase
         _updateCourseRequestValidator = updateCourseRequestValidator;
         _reorderModulesRequestValidator = reorderModulesRequestValidator;
         _updateModuleRequestValidator = updateModuleRequestValidator;
+        _updateAssignmentGroupRequestValidator = updateAssignmentGroupRequestValidator;
+        _updateAssignmentRequestValidator = updateAssignmentRequestValidator;
     }
 
     [HttpGet]
@@ -161,6 +167,41 @@ public class CourseController : ControllerBase
         return Ok(new Response<ModuleDTO>(null, module.ToDTO()));
     }
 
+    [HttpPut("{courseId:long}/assignment-groups/{assignmentGroupId:long}")]
+    public async Task<IActionResult> UpdateAssignmentGroup(
+        [FromRoute] long courseId,
+        [FromRoute] long assignmentGroupId,
+        [FromBody] UpdateAssignmentGroupRequest request
+    )
+    {
+        var validationResult = await _updateAssignmentGroupRequestValidator.ValidateAsync(request);
+        if (!validationResult.IsValid)
+        {
+            return BadRequest(new Response<object>(validationResult.GetErrorMessages()));
+        }
+
+        var assignmentGroup = await _courseService.UpdateAssignmentGroupAsync(courseId, assignmentGroupId, request);
+        return Ok(new Response<AssignmentGroupDTO>(null, assignmentGroup.ToDTO()));
+    }
+
+    [HttpPut("{courseId:long}/assignment-groups/{assignmentGroupId:long}/{assignmentId:long}")]
+    public async Task<IActionResult> UpdateAssignment(
+        [FromRoute] long courseId,
+        [FromRoute] long assignmentGroupId,
+        [FromRoute] long assignmentId,
+        [FromBody] UpdateAssignmentRequest request
+    )
+    {
+        var validationResult = await _updateAssignmentRequestValidator.ValidateAsync(request);
+        if (!validationResult.IsValid)
+        {
+            return BadRequest(new Response<object>(validationResult.GetErrorMessages()));
+        }
+
+        var assignment = await _courseService.UpdateAssignmentAsync(courseId, assignmentGroupId, assignmentId, request);
+        return Ok(new Response<AssignmentDTO>(null, assignment.ToDTO()));
+    }
+
     [HttpDelete("{courseId:long}")]
     public async Task<IActionResult> DeleteCourse([FromRoute] long courseId)
     {
@@ -172,6 +213,20 @@ public class CourseController : ControllerBase
     public async Task<IActionResult> DeleteCourseModule([FromRoute] long courseId, [FromRoute] long moduleId)
     {
         await _courseService.DeleteModuleAsync(courseId, moduleId);
+        return NoContent();
+    }
+
+    [HttpDelete("{courseId:long}/assignment-groups/{assignmentGroupId:long}")]
+    public async Task<IActionResult> DeleteAssignmentGroup([FromRoute] long courseId, [FromRoute] long assignmentGroupId)
+    {
+        await _courseService.DeleteAssignmentGroupAsync(courseId, assignmentGroupId);
+        return NoContent();
+    }
+
+    [HttpDelete("{courseId:long}/assignment-groups/{assignmentGroupId:long}/{assignmentId:long}")]
+    public async Task<IActionResult> DeleteAssignment([FromRoute] long courseId, long assignmentGroupId, long assignmentId)
+    {
+        await _courseService.DeleteAssignmentAsync(courseId, assignmentGroupId, assignmentId);
         return NoContent();
     }
 }

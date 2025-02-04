@@ -47,7 +47,14 @@ export const UpdateModuleDialog = () => {
       return;
     }
 
-    await updateModule({ courseId: module.courseId, moduleId: module.id, data: data }).unwrap();
+    await updateModule({
+      courseId: module.courseId,
+      moduleId: module.id,
+      data: {
+        ...data,
+        description: !!data.description ? data.description : undefined,
+      },
+    }).unwrap();
 
     dispatch(setDialog(null));
   };

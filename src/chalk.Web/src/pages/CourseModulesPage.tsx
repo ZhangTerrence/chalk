@@ -59,7 +59,7 @@ export default function CourseModulesPage() {
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="droppable">
           {(provided) => (
-            <div {...provided.droppableProps} ref={provided.innerRef} className="relative w-full flex flex-col">
+            <div {...provided.droppableProps} ref={provided.innerRef} className="flex flex-col gap-y-4">
               {modules.map((module, i) => {
                 return (
                   <Draggable key={module.id} draggableId={module.id.toString()} index={i}>

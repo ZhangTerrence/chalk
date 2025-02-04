@@ -11,6 +11,8 @@ import type {
   CreateModuleRequest,
   ModuleDTO,
   ReorderModulesRequest,
+  UpdateAssignmentGroupRequest,
+  UpdateAssignmentRequest,
   UpdateCourseRequest,
   UpdateModuleRequest,
 } from "@/lib/types/course.ts";
@@ -38,6 +40,7 @@ export const courseApi = baseApi.injectEndpoints({
         method: "POST",
         body: body.data,
       }),
+      invalidatesTags: (_, __, requestBody) => [{ type: "course", id: requestBody.courseId }],
     }),
     createAssignmentGroup: builder.mutation<Response<AssignmentGroupDTO>, CreateAssignmentGroupRequest>({
       query: (body) => ({
@@ -45,6 +48,7 @@ export const courseApi = baseApi.injectEndpoints({
         method: "POST",
         body: body.data,
       }),
+      invalidatesTags: (_, __, requestBody) => [{ type: "course", id: requestBody.courseId }],
     }),
     createAssignment: builder.mutation<Response<AssignmentDTO>, CreateAssignmentRequest>({
       query: (body) => ({
@@ -52,6 +56,7 @@ export const courseApi = baseApi.injectEndpoints({
         method: "POST",
         body: body.data,
       }),
+      invalidatesTags: (_, __, requestBody) => [{ type: "course", id: requestBody.courseId }],
     }),
     updateCourse: builder.mutation<Response<CourseResponse>, UpdateCourseRequest>({
       query: (body) => ({
@@ -68,6 +73,7 @@ export const courseApi = baseApi.injectEndpoints({
         method: "PUT",
         body: body.data,
       }),
+      invalidatesTags: (_, __, requestBody) => [{ type: "course", id: requestBody.courseId }],
     }),
     updateModule: builder.mutation<Response<ModuleDTO>, UpdateModuleRequest>({
       query: (body) => ({
@@ -75,6 +81,23 @@ export const courseApi = baseApi.injectEndpoints({
         method: "PUT",
         body: body.data,
       }),
+      invalidatesTags: (_, __, requestBody) => [{ type: "course", id: requestBody.courseId }],
+    }),
+    updateAssignmentGroup: builder.mutation<Response<AssignmentGroupDTO>, UpdateAssignmentGroupRequest>({
+      query: (body) => ({
+        url: `/courses/${body.courseId}/assignment-groups/${body.assignmentGroupId}`,
+        method: "PUT",
+        body: body.data,
+      }),
+      invalidatesTags: (_, __, requestBody) => [{ type: "course", id: requestBody.courseId }],
+    }),
+    updateAssignment: builder.mutation<Response<AssignmentDTO>, UpdateAssignmentRequest>({
+      query: (body) => ({
+        url: `/courses/${body.courseId}/assignment-groups/${body.assignmentGroupId}/${body.assignmentId}`,
+        method: "PUT",
+        body: body.data,
+      }),
+      invalidatesTags: (_, __, requestBody) => [{ type: "course", id: requestBody.courseId }],
     }),
     deleteCourse: builder.mutation<null, number>({
       query: (courseId) => ({
@@ -85,6 +108,18 @@ export const courseApi = baseApi.injectEndpoints({
     deleteModule: builder.mutation<null, { courseId: number; moduleId: number }>({
       query: (body) => ({
         url: `/courses/${body.courseId}/modules/${body.moduleId}`,
+        method: "DELETE",
+      }),
+    }),
+    deleteAssignmentGroup: builder.mutation<null, { courseId: number; assignmentGroupId: number }>({
+      query: (body) => ({
+        url: `/courses/${body.courseId}/assignment-groups/${body.assignmentGroupId}`,
+        method: "DELETE",
+      }),
+    }),
+    deleteAssignment: builder.mutation<null, { courseId: number; assignmentGroupId: number; assignmentId: number }>({
+      query: (body) => ({
+        url: `/courses/${body.courseId}/assignment-groups/${body.assignmentGroupId}/${body.assignmentId}`,
         method: "DELETE",
       }),
     }),
@@ -100,6 +135,10 @@ export const {
   useUpdateCourseMutation,
   useReorderModulesMutation,
   useUpdateModuleMutation,
+  useUpdateAssignmentGroupMutation,
+  useUpdateAssignmentMutation,
   useDeleteCourseMutation,
   useDeleteModuleMutation,
+  useDeleteAssignmentGroupMutation,
+  useDeleteAssignmentMutation,
 } = courseApi;

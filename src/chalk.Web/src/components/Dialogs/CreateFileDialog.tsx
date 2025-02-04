@@ -110,8 +110,8 @@ export const CreateFileDialog = () => {
             )}
           />
           <div className="flex flex-col gap-y-2">
-            <Label htmlFor="resource">File</Label>
-            <Input id="resource" type="file" onChange={onFileUpload} className="hover:cursor-pointer pt-1.5" />
+            <Label htmlFor="file">File</Label>
+            <Input id="file" type="file" onChange={onFileUpload} className="hover:cursor-pointer pt-1.5" />
           </div>
           <DialogFooter className="max-md:flex max-md:w-full max-md:flex-row max-md:justify-end max-md:gap-x-4">
             <DialogClose asChild>
