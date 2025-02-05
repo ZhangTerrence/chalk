@@ -15,7 +15,6 @@
         <PackageReference Include="EFCore.NamingConventions" Version="8.0.3"/>
         <PackageReference Include="FluentValidation" Version="11.11.0"/>
         <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0"/>
-        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.11"/>
         <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.11"/>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.11">
             <PrivateAssets>all</PrivateAssets>
@@ -23,7 +22,13 @@
         </PackageReference>
         <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="8.0.11"/>
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.10"/>
+        <PackageReference Include="Serilog.AspNetCore" Version="9.0.0"/>
         <PackageReference Include="Swashbuckle.AspNetCore" Version="7.0.0"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="appsettings.json" CopyToPublishDirectory="Always"/>
+        <None Include="appsettings.Development.json" CopyToPublishDirectory="Always"/>
     </ItemGroup>
 
 </Project>
