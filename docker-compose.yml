@@ -1,0 +1,49 @@
+﻿services:
+  chalk.database:
+    image: postgres
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DATABASE}
+    ports:
+      - "5432:5432"
+    restart: "always"
+    volumes:
+      - chalk_psql:/var/lib/postgresql/data
+  
+  chalk.server:
+    image: chalk.server
+    build:
+      context: src/Server
+      dockerfile: Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
+      - ConnectionStrings__DefaultConnection=${CONNECTION_STRING}
+      - Web__Host=${WEB_HOST}
+      - Web__Port=${WEB_PORT}
+      - AWS_SDK__Profile=${AWS_SDK_PROFILE}
+      - SMTP__Email=${SMTP_EMAIL}
+      - SMTP__Password=${SMTP_PASSWORD}
+    ports:
+      - "8080:8080"
+    volumes:
+      - ~/.aws:/root/.aws
+    depends_on:
+      - chalk.database
+  
+  chalk.web:
+    image: chalk.web
+    build:
+      context: src/Web
+      dockerfile: Dockerfile
+    environment:
+      - VITE_SERVER_HOST=${VITE_SERVER_HOST}
+      - VITE_SERVER_PORT=${VITE_SERVER_PORT}
+    ports:
+      - "3000:3000"
+    depends_on:
+      - chalk.database
+      - chalk.server
+
+volumes:
+  chalk_psql:

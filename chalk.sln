@@ -1,13 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "chalk.Server", "src\chalk.Server\chalk.Server.csproj", "{13198EF1-617E-4778-AB60-17BF9CE0EAFB}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{03172CF5-CF47-4A10-92F0-F5F192B21AAA}"
-	ProjectSection(SolutionItems) = preProject
-		.env = src\.env
-		docker-compose.yml = src\docker-compose.yml
-		.dockerignore = src\.dockerignore
-	EndProjectSection
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server", "src\Server\Server.csproj", "{13198EF1-617E-4778-AB60-17BF9CE0EAFB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
