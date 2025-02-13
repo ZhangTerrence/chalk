@@ -4,7 +4,7 @@ using Server.Data.Entities;
 
 namespace Server.Infrastructure.Extensions;
 
-public static class IdentityExtensions
+internal static class IdentityExtensions
 {
   public static void AddIdentity(this WebApplicationBuilder builder)
   {

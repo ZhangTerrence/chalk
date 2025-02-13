@@ -3,7 +3,7 @@ using Server.Common.Requests.User;
 
 namespace Server.Common.Validators.User;
 
-public class UpdateRequestValidator : AbstractValidator<UpdateRequest>
+internal class UpdateRequestValidator : AbstractValidator<UpdateRequest>
 {
   public UpdateRequestValidator()
   {

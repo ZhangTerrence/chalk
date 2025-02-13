@@ -4,7 +4,7 @@ using Server.Common.Interfaces;
 
 namespace Server.Services;
 
-public class EmailService : IEmailService
+internal class EmailService : IEmailService
 {
   private const string SmtpHost = "smtp.gmail.com";
   private const int SmtpPort = 587;

@@ -11,7 +11,7 @@ using CreateRoleRequest = Server.Common.Requests.Role.CreateRequest;
 
 namespace Server.Services;
 
-public class OrganizationService : IOrganizationService
+internal class OrganizationService : IOrganizationService
 {
   private readonly ICloudService _cloudService;
   private readonly DatabaseContext _context;
@@ -42,7 +42,7 @@ public class OrganizationService : IOrganizationService
     var user = await this._context.Users.FindAsync(requesterId);
     if (user is null) ServiceException.NotFound("User not found.", user);
 
-    var organization = request.ToEntity(user);
+    var organization = request.ToEntity(user.Id);
     if (await this._context.Organizations.AnyAsync(e => e.Name == request.Name))
       throw new ServiceException(StatusCodes.Status409Conflict, ["Organization already exists."]);
 
@@ -58,7 +58,6 @@ public class OrganizationService : IOrganizationService
     };
     var userRole = new UserRole
     {
-      UserOrganization = userOrganization,
       Role = role
     };
     userOrganization.Roles.Add(userRole);

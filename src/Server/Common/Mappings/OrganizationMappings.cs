@@ -6,7 +6,7 @@ using Server.Data.Entities;
 
 namespace Server.Common.Mappings;
 
-public static class OrganizationMappings
+internal static class OrganizationMappings
 {
   public static OrganizationResponse ToResponse(this Organization organization)
   {
@@ -20,7 +20,7 @@ public static class OrganizationMappings
     );
   }
 
-  public static Organization ToEntity(this CreateRequest request, User owner)
+  public static Organization ToEntity(this CreateRequest request, long ownerId)
   {
     return new Organization
     {
@@ -29,7 +29,7 @@ public static class OrganizationMappings
       IsPublic = request.IsPublic!.Value,
       CreatedOnUtc = DateTime.UtcNow,
       UpdatedOnUtc = DateTime.UtcNow,
-      Owner = owner
+      OwnerId = ownerId
     };
   }
 

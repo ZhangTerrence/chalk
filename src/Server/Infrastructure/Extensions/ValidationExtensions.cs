@@ -3,7 +3,7 @@ using FluentValidation;
 
 namespace Server.Infrastructure.Extensions;
 
-public static class ValidationExtensions
+internal static class ValidationExtensions
 {
   public static void AddValidation(this WebApplicationBuilder builder)
   {

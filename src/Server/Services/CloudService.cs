@@ -8,7 +8,7 @@ using Server.Common.Utilities;
 
 namespace Server.Services;
 
-public class CloudService : ICloudService
+internal class CloudService : ICloudService
 {
   private const string BucketName = "chalk-s3";
   private const string Location = "us-east-1";

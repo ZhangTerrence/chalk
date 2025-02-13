@@ -8,7 +8,7 @@ using Module = Server.Data.Entities.Module;
 
 namespace Server.Data;
 
-public class DatabaseContext : IdentityDbContext<User, IdentityRole<long>, long>
+internal class DatabaseContext : IdentityDbContext<User, IdentityRole<long>, long>
 {
   public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options)
   {

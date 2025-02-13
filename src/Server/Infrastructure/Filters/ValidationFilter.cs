@@ -7,9 +7,9 @@ using Server.Common.Utilities;
 namespace Server.Infrastructure.Filters;
 
 [AttributeUsage(AttributeTargets.Parameter)]
-public class ValidateAttribute : Attribute;
+internal class ValidateAttribute : Attribute;
 
-public abstract class ValidationFilter
+internal abstract class ValidationFilter
 {
   public static EndpointFilterDelegate Create(EndpointFilterFactoryContext context, EndpointFilterDelegate next)
   {

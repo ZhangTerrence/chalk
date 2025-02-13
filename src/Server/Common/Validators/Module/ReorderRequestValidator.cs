@@ -3,7 +3,7 @@ using Server.Common.Requests.Module;
 
 namespace Server.Common.Validators.Module;
 
-public class ReorderRequestValidator : AbstractValidator<ReorderRequest>
+internal class ReorderRequestValidator : AbstractValidator<ReorderRequest>
 {
   public ReorderRequestValidator()
   {

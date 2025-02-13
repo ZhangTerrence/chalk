@@ -3,13 +3,13 @@ using Server.Common.Requests.File;
 
 namespace Server.Common.Validators.File;
 
-public class UpdateRequestValidator : AbstractValidator<UpdateRequest>
+internal class UpdateRequestValidator : AbstractValidator<UpdateRequest>
 {
   public UpdateRequestValidator()
   {
     this.RuleFor(e => e.For)
       .NotNull()
-      .WithMessage("Must specify whether the file is for either a module, assignment, or submission.")
+      .WithMessage("Must specify whether the file is for a module, assignment, or submission.")
       .IsInEnum()
       .WithMessage("Invalid choice.");
     this.RuleFor(e => e.EntityId)

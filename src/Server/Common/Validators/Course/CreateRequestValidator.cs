@@ -3,7 +3,7 @@ using Server.Common.Requests.Course;
 
 namespace Server.Common.Validators.Course;
 
-public class CreateRequestValidator : AbstractValidator<CreateRequest>
+internal class CreateRequestValidator : AbstractValidator<CreateRequest>
 {
   public CreateRequestValidator()
   {

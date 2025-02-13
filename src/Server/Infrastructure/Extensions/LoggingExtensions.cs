@@ -2,7 +2,7 @@ using Serilog;
 
 namespace Server.Infrastructure.Extensions;
 
-public static class LoggingExtensions
+internal static class LoggingExtensions
 {
   public static void AddLogging(this WebApplicationBuilder builder)
   {

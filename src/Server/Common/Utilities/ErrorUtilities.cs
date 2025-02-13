@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Server.Common.Utilities;
 
-public static class ErrorUtilities
+internal static class ErrorUtilities
 {
   public static IEnumerable<string> GetErrorMessages(this ValidationResult validationResult)
   {

@@ -4,7 +4,7 @@ using Server.Data.Entities;
 
 namespace Server.Common.Mappings;
 
-public static class ChannelMappings
+internal static class ChannelMappings
 {
   public static ChannelDto ToDto(this Channel channel)
   {

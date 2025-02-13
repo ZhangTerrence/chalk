@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Server.Data.Entities.Configurations;
 
-public class TagConfiguration : IEntityTypeConfiguration<Tag>
+internal class TagConfiguration : IEntityTypeConfiguration<Tag>
 {
   public void Configure(EntityTypeBuilder<Tag> builder)
   {

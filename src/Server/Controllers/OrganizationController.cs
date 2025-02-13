@@ -8,18 +8,25 @@ using Server.Common.Utilities;
 
 namespace Server.Controllers;
 
-[ApiController]
-[Authorize]
+/// <summary>
+/// Routes for managing organizations.
+/// </summary>
+[ApiController] [Authorize]
 [Route("/api/organizations")]
+[Produces("application/json")]
 public class OrganizationController : ControllerBase
 {
   private readonly IOrganizationService _organizationService;
 
-  public OrganizationController(IOrganizationService organizationService)
+  internal OrganizationController(IOrganizationService organizationService)
   {
     this._organizationService = organizationService;
   }
 
+  /// <summary>
+  /// Gets all organizations.
+  /// </summary>
+  /// <returns>A list of all the organizations.</returns>
   [HttpGet]
   public async Task<IActionResult> GetOrganizations()
   {
@@ -27,6 +34,11 @@ public class OrganizationController : ControllerBase
     return this.Ok(new Response<IEnumerable<OrganizationResponse>>(null, organizations.Select(e => e.ToResponse())));
   }
 
+  /// <summary>
+  /// Gets an organization.
+  /// </summary>
+  /// <param name="organizationId">The organization's id.</param>
+  /// <returns>The organization.</returns>
   [HttpGet("{organizationId:long}")]
   public async Task<IActionResult> GetOrganization([FromRoute] long organizationId)
   {
@@ -34,6 +46,11 @@ public class OrganizationController : ControllerBase
     return this.Ok(new Response<OrganizationResponse>(null, organization.ToResponse()));
   }
 
+  /// <summary>
+  /// Creates an organization.
+  /// </summary>
+  /// <param name="request">The request body. See <see cref="CreateRequest" /> for more details.</param>
+  /// <returns>The created organization.</returns>
   [HttpPost]
   public async Task<IActionResult> CreateOrganization([FromBody] CreateRequest request)
   {
@@ -42,6 +59,12 @@ public class OrganizationController : ControllerBase
       new Response<OrganizationResponse>(null, organization.ToResponse()));
   }
 
+  /// <summary>
+  /// Updates an organization.
+  /// </summary>
+  /// <param name="organizationId">The organization's id.</param>
+  /// <param name="request">The request body. See <see cref="UpdateRequest" /> for more details.</param>
+  /// <returns>The updated organization.</returns>
   [HttpPut("{organizationId:long}")]
   public async Task<IActionResult> UpdateOrganization([FromRoute] long organizationId, [FromBody] UpdateRequest request)
   {
@@ -50,6 +73,10 @@ public class OrganizationController : ControllerBase
     return this.Ok(new Response<OrganizationResponse>(null, organization.ToResponse()));
   }
 
+  /// <summary>
+  /// Deletes an organization.
+  /// </summary>
+  /// <param name="organizationId">The organization's id.</param>
   [HttpDelete("{organizationId:long}")]
   public async Task<IActionResult> DeleteOrganization([FromRoute] long organizationId)
   {

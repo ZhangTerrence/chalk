@@ -6,7 +6,7 @@ using Server.Data.Entities;
 
 namespace Server.Common.Mappings;
 
-public static class UserMappings
+internal static class UserMappings
 {
   public static UserResponse ToResponse(this User user)
   {

@@ -7,7 +7,7 @@ using IExceptionHandler = Microsoft.AspNetCore.Diagnostics.IExceptionHandler;
 
 namespace Server.Infrastructure.Handlers;
 
-public class ExceptionHandler : IExceptionHandler
+internal class ExceptionHandler : IExceptionHandler
 {
   public async ValueTask<bool> TryHandleAsync(
     HttpContext httpContext,

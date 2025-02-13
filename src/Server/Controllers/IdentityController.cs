@@ -10,21 +10,30 @@ using Server.Infrastructure.Filters;
 
 namespace Server.Controllers;
 
+/// <summary>
+/// Routes for managing ASP.NET Identity users.
+/// </summary>
 [ApiController]
 [Route("/api")]
+[Produces("application/json")]
 public class IdentityController : ControllerBase
 {
   private readonly IConfiguration _configuration;
   private readonly IEmailService _emailService;
   private readonly IIdentityService _identityService;
 
-  public IdentityController(IConfiguration configuration, IEmailService emailService, IIdentityService identityService)
+  internal IdentityController(IConfiguration configuration, IEmailService emailService,
+    IIdentityService identityService)
   {
     this._configuration = configuration;
     this._emailService = emailService;
     this._identityService = identityService;
   }
 
+  /// <summary>
+  /// Registers a user.
+  /// </summary>
+  /// <param name="request">The request body. See <see cref="RegisterRequest" /> for more details.</param>
   [HttpPost("register")]
   public async Task<IActionResult> Register([FromBody] [Validate] RegisterRequest request)
   {
@@ -41,6 +50,11 @@ public class IdentityController : ControllerBase
     return this.Created();
   }
 
+  /// <summary>
+  /// Confirms a user's email.
+  /// </summary>
+  /// <param name="token">The user's email confirmation token.</param>
+  /// <param name="email">The user's email.</param>
   [HttpGet("confirm-email")]
   public async Task<IActionResult> ConfirmEmail([FromQuery] string token, [FromQuery] string email)
   {
@@ -53,6 +67,11 @@ public class IdentityController : ControllerBase
     return this.Redirect(this.Request.Scheme + "://" + webHost + ":" + webPort + "/login");
   }
 
+  /// <summary>
+  /// Logins a user and creates a new session.
+  /// </summary>
+  /// <param name="request">The request body. See <see cref="LoginRequest" /> for more details.</param>
+  /// <returns>The authenticated user.</returns>
   [HttpPost("login")]
   public async Task<IActionResult> Login([FromBody] [Validate] LoginRequest request)
   {
@@ -60,6 +79,10 @@ public class IdentityController : ControllerBase
     return this.Ok(new Response<UserResponse>(null, user.ToResponse()));
   }
 
+  /// <summary>
+  /// Refreshes a user's session.
+  /// </summary>
+  /// <returns>The authenticated user.</returns>
   [HttpGet("refresh")]
   public async Task<IActionResult> Refresh()
   {
@@ -67,6 +90,9 @@ public class IdentityController : ControllerBase
     return this.Ok(new Response<UserResponse>(null, user.ToResponse()));
   }
 
+  /// <summary>
+  /// Logouts a user.
+  /// </summary>
   [Authorize]
   [HttpDelete("logout")]
   public async Task<IActionResult> Logout()

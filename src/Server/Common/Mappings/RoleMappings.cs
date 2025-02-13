@@ -4,7 +4,7 @@ using Server.Data.Entities;
 
 namespace Server.Common.Mappings;
 
-public static class RoleMappings
+internal static class RoleMappings
 {
   public static Role ToEntity(this CreateRequest request, long? courseId, long? organizationId)
   {

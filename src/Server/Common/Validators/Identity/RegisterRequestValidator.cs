@@ -3,7 +3,7 @@ using Server.Common.Requests.Identity;
 
 namespace Server.Common.Validators.Identity;
 
-public class RegisterRequestValidator : AbstractValidator<RegisterRequest>
+internal class RegisterRequestValidator : AbstractValidator<RegisterRequest>
 {
   public RegisterRequestValidator()
   {

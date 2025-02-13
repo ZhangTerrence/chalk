@@ -1,6 +1,6 @@
 namespace Server.Common.Utilities;
 
-public static class FileUtilities
+internal static class FileUtilities
 {
   public static bool IsAcceptedImage(this string contentType)
   {

@@ -1,8 +1,9 @@
+using System.Reflection;
 using Server.Infrastructure.Filters;
 
 namespace Server.Infrastructure.Extensions;
 
-public static class RouteExtensions
+internal static class RoutingExtensions
 {
   public static void AddRouting(this WebApplicationBuilder builder)
   {
@@ -17,7 +18,16 @@ public static class RouteExtensions
       .ConfigureApiBehaviorOptions(options => options.SuppressModelStateInvalidFilter = true);
     builder.Services.AddRouting(options => options.LowercaseUrls = true);
     builder.Services.AddEndpointsApiExplorer();
-    builder.Services.AddSwaggerGen(options => options.CustomSchemaIds(type => type.ToString()));
+    builder.Services.AddSwaggerGen(options =>
+    {
+      options.UseAllOfForInheritance();
+      options.UseOneOfForPolymorphism();
+      options.SelectSubTypesUsing(baseType =>
+        typeof(Program).Assembly.GetTypes().Where(type => type.IsSubclassOf(baseType)));
+      options.CustomSchemaIds(type => type.ToString());
+      var file = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+      options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, file), true);
+    });
   }
 
   public static void UseRouting(this WebApplication app)
@@ -25,7 +35,11 @@ public static class RouteExtensions
     if (app.Environment.IsDevelopment())
     {
       app.UseSwagger();
-      app.UseSwaggerUI();
+      app.UseSwaggerUI(options =>
+      {
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
+        options.RoutePrefix = "api";
+      });
     }
     app.UseHttpsRedirection();
     app.UseCors("CorsPolicy");

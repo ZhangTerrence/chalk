@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Server.Data.Entities.Configurations;
 
-public class UserCourseConfiguration : IEntityTypeConfiguration<UserCourse>
+internal class UserCourseConfiguration : IEntityTypeConfiguration<UserCourse>
 {
   public void Configure(EntityTypeBuilder<UserCourse> builder)
   {
@@ -27,7 +27,7 @@ public class UserCourseConfiguration : IEntityTypeConfiguration<UserCourse>
       .IsRequired();
     builder
       .HasMany(e => e.Roles)
-      .WithOne(e => e.UserCourse)
+      .WithOne()
       .HasForeignKey(e => new { e.UserId, CourseId = (long)e.CourseId! })
       .OnDelete(DeleteBehavior.Cascade);
   }

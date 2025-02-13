@@ -2,7 +2,7 @@ using Server.Infrastructure.Handlers;
 
 namespace Server.Infrastructure.Extensions;
 
-public static class ExceptionExtensions
+internal static class ExceptionExtensions
 {
   public static void AddExceptionHandler(this WebApplicationBuilder builder)
   {

@@ -9,7 +9,7 @@ using File = Server.Data.Entities.File;
 
 namespace Server.Services;
 
-public class FileService : IFileService
+internal class FileService : IFileService
 {
   private readonly ICloudService _cloudService;
   private readonly DatabaseContext _context;

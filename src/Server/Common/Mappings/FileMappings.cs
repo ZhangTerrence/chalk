@@ -5,7 +5,7 @@ using File = Server.Data.Entities.File;
 
 namespace Server.Common.Mappings;
 
-public static class FileMappings
+internal static class FileMappings
 {
   public static File ToEntity(this CreateRequest request, string fileUrl)
   {

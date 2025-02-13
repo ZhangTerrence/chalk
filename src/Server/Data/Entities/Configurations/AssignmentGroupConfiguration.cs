@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Server.Data.Entities.Configurations;
 
-public class AssignmentGroupConfiguration : IEntityTypeConfiguration<AssignmentGroup>
+internal class AssignmentGroupConfiguration : IEntityTypeConfiguration<AssignmentGroup>
 {
   public void Configure(EntityTypeBuilder<AssignmentGroup> builder)
   {

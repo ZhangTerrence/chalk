@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Server.Data.Entities.Configurations;
 
-public class ModuleConfiguration : IEntityTypeConfiguration<Module>
+internal class ModuleConfiguration : IEntityTypeConfiguration<Module>
 {
   public void Configure(EntityTypeBuilder<Module> builder)
   {
@@ -21,7 +21,7 @@ public class ModuleConfiguration : IEntityTypeConfiguration<Module>
     builder
       .HasMany(e => e.Files)
       .WithOne()
-      .HasForeignKey(e => e.CourseModuleId)
+      .HasForeignKey(e => e.ModuleId)
       .OnDelete(DeleteBehavior.Cascade);
   }
 }

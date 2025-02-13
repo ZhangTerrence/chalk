@@ -3,13 +3,13 @@ using Server.Common.Requests.Assignment;
 
 namespace Server.Common.Validators.Assignment;
 
-public class CreateRequestValidator : AbstractValidator<CreateRequest>
+internal class CreateRequestValidator : AbstractValidator<CreateRequest>
 {
   public CreateRequestValidator()
   {
     this.RuleFor(e => e.AssignmentGroupId)
       .NotEmpty()
-      .WithMessage("Must specify the id of the group the assignment belongs to.");
+      .WithMessage("Must specify the id of the assignment group the assignment belongs to.");
     this.RuleFor(e => e.Name)
       .NotEmpty()
       .WithMessage("The assignment group's name is required.")

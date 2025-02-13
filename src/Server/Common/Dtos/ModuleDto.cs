@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using Server.Controllers;
 
 namespace Server.Common.DTOs;
 
@@ -23,4 +24,4 @@ public sealed record ModuleDto(
   [property: JsonRequired]
   [property: JsonPropertyName("files")]
   IEnumerable<FileDto> Files
-);
+) : FileController.FileResponse;

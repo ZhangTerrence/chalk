@@ -9,7 +9,7 @@ using Server.Data.Entities;
 
 namespace Server.Services;
 
-public class IdentityService : IIdentityService
+internal class IdentityService : IIdentityService
 {
   private readonly SignInManager<User> _signInManager;
 

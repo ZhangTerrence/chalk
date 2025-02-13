@@ -8,7 +8,7 @@ using Server.Data.Entities;
 
 namespace Server.Services;
 
-public class ModuleService : IModuleService
+internal class ModuleService : IModuleService
 {
   private readonly DatabaseContext _context;
   private readonly IFileService _fileService;
@@ -44,9 +44,9 @@ public class ModuleService : IModuleService
     return await this.GetModuleByIdAsync(module.Id, requesterId);
   }
 
-  public async Task<Course> ReorderModulesAsync(long courseId, long requesterId, ReorderRequest request)
+  public async Task<Course> ReorderModulesAsync(long requesterId, ReorderRequest request)
   {
-    var course = await this._context.Courses.FindAsync(courseId);
+    var course = await this._context.Courses.FindAsync(request.CourseId!.Value);
     if (course is null) ServiceException.NotFound("Course not found.", course);
 
     var i = 0;

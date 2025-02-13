@@ -5,7 +5,7 @@ using Server.Data.Entities;
 
 namespace Server.Common.Mappings;
 
-public static class ModuleMappings
+internal static class ModuleMappings
 {
   public static Module ToEntity(this CreateRequest request, int relativeOrder)
   {

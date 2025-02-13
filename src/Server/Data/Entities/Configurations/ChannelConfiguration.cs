@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Server.Data.Entities.Configurations;
 
-public class ChannelConfiguration : IEntityTypeConfiguration<Channel>
+internal class ChannelConfiguration : IEntityTypeConfiguration<Channel>
 {
   public void Configure(EntityTypeBuilder<Channel> builder)
   {

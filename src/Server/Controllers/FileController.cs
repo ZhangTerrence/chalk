@@ -12,29 +12,38 @@ using Server.Infrastructure.Filters;
 
 namespace Server.Controllers;
 
-[ApiController]
-[Authorize]
+/// <summary>
+/// Routes for managing files.
+/// </summary>
+[ApiController] [Authorize]
 [Route("/api/files")]
+[Produces("application/json")]
 public class FileController : ControllerBase
 {
   private readonly IFileService _fileService;
 
-  public FileController(IFileService fileService)
+  internal FileController(IFileService fileService)
   {
     this._fileService = fileService;
   }
 
+  /// <summary>
+  /// Creates a file.
+  /// </summary>
+  /// <param name="request">The request body. See <see cref="CreateRequest" /> for more details.</param>
+  /// <returns>The created file.</returns>
   [HttpPost]
+  [ProducesResponseType<FileResponse>(StatusCodes.Status201Created)]
   public async Task<IActionResult> CreateFile([FromForm] [Validate] CreateRequest request)
   {
     switch (request.For)
     {
       case FileFor.Module:
         var module = await this._fileService.CreateFile<Module>(this.User.GetUserId(), request);
-        return this.Ok(new Response<ModuleDto>(null, module.ToDto()));
+        return this.Ok(module.ToDto());
       case FileFor.Assignment:
         var assignment = await this._fileService.CreateFile<Assignment>(this.User.GetUserId(), request);
-        return this.Ok(new Response<AssignmentDto>(null, assignment.ToDto()));
+        return this.Ok(assignment.ToDto());
       case FileFor.Submission:
         return this.NoContent();
       default:
@@ -66,4 +75,6 @@ public class FileController : ControllerBase
     await this._fileService.DeleteFile(fileId, this.User.GetUserId());
     return this.NoContent();
   }
+
+  public abstract record FileResponse;
 }

@@ -3,7 +3,7 @@ using Server.Services;
 
 namespace Server.Infrastructure.Extensions;
 
-public static class ServiceExtensions
+internal static class ServiceExtensions
 {
   public static void AddServices(this WebApplicationBuilder builder)
   {

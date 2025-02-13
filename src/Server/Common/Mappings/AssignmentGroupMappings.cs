@@ -5,7 +5,7 @@ using Server.Data.Entities;
 
 namespace Server.Common.Mappings;
 
-public static class AssignmentGroupMappings
+internal static class AssignmentGroupMappings
 {
   public static AssignmentGroup ToEntity(this CreateRequest request, long courseId)
   {

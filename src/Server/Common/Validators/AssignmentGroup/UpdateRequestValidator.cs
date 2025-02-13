@@ -3,7 +3,7 @@ using Server.Common.Requests.AssignmentGroup;
 
 namespace Server.Common.Validators.AssignmentGroup;
 
-public class UpdateRequestValidator : AbstractValidator<UpdateRequest>
+internal class UpdateRequestValidator : AbstractValidator<UpdateRequest>
 {
   public UpdateRequestValidator()
   {

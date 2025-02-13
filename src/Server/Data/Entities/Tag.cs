@@ -5,11 +5,23 @@ namespace Server.Data.Entities;
 /// </summary>
 public class Tag
 {
-  // Properties
+  /// <summary>
+  /// The tag's id.
+  /// </summary>
   public long Id { get; init; }
+
+  /// <summary>
+  /// The tag's name.
+  /// </summary>
   public required string Name { get; set; }
 
-  // Foreign Keys
-  public long? CourseId { get; set; }
-  public long? OrganizationId { get; set; }
+  /// <summary>
+  /// The id of the <see cref="Course" /> the tag could be for.
+  /// </summary>
+  public long? CourseId { get; init; }
+
+  /// <summary>
+  /// The id of the <see cref="Organization" /> the tag could be for.
+  /// </summary>
+  public long? OrganizationId { get; init; }
 }

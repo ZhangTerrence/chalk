@@ -1,7 +1,7 @@
 namespace Server.Common.Requests.Identity;
 
 /// <summary>
-/// A request to register a new account.
+/// A request to register a new user.
 /// </summary>
 /// <param name="FirstName">The user's first name. Required.</param>
 /// <param name="LastName">The user's last name. Required.</param>

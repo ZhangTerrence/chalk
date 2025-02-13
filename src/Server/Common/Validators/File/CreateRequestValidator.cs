@@ -3,7 +3,7 @@ using Server.Common.Requests.File;
 
 namespace Server.Common.Validators.File;
 
-public class CreateRequestValidator : AbstractValidator<CreateRequest>
+internal class CreateRequestValidator : AbstractValidator<CreateRequest>
 {
   public CreateRequestValidator()
   {

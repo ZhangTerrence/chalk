@@ -5,14 +5,28 @@ namespace Server.Data.Entities;
 /// </summary>
 public class UserRole
 {
-  // Foreign Keys
+  /// <summary>
+  /// The id of the specific <see cref="User" />.
+  /// </summary>
   public long UserId { get; init; }
+
+  /// <summary>
+  /// The id of the specific <see cref="Course" /> the role could belong in.
+  /// </summary>
   public long? CourseId { get; init; }
+
+  /// <summary>
+  /// The id of the specific <see cref="Organization" /> the role could belong in.
+  /// </summary>
   public long? OrganizationId { get; init; }
+
+  /// <summary>
+  /// The id of the specific <see cref="Role" />.
+  /// </summary>
   public long RoleId { get; init; }
 
-  // Navigation Properties
-  public UserCourse? UserCourse { get; init; }
-  public UserOrganization? UserOrganization { get; init; }
+  /// <summary>
+  /// The specific <see cref="Role" />.
+  /// </summary>
   public Role Role { get; init; } = null!;
 }

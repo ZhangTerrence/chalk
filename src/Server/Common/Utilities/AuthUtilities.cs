@@ -4,7 +4,7 @@ using Server.Data.Entities;
 
 namespace Server.Common.Utilities;
 
-public static class AuthUtilities
+internal static class AuthUtilities
 {
   public static long GetUserId(this ClaimsPrincipal principal)
   {

@@ -3,7 +3,7 @@ using Server.Data;
 
 namespace Server.Infrastructure.Extensions;
 
-public static class DatabaseExtensions
+internal static class DatabaseExtensions
 {
   public static void AddDatabase(this WebApplicationBuilder builder)
   {

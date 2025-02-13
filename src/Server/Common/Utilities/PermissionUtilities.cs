@@ -1,6 +1,6 @@
 namespace Server.Common.Utilities;
 
-public static class PermissionUtilities
+internal static class PermissionUtilities
 {
   public const long All = long.MinValue;
   public const long None = 0L;

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Server.Data.Entities.Configurations;
 
-public class CourseConfiguration : IEntityTypeConfiguration<Course>
+internal class CourseConfiguration : IEntityTypeConfiguration<Course>
 {
   public void Configure(EntityTypeBuilder<Course> builder)
   {
@@ -20,11 +20,6 @@ public class CourseConfiguration : IEntityTypeConfiguration<Course>
     builder.Property(e => e.CreatedOnUtc).IsRequired();
     builder.Property(e => e.UpdatedOnUtc).IsRequired();
 
-    builder
-      .HasOne(e => e.Organization)
-      .WithMany(e => e.Courses)
-      .HasForeignKey(e => e.OrganizationId)
-      .OnDelete(DeleteBehavior.Cascade);
     builder
       .HasMany(e => e.Users)
       .WithOne(e => e.Course)

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Server.Data.Entities.Configurations;
 
-public class FileConfiguration : IEntityTypeConfiguration<File>
+internal class FileConfiguration : IEntityTypeConfiguration<File>
 {
   public void Configure(EntityTypeBuilder<File> builder)
   {

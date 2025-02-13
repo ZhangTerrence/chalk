@@ -7,7 +7,7 @@ using Server.Data.Entities;
 
 namespace Server.Services;
 
-public class UserService : IUserService
+internal class UserService : IUserService
 {
   private readonly ICloudService _cloudService;
   private readonly DatabaseContext _context;

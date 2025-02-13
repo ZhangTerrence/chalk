@@ -6,7 +6,7 @@ using Server.Data.Entities;
 
 namespace Server.Common.Mappings;
 
-public static class CourseMappings
+internal static class CourseMappings
 {
   public static CourseResponse ToResponse(this Course course)
   {
@@ -23,7 +23,7 @@ public static class CourseMappings
     );
   }
 
-  public static Course ToEntity(this CreateRequest request, Organization? organization)
+  public static Course ToEntity(this CreateRequest request, long? organizationId)
   {
     return new Course
     {
@@ -33,7 +33,7 @@ public static class CourseMappings
       IsPublic = request.IsPublic!.Value,
       CreatedOnUtc = DateTime.UtcNow,
       UpdatedOnUtc = DateTime.UtcNow,
-      Organization = organization
+      OrganizationId = organizationId
     };
   }
 

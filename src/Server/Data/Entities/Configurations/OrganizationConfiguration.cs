@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Server.Data.Entities.Configurations;
 
-public class OrganizationConfiguration : IEntityTypeConfiguration<Organization>
+internal class OrganizationConfiguration : IEntityTypeConfiguration<Organization>
 {
   public void Configure(EntityTypeBuilder<Organization> builder)
   {
@@ -20,7 +20,7 @@ public class OrganizationConfiguration : IEntityTypeConfiguration<Organization>
     builder.Property(e => e.UpdatedOnUtc).IsRequired();
 
     builder
-      .HasOne(e => e.Owner)
+      .HasOne<User>()
       .WithMany()
       .HasForeignKey(e => e.OwnerId)
       .IsRequired();
@@ -41,7 +41,7 @@ public class OrganizationConfiguration : IEntityTypeConfiguration<Organization>
       .OnDelete(DeleteBehavior.Cascade);
     builder
       .HasMany(e => e.Courses)
-      .WithOne(e => e.Organization)
+      .WithOne()
       .HasForeignKey(e => e.OrganizationId)
       .OnDelete(DeleteBehavior.Cascade);
     builder

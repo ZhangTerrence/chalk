@@ -2,7 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Server.Common.Exceptions;
 
-public class ServiceException : Exception
+internal class ServiceException : Exception
 {
   public ServiceException(int httpStatusCode, IEnumerable<string> messages)
   {

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Server.Data.Entities.Configurations;
 
-public class SubmissionConfiguration : IEntityTypeConfiguration<Submission>
+internal class SubmissionConfiguration : IEntityTypeConfiguration<Submission>
 {
   public void Configure(EntityTypeBuilder<Submission> builder)
   {

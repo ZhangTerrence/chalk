@@ -8,7 +8,7 @@ using Server.Data.Entities;
 
 namespace Server.Services;
 
-public class AssignmentGroupService : IAssignmentGroupService
+internal class AssignmentGroupService : IAssignmentGroupService
 {
   private readonly IAssignmentService _assignmentService;
   private readonly DatabaseContext _context;

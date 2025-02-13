@@ -11,7 +11,7 @@ using CreateRoleRequest = Server.Common.Requests.Role.CreateRequest;
 
 namespace Server.Services;
 
-public class CourseService : ICourseService
+internal class CourseService : ICourseService
 {
   private readonly IAssignmentGroupService _assignmentGroupService;
   private readonly ICloudService _cloudService;
@@ -70,7 +70,6 @@ public class CourseService : ICourseService
     };
     var userRole = new UserRole
     {
-      UserCourse = userCourse,
       Role = role
     };
     userCourse.Roles.Add(userRole);
