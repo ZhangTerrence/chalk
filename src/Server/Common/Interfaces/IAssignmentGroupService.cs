@@ -9,6 +9,14 @@ namespace Server.Common.Interfaces;
 public interface IAssignmentGroupService
 {
   /// <summary>
+  /// Gets a course's assignment groups.
+  /// </summary>
+  /// <param name="courseId">The course's id.</param>
+  /// <param name="requesterId">The requester's id.</param>
+  /// <returns>A list of all the course's assignment groups.</returns>
+  public Task<IEnumerable<AssignmentGroup>> GetCourseAssignmentGroupsAsync(long courseId, long requesterId);
+
+  /// <summary>
   /// Gets an assignment group by id.
   /// </summary>
   /// <param name="assignmentGroupId">The assignment group's id.</param>

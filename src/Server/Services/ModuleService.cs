@@ -19,6 +19,14 @@ internal class ModuleService : IModuleService
     this._fileService = fileService;
   }
 
+  public async Task<IEnumerable<Module>> GetCourseModulesAsync(long courseId, long requesterId)
+  {
+    return await this._context.Modules
+      .Include(e => e.Files).AsSingleQuery()
+      .Where(e => e.CourseId == courseId)
+      .ToListAsync();
+  }
+
   public async Task<Module> GetModuleByIdAsync(long moduleId, long requesterId)
   {
     var module = await this._context.Modules

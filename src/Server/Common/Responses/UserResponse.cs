@@ -16,7 +16,7 @@ namespace Server.Common.Responses;
 /// <param name="UpdatedOnUtc">The user's updated date.</param>
 /// <param name="DirectMessages">The user's direct messages.</param>
 /// <param name="Courses">The user's courses.</param>
-/// <param name="Organizations">The user's joined organization.</param>
+/// <param name="Organizations">The user's organizations.</param>
 [Serializable]
 [method: JsonConstructor]
 public sealed record UserResponse(

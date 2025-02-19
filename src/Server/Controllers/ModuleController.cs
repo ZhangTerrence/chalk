@@ -24,6 +24,19 @@ public class ModuleController : ControllerBase
   }
 
   /// <summary>
+  /// Gets a course's modules.
+  /// </summary>
+  /// <param name="courseId">The course's id.</param>
+  /// <returns>A list of all the course's modules.</returns>
+  [HttpGet("course/{courseId:long}")]
+  [ProducesResponseType<Response<IEnumerable<ModuleResponse>>>(StatusCodes.Status200OK)]
+  public async Task<IActionResult> GetCourseModules([FromRoute] long courseId)
+  {
+    var modules = await this._moduleService.GetCourseModulesAsync(courseId, this.User.GetUserId());
+    return this.Ok(new Response<IEnumerable<ModuleResponse>>(null, modules.Select(e => e.ToResponse())));
+  }
+
+  /// <summary>
   /// Creates a module.
   /// </summary>
   /// <param name="request">The request body. See <see cref="CreateRequest" /> for more details.</param>

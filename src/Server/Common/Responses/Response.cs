@@ -3,6 +3,22 @@ using System.Text.Json.Serialization;
 namespace Server.Common.Responses;
 
 /// <summary>
+/// A response error.
+/// </summary>
+/// <param name="Title">The error's title.</param>
+/// <param name="Details">The error's details.</param>
+[Serializable]
+[method: JsonConstructor]
+public sealed record Error(
+  [property: JsonRequired]
+  [property: JsonPropertyName("title")]
+  string Title,
+  [property: JsonRequired]
+  [property: JsonPropertyName("details")]
+  IEnumerable<string> Details
+);
+
+/// <summary>
 /// Base response.
 /// </summary>
 /// <param name="Errors">The response's errors.</param>
@@ -13,7 +29,7 @@ namespace Server.Common.Responses;
 public sealed record Response<T>(
   [property: JsonRequired]
   [property: JsonPropertyName("errors")]
-  IEnumerable<Response<T>.Error>? Errors,
+  IEnumerable<Error>? Errors,
   [property: JsonRequired]
   [property: JsonPropertyName("data")]
   T? Data
@@ -26,20 +42,4 @@ public sealed record Response<T>(
     : this(errors.Select(pair => new Error(pair.Key, pair.Value)), default)
   {
   }
-
-  /// <summary>
-  /// A response error.
-  /// </summary>
-  /// <param name="Title">The error's title.</param>
-  /// <param name="Details">The error's details.</param>
-  [Serializable]
-  [method: JsonConstructor]
-  public sealed record Error(
-    [property: JsonRequired]
-    [property: JsonPropertyName("title")]
-    string Title,
-    [property: JsonRequired]
-    [property: JsonPropertyName("details")]
-    IEnumerable<string> Details
-  );
 }

@@ -4,7 +4,7 @@ namespace Server.Common.Exceptions;
 
 internal class ServiceException : Exception
 {
-  public ServiceException(int httpStatusCode, IDictionary<string, string[]> errors)
+  private ServiceException(int httpStatusCode, IDictionary<string, string[]> errors)
   {
     this.HttpStatusCode = httpStatusCode;
     this.Errors = errors;

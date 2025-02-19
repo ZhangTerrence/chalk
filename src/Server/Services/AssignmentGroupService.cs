@@ -19,6 +19,15 @@ internal class AssignmentGroupService : IAssignmentGroupService
     this._assignmentService = assignmentService;
   }
 
+  public async Task<IEnumerable<AssignmentGroup>> GetCourseAssignmentGroupsAsync(long courseId, long requesterId)
+  {
+    return await this._context.AssignmentGroups
+      .Include(e => e.Assignments).ThenInclude(e => e.Files).AsSingleQuery()
+      .Include(e => e.Assignments).ThenInclude(e => e.Submissions).AsSingleQuery()
+      .Where(e => e.CourseId == courseId)
+      .ToListAsync();
+  }
+
   public async Task<AssignmentGroup> GetAssignmentGroupByIdAsync(long assignmentGroupId, long requesterId)
   {
     var assignmentGroup = await this._context.AssignmentGroups

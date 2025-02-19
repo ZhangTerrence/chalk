@@ -24,6 +24,21 @@ public class AssignmentGroupController : ControllerBase
   }
 
   /// <summary>
+  /// Gets a course's assignment groups.
+  /// </summary>
+  /// <param name="courseId">The course's id.</param>
+  /// <returns>A list of all the course's assignment groups.</returns>
+  [HttpGet("course/{courseId:long}")]
+  [ProducesResponseType<Response<IEnumerable<AssignmentGroupResponse>>>(StatusCodes.Status200OK)]
+  public async Task<IActionResult> GetCourseAssignmentGroups([FromRoute] long courseId)
+  {
+    var assignmentGroups =
+      await this._assignmentGroupService.GetCourseAssignmentGroupsAsync(courseId, this.User.GetUserId());
+    return this.Ok(
+      new Response<IEnumerable<AssignmentGroupResponse>>(null, assignmentGroups.Select(e => e.ToResponse())));
+  }
+
+  /// <summary>
   /// Creates an assignment group.
   /// </summary>
   /// <param name="request">The request body. See <see cref="CreateRequest" /> for more details.</param>

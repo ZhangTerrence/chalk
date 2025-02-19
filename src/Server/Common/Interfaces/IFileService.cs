@@ -22,7 +22,7 @@ public interface IFileService
   /// <param name="requesterId">The requester's id.</param>
   /// <param name="request">The request body. See <see cref="CreateRequest" /> for more details.</param>
   /// <typeparam name="T">Whether it is for a module, assignment, or submission.</typeparam>
-  /// <returns>The created file.</returns>
+  /// <returns>The container of the created file.</returns>
   public Task<T?> CreateFile<T>(long requesterId, CreateRequest request);
 
   /// <summary>
@@ -32,7 +32,7 @@ public interface IFileService
   /// <param name="requesterId">The requester's id.</param>
   /// <param name="request">The request body. See <see cref="UpdateRequest" /> for more details.</param>
   /// <typeparam name="T">Whether it is for a module, assignment, or submission.</typeparam>
-  /// <returns>The created file.</returns>
+  /// <returns>The container of the updated file.</returns>
   public Task<T?> UpdateFile<T>(long fileId, long requesterId, UpdateRequest request);
 
   /// <summary>

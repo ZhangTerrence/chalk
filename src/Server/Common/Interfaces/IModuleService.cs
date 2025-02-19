@@ -9,6 +9,14 @@ namespace Server.Common.Interfaces;
 public interface IModuleService
 {
   /// <summary>
+  /// Gets a course's modules.
+  /// </summary>
+  /// <param name="courseId">The course's id.</param>
+  /// <param name="requesterId">The requester's id.</param>
+  /// <returns>A list of all the course's modules.</returns>
+  public Task<IEnumerable<Module>> GetCourseModulesAsync(long courseId, long requesterId);
+
+  /// <summary>
   /// Gets a module by id.
   /// </summary>
   /// <param name="moduleId">The module's id.</param>
