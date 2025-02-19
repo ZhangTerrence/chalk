@@ -1,5 +1,4 @@
 using System.Globalization;
-using Server.Common.DTOs;
 using Server.Common.Requests.Identity;
 using Server.Common.Responses;
 using Server.Data.Entities;
@@ -19,9 +18,11 @@ internal static class UserMappings
       user.Description,
       user.ImageUrl,
       user.CreatedOnUtc.ToString(CultureInfo.CurrentCulture),
-      user.DirectMessages.Select(e => e.Channel.ToDto()),
-      user.Courses.Select(e => e.Course.ToDto()),
-      user.Organizations.Select(e => e.Organization.ToDto())
+      user.UpdatedOnUtc.ToString(CultureInfo.CurrentCulture),
+      user.DirectMessages.Select(e => new UserResponse.PartialChannelResponse(e.Channel.Id)),
+      user.Courses.Select(e => new UserResponse.PartialCourseResponse(e.Course.Id, e.Course.Name, e.Course.Code)),
+      user.Organizations.Select(e =>
+        new UserResponse.PartialOrganizationResponse(e.Organization.Id, e.Organization.Name))
     );
   }
 
@@ -37,19 +38,5 @@ internal static class UserMappings
       CreatedOnUtc = DateTime.UtcNow,
       UpdatedOnUtc = DateTime.UtcNow
     };
-  }
-
-  public static UserDto ToDto(this User user, string? joinedDate)
-  {
-    return new UserDto(
-      user.Id,
-      user.FirstName,
-      user.LastName,
-      user.DisplayName,
-      user.Description,
-      user.ImageUrl,
-      user.CreatedOnUtc.ToString(CultureInfo.CurrentCulture),
-      joinedDate
-    );
   }
 }

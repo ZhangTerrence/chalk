@@ -44,7 +44,7 @@ internal class OrganizationService : IOrganizationService
 
     var organization = request.ToEntity(user.Id);
     if (await this._context.Organizations.AnyAsync(e => e.Name == request.Name))
-      throw new ServiceException(StatusCodes.Status409Conflict, ["Organization already exists."]);
+      ServiceException.Conflict("Organization already exists.");
 
     var createdOrganization = await this._context.Organizations.AddAsync(organization);
     var role = new CreateRoleRequest("Owner", null, PermissionUtilities.All, 0)
@@ -72,7 +72,7 @@ internal class OrganizationService : IOrganizationService
   {
     var organization = await this.GetOrganizationByIdAsync(organizationId, requesterId);
     if (await this._context.Organizations.AnyAsync(e => e.Name == request.Name))
-      throw new ServiceException(StatusCodes.Status409Conflict, ["Organization already exists."]);
+      ServiceException.Conflict("Organization already exists.", organization);
 
     organization.Name = request.Name;
     organization.Description = request.Description;

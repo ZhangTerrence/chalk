@@ -1,10 +1,9 @@
 using System.Text.Json.Serialization;
-using Server.Common.DTOs;
 
 namespace Server.Common.Responses;
 
 /// <summary>
-/// Detailed course response.
+/// Course response.
 /// </summary>
 /// <param name="Id">The course's id.</param>
 /// <param name="Name">The course's name.</param>
@@ -13,11 +12,10 @@ namespace Server.Common.Responses;
 /// <param name="ImageUrl">The course's image url.</param>
 /// <param name="IsPublic">Whether the course is public.</param>
 /// <param name="CreatedOnUtc">The course's creation date.</param>
-/// <param name="Modules">The course's modules.</param>
-/// <param name="AssignmentGroups">The course's assignment groups.</param>
+/// <param name="UpdatedOnUtc">The course's updated date.</param>
 [Serializable]
 [method: JsonConstructor]
-public record CourseResponse(
+public sealed record CourseResponse(
   [property: JsonRequired]
   [property: JsonPropertyName("id")]
   long Id,
@@ -40,9 +38,6 @@ public record CourseResponse(
   [property: JsonPropertyName("createdOnUtc")]
   string CreatedOnUtc,
   [property: JsonRequired]
-  [property: JsonPropertyName("modules")]
-  IEnumerable<ModuleDto> Modules,
-  [property: JsonRequired]
-  [property: JsonPropertyName("assignmentGroups")]
-  IEnumerable<AssignmentGroupDto> AssignmentGroups
+  [property: JsonPropertyName("updatedOnUtc")]
+  string UpdatedOnUtc
 );

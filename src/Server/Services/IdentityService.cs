@@ -22,7 +22,7 @@ internal class IdentityService : IIdentityService
   {
     var user = request.ToEntity();
     var identityResult = await this._signInManager.UserManager.CreateAsync(user, request.Password);
-    if (!identityResult.Succeeded) ServiceException.InternalServerError(identityResult.GetErrorMessages());
+    if (!identityResult.Succeeded) ServiceException.InternalServerError(identityResult.GetErrors());
 
     return await this._signInManager.UserManager.GenerateEmailConfirmationTokenAsync(user);
   }
@@ -77,7 +77,7 @@ internal class IdentityService : IIdentityService
     if (user is null) ServiceException.NotFound("User not found.", user);
 
     var identityResult = await this._signInManager.UserManager.ConfirmEmailAsync(user, token);
-    if (!identityResult.Succeeded) ServiceException.Forbidden(identityResult.GetErrorMessages());
+    if (!identityResult.Succeeded) ServiceException.Forbidden(identityResult.GetErrors());
 
     await this._signInManager.UserManager.AddToRoleAsync(user, "User");
   }

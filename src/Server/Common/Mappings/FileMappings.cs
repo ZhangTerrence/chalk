@@ -1,12 +1,24 @@
 using System.Globalization;
-using Server.Common.DTOs;
 using Server.Common.Requests.File;
+using Server.Common.Responses;
 using File = Server.Data.Entities.File;
 
 namespace Server.Common.Mappings;
 
 internal static class FileMappings
 {
+  public static FileResponse ToResponse(this File file)
+  {
+    return new FileResponse(
+      file.Id,
+      file.Name,
+      file.Description,
+      file.FileUrl,
+      file.CreatedOnUtc.ToString(CultureInfo.CurrentCulture),
+      file.UpdatedOnUtc.ToString(CultureInfo.CurrentCulture)
+    );
+  }
+
   public static File ToEntity(this CreateRequest request, string fileUrl)
   {
     return new File
@@ -17,17 +29,5 @@ internal static class FileMappings
       CreatedOnUtc = DateTime.UtcNow,
       UpdatedOnUtc = DateTime.UtcNow
     };
-  }
-
-  public static FileDto ToDto(this File file)
-  {
-    return new FileDto(
-      file.Id,
-      file.Name,
-      file.Description,
-      file.FileUrl,
-      file.CreatedOnUtc.ToString(CultureInfo.CurrentCulture),
-      file.UpdatedOnUtc.ToString(CultureInfo.CurrentCulture)
-    );
   }
 }

@@ -29,6 +29,7 @@ public class UserController : ControllerBase
   /// </summary>
   /// <returns>A list of the users.</returns>
   [HttpGet]
+  [ProducesResponseType<Response<IEnumerable<UserResponse>>>(StatusCodes.Status200OK)]
   public async Task<IActionResult> GetUsers()
   {
     var users = await this._userService.GetUsersAsync(this.User.GetUserId());
@@ -41,6 +42,7 @@ public class UserController : ControllerBase
   /// <param name="userId">The user's id.</param>
   /// <returns>The user.</returns>
   [HttpGet("{userId:long}")]
+  [ProducesResponseType<Response<UserResponse>>(StatusCodes.Status200OK)]
   public async Task<IActionResult> GetUser([FromRoute] long userId)
   {
     var user = await this._userService.GetUserByIdAsync(userId, this.User.GetUserId());
@@ -53,6 +55,7 @@ public class UserController : ControllerBase
   /// <param name="request">The request body. See <see cref="UpdateRequest" /> for more details.</param>
   /// <returns>The updated user.</returns>
   [HttpPut]
+  [ProducesResponseType<Response<UserResponse>>(StatusCodes.Status200OK)]
   public async Task<IActionResult> UpdateUser([FromForm] [Validate] UpdateRequest request)
   {
     var user = await this._userService.UpdateUserAsync(this.User.GetUserId(), this.User.GetUserId(), request);

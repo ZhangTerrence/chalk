@@ -1,11 +1,20 @@
 using System.Text.Json.Serialization;
-using Server.Controllers;
 
-namespace Server.Common.DTOs;
+namespace Server.Common.Responses;
 
+/// <summary>
+/// Assignment response.
+/// </summary>
+/// <param name="Id">The assignment's id.</param>
+/// <param name="Name">The assignment's name.</param>
+/// <param name="Description">The assignment's description.</param>
+/// <param name="DueOnUtc">The assignment's due date.</param>
+/// <param name="CreatedOnUtc">The assignment's creation date.</param>
+/// <param name="UpdatedOnUtc">The assignment's updated date.</param>
+/// <param name="Files">The assignment's files.</param>
 [Serializable]
 [method: JsonConstructor]
-public sealed record AssignmentDto(
+public sealed record AssignmentResponse(
   [property: JsonRequired]
   [property: JsonPropertyName("id")]
   long Id,
@@ -26,5 +35,5 @@ public sealed record AssignmentDto(
   string UpdatedOnUtc,
   [property: JsonRequired]
   [property: JsonPropertyName("files")]
-  IEnumerable<FileDto> Files
-) : FileController.FileResponse;
+  IEnumerable<FileResponse> Files
+) : FileContainerResponse;

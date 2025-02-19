@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Server.Common.DTOs;
 using Server.Common.Interfaces;
 using Server.Common.Mappings;
 using Server.Common.Requests.AssignmentGroup;
@@ -30,12 +29,12 @@ public class AssignmentGroupController : ControllerBase
   /// <param name="request">The request body. See <see cref="CreateRequest" /> for more details.</param>
   /// <returns>The created assignment group.</returns>
   [HttpPost]
-  [ProducesResponseType<Response<AssignmentGroupDto>>(StatusCodes.Status201Created)]
+  [ProducesResponseType<Response<AssignmentGroupResponse>>(StatusCodes.Status201Created)]
   public async Task<IActionResult> CreateAssignmentGroup([FromBody] CreateRequest request)
   {
     var assignmentGroup = await this._assignmentGroupService.CreateAssignmentGroupAsync(this.User.GetUserId(), request);
     return this.Created(nameof(this.CreateAssignmentGroup),
-      new Response<AssignmentGroupDto>(null, assignmentGroup.ToDto()));
+      new Response<AssignmentGroupResponse>(null, assignmentGroup.ToResponse()));
   }
 
   /// <summary>
@@ -45,13 +44,13 @@ public class AssignmentGroupController : ControllerBase
   /// <param name="request">The request body. See <see cref="UpdateRequest" /> for more details.</param>
   /// <returns>The updated assignment group.</returns>
   [HttpPut("{assignmentGroupId:long}")]
-  [ProducesResponseType<Response<AssignmentGroupDto>>(StatusCodes.Status200OK)]
+  [ProducesResponseType<Response<AssignmentGroupResponse>>(StatusCodes.Status200OK)]
   public async Task<IActionResult> UpdateAssignmentGroup([FromRoute] long assignmentGroupId,
     [FromBody] UpdateRequest request)
   {
     var assignmentGroup =
       await this._assignmentGroupService.UpdateAssignmentGroupAsync(assignmentGroupId, this.User.GetUserId(), request);
-    return this.Ok(new Response<AssignmentGroupDto>(null, assignmentGroup.ToDto()));
+    return this.Ok(new Response<AssignmentGroupResponse>(null, assignmentGroup.ToResponse()));
   }
 
   /// <summary>

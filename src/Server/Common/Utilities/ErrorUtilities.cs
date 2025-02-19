@@ -5,13 +5,17 @@ namespace Server.Common.Utilities;
 
 internal static class ErrorUtilities
 {
-  public static IEnumerable<string> GetErrorMessages(this ValidationResult validationResult)
+  public static IDictionary<string, string[]> GetErrors(this ValidationResult validationResult)
   {
-    return validationResult.Errors.Select(error => error.ErrorMessage);
+    return validationResult.Errors
+      .GroupBy(e => e.PropertyName, e => e.ErrorMessage)
+      .ToDictionary(group => group.Key, group => group.ToArray());
   }
 
-  public static IEnumerable<string> GetErrorMessages(this IdentityResult identityResult)
+  public static IDictionary<string, string[]> GetErrors(this IdentityResult identityResult)
   {
-    return identityResult.Errors.Select(error => error.Description);
+    return identityResult.Errors
+      .GroupBy(e => e.Code, e => e.Description)
+      .ToDictionary(group => group.Key, group => group.ToArray());
   }
 }

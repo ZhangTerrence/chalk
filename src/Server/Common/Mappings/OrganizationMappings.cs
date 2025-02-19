@@ -1,5 +1,4 @@
 using System.Globalization;
-using Server.Common.DTOs;
 using Server.Common.Requests.Organization;
 using Server.Common.Responses;
 using Server.Data.Entities;
@@ -16,7 +15,8 @@ internal static class OrganizationMappings
       organization.Description,
       organization.ImageUrl,
       organization.IsPublic,
-      organization.CreatedOnUtc.ToString(CultureInfo.CurrentCulture)
+      organization.CreatedOnUtc.ToString(CultureInfo.CurrentCulture),
+      organization.UpdatedOnUtc.ToString(CultureInfo.CurrentCulture)
     );
   }
 
@@ -31,17 +31,5 @@ internal static class OrganizationMappings
       UpdatedOnUtc = DateTime.UtcNow,
       OwnerId = ownerId
     };
-  }
-
-  public static OrganizationDto ToDto(this Organization organization)
-  {
-    return new OrganizationDto(
-      organization.Id,
-      organization.Name,
-      organization.Description,
-      organization.ImageUrl,
-      organization.IsPublic,
-      organization.CreatedOnUtc.ToString(CultureInfo.CurrentCulture)
-    );
   }
 }

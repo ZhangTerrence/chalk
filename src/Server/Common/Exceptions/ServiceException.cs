@@ -4,62 +4,78 @@ namespace Server.Common.Exceptions;
 
 internal class ServiceException : Exception
 {
-  public ServiceException(int httpStatusCode, IEnumerable<string> messages)
+  public ServiceException(int httpStatusCode, IDictionary<string, string[]> errors)
   {
     this.HttpStatusCode = httpStatusCode;
-    this.Messages = messages;
+    this.Errors = errors;
   }
 
   public int HttpStatusCode { get; }
-  public IEnumerable<string> Messages { get; }
+  public IDictionary<string, string[]> Errors { get; }
 
-  public static void BadRequest(string message, [NotNull] object? e = null)
+  public static void BadRequest(string detail, [NotNull] object? _ = null)
   {
-    throw new ServiceException(StatusCodes.Status400BadRequest, [message]);
+    throw new ServiceException(StatusCodes.Status400BadRequest,
+      new Dictionary<string, string[]> { { "Bad Request.", [detail] } });
   }
 
-  public static void BadRequest(IEnumerable<string> messages, [NotNull] object? e = null)
+  public static void BadRequest(IDictionary<string, string[]> errors, [NotNull] object? _ = null)
   {
-    throw new ServiceException(StatusCodes.Status400BadRequest, messages);
+    throw new ServiceException(StatusCodes.Status400BadRequest, errors);
   }
 
-  public static void Unauthorized(string message, [NotNull] object? e = null)
+  public static void Unauthorized(string detail, [NotNull] object? _ = null)
   {
-    throw new ServiceException(StatusCodes.Status401Unauthorized, [message]);
+    throw new ServiceException(StatusCodes.Status401Unauthorized,
+      new Dictionary<string, string[]> { { "Unauthorized.", [detail] } });
   }
 
-  public static void Unauthorized(IEnumerable<string> messages, [NotNull] object? e = null)
+  public static void Unauthorized(IDictionary<string, string[]> errors, [NotNull] object? _ = null)
   {
-    throw new ServiceException(StatusCodes.Status401Unauthorized, messages);
+    throw new ServiceException(StatusCodes.Status401Unauthorized, errors);
   }
 
-  public static void Forbidden(string message, [NotNull] object? e = null)
+  public static void Forbidden(string detail, [NotNull] object? _ = null)
   {
-    throw new ServiceException(StatusCodes.Status403Forbidden, [message]);
+    throw new ServiceException(StatusCodes.Status403Forbidden,
+      new Dictionary<string, string[]> { { "Forbidden.", [detail] } });
   }
 
-  public static void Forbidden(IEnumerable<string> messages, [NotNull] object? e = null)
+  public static void Forbidden(IDictionary<string, string[]> errors, [NotNull] object? _ = null)
   {
-    throw new ServiceException(StatusCodes.Status403Forbidden, messages);
+    throw new ServiceException(StatusCodes.Status403Forbidden, errors);
   }
 
-  public static void NotFound(string message, [NotNull] object? e = null)
+  public static void NotFound(string detail, [NotNull] object? _ = null)
   {
-    throw new ServiceException(StatusCodes.Status404NotFound, [message]);
+    throw new ServiceException(StatusCodes.Status404NotFound,
+      new Dictionary<string, string[]> { { "Not Found", [detail] } });
   }
 
-  public static void NotFound(IEnumerable<string> messages, [NotNull] object? e = null)
+  public static void NotFound(IDictionary<string, string[]> errors, [NotNull] object? _ = null)
   {
-    throw new ServiceException(StatusCodes.Status404NotFound, messages);
+    throw new ServiceException(StatusCodes.Status404NotFound, errors);
   }
 
-  public static void InternalServerError(string message, [NotNull] object? e = null)
+  public static void Conflict(string detail, [NotNull] object? _ = null)
   {
-    throw new ServiceException(StatusCodes.Status500InternalServerError, [message]);
+    throw new ServiceException(StatusCodes.Status409Conflict,
+      new Dictionary<string, string[]> { { "Conflict.", [detail] } });
   }
 
-  public static void InternalServerError(IEnumerable<string> messages, [NotNull] object? e = null)
+  public static void Conflict(IDictionary<string, string[]> errors, [NotNull] object? _ = null)
   {
-    throw new ServiceException(StatusCodes.Status500InternalServerError, messages);
+    throw new ServiceException(StatusCodes.Status409Conflict, errors);
+  }
+
+  public static void InternalServerError(string detail, [NotNull] object? _ = null)
+  {
+    throw new ServiceException(StatusCodes.Status500InternalServerError,
+      new Dictionary<string, string[]> { { "Internal Server Error.", [detail] } });
+  }
+
+  public static void InternalServerError(IDictionary<string, string[]> errors, [NotNull] object? _ = null)
+  {
+    throw new ServiceException(StatusCodes.Status500InternalServerError, errors);
   }
 }

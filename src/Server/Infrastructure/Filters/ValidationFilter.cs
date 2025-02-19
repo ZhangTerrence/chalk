@@ -31,7 +31,7 @@ internal abstract class ValidationFilter
       if (argument is null) continue;
       var validationResult = await descriptor.Validator.ValidateAsync(new ValidationContext<object>(argument));
       if (!validationResult.IsValid)
-        return new BadRequestObjectResult(new Response<object>(validationResult.GetErrorMessages()));
+        return new BadRequestObjectResult(new Response<object>(validationResult.GetErrors()));
     }
     return await next.Invoke(invocationContext);
   }

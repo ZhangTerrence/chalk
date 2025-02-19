@@ -1,6 +1,5 @@
 using Amazon.Runtime;
 using Serilog;
-using Server.Common.DTOs;
 using Server.Common.Exceptions;
 using Server.Common.Responses;
 using IExceptionHandler = Microsoft.AspNetCore.Diagnostics.IExceptionHandler;
@@ -20,21 +19,25 @@ internal class ExceptionHandler : IExceptionHandler
       case ServiceException e:
         httpContext.Response.StatusCode = e.HttpStatusCode;
         await httpContext.Response
-          .WriteAsJsonAsync(new Response<object>(e.Messages.Select(x => new ErrorDto(x)), null), cancellationToken);
-        Log.Information("Service Exception: {StatusCode} {Messages}", e.HttpStatusCode, e.Messages);
+          .WriteAsJsonAsync(new Response<object>(e.Errors), cancellationToken);
+        Log.Information("Service Exception: {StatusCode} {Messages}", e.HttpStatusCode, e.Errors);
         return true;
       case AmazonClientException:
+      {
         httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
         Log.Error("Error connecting to AWS: {Message}", exception.Message);
-        await httpContext.Response
-          .WriteAsJsonAsync(new Response<object>([new ErrorDto("Internal Server Error.")], null), cancellationToken);
+        var errors = new Dictionary<string, string[]> { { "Internal Server Error.", [] } };
+        await httpContext.Response.WriteAsJsonAsync(new Response<object>(errors), cancellationToken);
         return true;
+      }
       default:
+      {
         httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
         Log.Error("Exception: {Message}", exception.Message);
-        await httpContext.Response
-          .WriteAsJsonAsync(new Response<object>([new ErrorDto("Internal Server Error.")], null), cancellationToken);
+        var errors = new Dictionary<string, string[]> { { "Internal Server Error.", [] } };
+        await httpContext.Response.WriteAsJsonAsync(new Response<object>(errors), cancellationToken);
         return true;
+      }
     }
   }
 }

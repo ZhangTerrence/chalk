@@ -1,4 +1,3 @@
-using Server.Common.DTOs;
 using Server.Common.Requests.Role;
 using Server.Data.Entities;
 
@@ -19,16 +18,5 @@ internal static class RoleMappings
       CourseId = courseId,
       OrganizationId = organizationId
     };
-  }
-
-  public static RoleDto ToDto(this Role role)
-  {
-    return new RoleDto(
-      role.Id,
-      role.Name,
-      role.Description,
-      role.Permissions,
-      role.RelativeRank
-    );
   }
 }

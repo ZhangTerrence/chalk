@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Server.Common.DTOs;
 using Server.Common.Interfaces;
 using Server.Common.Mappings;
 using Server.Common.Requests.Assignment;
@@ -30,11 +29,11 @@ public class AssignmentController : ControllerBase
   /// <param name="request">The request body. See <see cref="CreateRequest" /> for more details.</param>
   /// <returns>The created assignment.</returns>
   [HttpPost]
-  [ProducesResponseType<Response<AssignmentDto>>(StatusCodes.Status201Created)]
+  [ProducesResponseType<Response<AssignmentResponse>>(StatusCodes.Status201Created)]
   public async Task<IActionResult> CreateAssignment([FromBody] CreateRequest request)
   {
     var assignment = await this._assignmentService.CreateAssignmentAsync(this.User.GetUserId(), request);
-    return this.Created(nameof(this.CreateAssignment), new Response<AssignmentDto>(null, assignment.ToDto()));
+    return this.Created(nameof(this.CreateAssignment), new Response<AssignmentResponse>(null, assignment.ToResponse()));
   }
 
   /// <summary>
@@ -44,11 +43,11 @@ public class AssignmentController : ControllerBase
   /// <param name="request">The request body. See <see cref="UpdateRequest" /> for more details.</param>
   /// <returns>The updated assignment.</returns>
   [HttpPut("{assignmentId:long}")]
-  [ProducesResponseType<Response<AssignmentDto>>(StatusCodes.Status200OK)]
+  [ProducesResponseType<Response<AssignmentResponse>>(StatusCodes.Status200OK)]
   public async Task<IActionResult> UpdateAssignment([FromRoute] long assignmentId, [FromBody] UpdateRequest request)
   {
     var assignment = await this._assignmentService.UpdateAssignmentAsync(assignmentId, this.User.GetUserId(), request);
-    return this.Ok(new Response<AssignmentDto>(null, assignment.ToDto()));
+    return this.Ok(new Response<AssignmentResponse>(null, assignment.ToResponse()));
   }
 
   /// <summary>

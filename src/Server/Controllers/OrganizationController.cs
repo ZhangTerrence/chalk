@@ -28,6 +28,7 @@ public class OrganizationController : ControllerBase
   /// </summary>
   /// <returns>A list of all the organizations.</returns>
   [HttpGet]
+  [ProducesResponseType<Response<IEnumerable<OrganizationResponse>>>(StatusCodes.Status200OK)]
   public async Task<IActionResult> GetOrganizations()
   {
     var organizations = await this._organizationService.GetOrganizationsAsync(this.User.GetUserId());
@@ -40,6 +41,7 @@ public class OrganizationController : ControllerBase
   /// <param name="organizationId">The organization's id.</param>
   /// <returns>The organization.</returns>
   [HttpGet("{organizationId:long}")]
+  [ProducesResponseType<Response<OrganizationResponse>>(StatusCodes.Status200OK)]
   public async Task<IActionResult> GetOrganization([FromRoute] long organizationId)
   {
     var organization = await this._organizationService.GetOrganizationByIdAsync(organizationId, this.User.GetUserId());
@@ -52,6 +54,7 @@ public class OrganizationController : ControllerBase
   /// <param name="request">The request body. See <see cref="CreateRequest" /> for more details.</param>
   /// <returns>The created organization.</returns>
   [HttpPost]
+  [ProducesResponseType<Response<OrganizationResponse>>(StatusCodes.Status201Created)]
   public async Task<IActionResult> CreateOrganization([FromBody] CreateRequest request)
   {
     var organization = await this._organizationService.CreateOrganizationAsync(this.User.GetUserId(), request);
@@ -66,6 +69,7 @@ public class OrganizationController : ControllerBase
   /// <param name="request">The request body. See <see cref="UpdateRequest" /> for more details.</param>
   /// <returns>The updated organization.</returns>
   [HttpPut("{organizationId:long}")]
+  [ProducesResponseType<Response<OrganizationResponse>>(StatusCodes.Status200OK)]
   public async Task<IActionResult> UpdateOrganization([FromRoute] long organizationId, [FromBody] UpdateRequest request)
   {
     var organization =
@@ -78,6 +82,7 @@ public class OrganizationController : ControllerBase
   /// </summary>
   /// <param name="organizationId">The organization's id.</param>
   [HttpDelete("{organizationId:long}")]
+  [ProducesResponseType(StatusCodes.Status204NoContent)]
   public async Task<IActionResult> DeleteOrganization([FromRoute] long organizationId)
   {
     await this._organizationService.DeleteOrganizationAsync(organizationId, this.User.GetUserId());

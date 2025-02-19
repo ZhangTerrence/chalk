@@ -1,10 +1,24 @@
 using System.Text.Json.Serialization;
 
-namespace Server.Common.DTOs;
+namespace Server.Common.Responses;
 
+/// <summary>
+/// File container response.
+/// </summary>
+public abstract record FileContainerResponse;
+
+/// <summary>
+/// File response.
+/// </summary>
+/// <param name="Id">The file's id.</param>
+/// <param name="Name">The file's name.</param>
+/// <param name="Description">The file's description.</param>
+/// <param name="FileUrl">The file's storage url.</param>
+/// <param name="CreatedOnUtc">The file's creation date.</param>
+/// <param name="UpdatedOnUtc">The file's updated date.</param>
 [Serializable]
 [method: JsonConstructor]
-public sealed record FileDto(
+public sealed record FileResponse(
   [property: JsonRequired]
   [property: JsonPropertyName("id")]
   long Id,

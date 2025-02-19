@@ -1,5 +1,4 @@
 using System.Globalization;
-using Server.Common.DTOs;
 using Server.Common.Requests.Course;
 using Server.Common.Responses;
 using Server.Data.Entities;
@@ -18,8 +17,7 @@ internal static class CourseMappings
       course.ImageUrl,
       course.IsPublic,
       course.CreatedOnUtc.ToString(CultureInfo.CurrentCulture),
-      course.Modules.Select(e => e.ToDto()),
-      course.AssignmentGroups.Select(e => e.ToDto())
+      course.UpdatedOnUtc.ToString(CultureInfo.CurrentCulture)
     );
   }
 
@@ -35,18 +33,5 @@ internal static class CourseMappings
       UpdatedOnUtc = DateTime.UtcNow,
       OrganizationId = organizationId
     };
-  }
-
-  public static CourseDto ToDto(this Course course)
-  {
-    return new CourseDto(
-      course.Id,
-      course.Name,
-      course.Code,
-      course.Description,
-      course.ImageUrl,
-      course.IsPublic,
-      course.CreatedOnUtc.ToString(CultureInfo.CurrentCulture)
-    );
   }
 }

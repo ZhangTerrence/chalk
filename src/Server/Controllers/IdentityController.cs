@@ -35,6 +35,7 @@ public class IdentityController : ControllerBase
   /// </summary>
   /// <param name="request">The request body. See <see cref="RegisterRequest" /> for more details.</param>
   [HttpPost("register")]
+  [ProducesResponseType(StatusCodes.Status201Created)]
   public async Task<IActionResult> Register([FromBody] [Validate] RegisterRequest request)
   {
     var token = await this._identityService.CreateUserAsync(request);
@@ -56,6 +57,7 @@ public class IdentityController : ControllerBase
   /// <param name="token">The user's email confirmation token.</param>
   /// <param name="email">The user's email.</param>
   [HttpGet("confirm-email")]
+  [ProducesResponseType(StatusCodes.Status308PermanentRedirect)]
   public async Task<IActionResult> ConfirmEmail([FromQuery] string token, [FromQuery] string email)
   {
     await this._identityService.ConfirmEmailAsync(token, email);
@@ -64,7 +66,7 @@ public class IdentityController : ControllerBase
     var webPort = this._configuration["Web:Port"];
     if (webHost is null || webPort is null) return this.NoContent();
 
-    return this.Redirect(this.Request.Scheme + "://" + webHost + ":" + webPort + "/login");
+    return this.RedirectPermanent(this.Request.Scheme + "://" + webHost + ":" + webPort + "/login");
   }
 
   /// <summary>
@@ -73,6 +75,7 @@ public class IdentityController : ControllerBase
   /// <param name="request">The request body. See <see cref="LoginRequest" /> for more details.</param>
   /// <returns>The authenticated user.</returns>
   [HttpPost("login")]
+  [ProducesResponseType<Response<UserResponse>>(StatusCodes.Status200OK)]
   public async Task<IActionResult> Login([FromBody] [Validate] LoginRequest request)
   {
     var user = await this._identityService.LoginUserAsync(request);
@@ -84,6 +87,7 @@ public class IdentityController : ControllerBase
   /// </summary>
   /// <returns>The authenticated user.</returns>
   [HttpGet("refresh")]
+  [ProducesResponseType<Response<UserResponse>>(StatusCodes.Status200OK)]
   public async Task<IActionResult> Refresh()
   {
     var user = await this._identityService.RefreshUserAsync(this.User.GetUserId());
@@ -95,6 +99,7 @@ public class IdentityController : ControllerBase
   /// </summary>
   [Authorize]
   [HttpDelete("logout")]
+  [ProducesResponseType(StatusCodes.Status204NoContent)]
   public async Task<IActionResult> Logout()
   {
     await this._identityService.LogoutUserAsync();

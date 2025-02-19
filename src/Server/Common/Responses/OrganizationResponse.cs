@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 namespace Server.Common.Responses;
 
 /// <summary>
-/// Detailed organization response.
+/// Organization response.
 /// </summary>
 /// <param name="Id">The organization's id.</param>
 /// <param name="Name">The organization's name.</param>
@@ -11,9 +11,10 @@ namespace Server.Common.Responses;
 /// <param name="ImageUrl">The organization's image url.</param>
 /// <param name="IsPublic">Whether the organization is public.</param>
 /// <param name="CreatedOnUtc">The organization's creation date.</param>
+/// <param name="UpdatedOnUtc">The organization's updated date.</param>
 [Serializable]
 [method: JsonConstructor]
-public record OrganizationResponse(
+public sealed record OrganizationResponse(
   [property: JsonRequired]
   [property: JsonPropertyName("id")]
   long Id,
@@ -31,5 +32,8 @@ public record OrganizationResponse(
   bool IsPublic,
   [property: JsonRequired]
   [property: JsonPropertyName("createdOnUtc")]
-  string CreatedOnUtc
+  string CreatedOnUtc,
+  [property: JsonRequired]
+  [property: JsonPropertyName("updatedOnUtc")]
+  string UpdatedOnUtc
 );

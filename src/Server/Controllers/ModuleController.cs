@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Server.Common.DTOs;
 using Server.Common.Interfaces;
 using Server.Common.Mappings;
 using Server.Common.Requests.Module;
@@ -30,10 +29,11 @@ public class ModuleController : ControllerBase
   /// <param name="request">The request body. See <see cref="CreateRequest" /> for more details.</param>
   /// <returns>The created module.</returns>
   [HttpPost]
+  [ProducesResponseType<Response<ModuleResponse>>(StatusCodes.Status201Created)]
   public async Task<IActionResult> CreateModule([FromBody] CreateRequest request)
   {
     var module = await this._moduleService.CreateModuleAsync(this.User.GetUserId(), request);
-    return this.Created(nameof(this.CreateModule), new Response<ModuleDto>(null, module.ToDto()));
+    return this.Created(nameof(this.CreateModule), new Response<ModuleResponse>(null, module.ToResponse()));
   }
 
   /// <summary>
@@ -42,6 +42,7 @@ public class ModuleController : ControllerBase
   /// <param name="request">The request body. See <see cref="ReorderModules" /> for more details.</param>
   /// <returns>The updated course.</returns>
   [HttpPatch("reorder")]
+  [ProducesResponseType<Response<CourseResponse>>(StatusCodes.Status200OK)]
   public async Task<IActionResult> ReorderModules([FromBody] ReorderRequest request)
   {
     var course = await this._moduleService.ReorderModulesAsync(this.User.GetUserId(), request);
@@ -55,10 +56,11 @@ public class ModuleController : ControllerBase
   /// <param name="request">The request body. See <see cref="UpdateRequest" /> for more details.</param>
   /// <returns>The updated module.</returns>
   [HttpPut("{moduleId:long}")]
+  [ProducesResponseType<Response<ModuleResponse>>(StatusCodes.Status200OK)]
   public async Task<IActionResult> UpdateCourseModule([FromRoute] long moduleId, [FromBody] UpdateRequest request)
   {
     var module = await this._moduleService.UpdateModuleAsync(moduleId, this.User.GetUserId(), request);
-    return this.Ok(new Response<ModuleDto>(null, module.ToDto()));
+    return this.Ok(new Response<ModuleResponse>(null, module.ToResponse()));
   }
 
   /// <summary>
@@ -66,6 +68,7 @@ public class ModuleController : ControllerBase
   /// </summary>
   /// <param name="moduleId">The module's id.</param>
   [HttpDelete("{moduleId:long}")]
+  [ProducesResponseType(StatusCodes.Status204NoContent)]
   public async Task<IActionResult> DeleteCourseModule([FromRoute] long moduleId)
   {
     await this._moduleService.DeleteModuleAsync(moduleId, this.User.GetUserId());
