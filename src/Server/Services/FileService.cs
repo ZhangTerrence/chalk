@@ -36,7 +36,7 @@ internal class FileService : IFileService
       {
         var module = await this._context.Modules
           .Include(e => e.Files)
-          .FirstOrDefaultAsync(e => e.Id == request.EntityId);
+          .FirstOrDefaultAsync(e => e.Id == request.ContainerId);
         if (module is null) ServiceException.NotFound("Module not found.", module);
         var course = await this._context.Courses.FindAsync(module.CourseId);
         if (course is null) ServiceException.NotFound("Course not found.", course);
@@ -54,7 +54,7 @@ internal class FileService : IFileService
       {
         var assignment = this._context.Assignments
           .Include(e => e.Files)
-          .FirstOrDefault(e => e.Id == request.EntityId);
+          .FirstOrDefault(e => e.Id == request.ContainerId);
         if (assignment is null) ServiceException.NotFound("Assignment not found.", assignment);
         var assignmentGroup = await this._context.AssignmentGroups.FindAsync(assignment.AssignmentGroupId);
         if (assignmentGroup is null) ServiceException.NotFound("Assignment group not found.", assignmentGroup);
@@ -87,7 +87,7 @@ internal class FileService : IFileService
       {
         var module = await this._context.Modules
           .Include(e => e.Files)
-          .FirstOrDefaultAsync(e => e.Id == request.EntityId);
+          .FirstOrDefaultAsync(e => e.Id == request.ContainerId);
         if (module is null) ServiceException.NotFound("Module not found.", module);
         var course = await this._context.Courses.FindAsync(module.CourseId);
         if (course is null) ServiceException.NotFound("Course not found.", course);
@@ -112,7 +112,7 @@ internal class FileService : IFileService
       {
         var assignment = this._context.Assignments
           .Include(e => e.Files)
-          .FirstOrDefault(e => e.Id == request.EntityId);
+          .FirstOrDefault(e => e.Id == request.ContainerId);
         if (assignment is null) ServiceException.NotFound("Assignment not found.", assignment);
         var assignmentGroup = await this._context.AssignmentGroups.FindAsync(assignment.AssignmentGroupId);
         if (assignmentGroup is null) ServiceException.NotFound("Assignment group not found.", assignmentGroup);

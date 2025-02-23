@@ -65,6 +65,7 @@ public class CourseController : ControllerBase
   /// <summary>
   /// Updates a course.
   /// </summary>
+  /// <param name="courseId">The course's id.</param>
   /// <param name="request">The request body. See <see cref="UpdateRequest" /> for more details.</param>
   /// <returns>The updated course.</returns>
   [HttpPut("{courseId:long}")]

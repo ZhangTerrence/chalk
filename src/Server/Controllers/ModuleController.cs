@@ -55,11 +55,11 @@ public class ModuleController : ControllerBase
   /// <param name="request">The request body. See <see cref="ReorderModules" /> for more details.</param>
   /// <returns>The updated course.</returns>
   [HttpPatch("reorder")]
-  [ProducesResponseType<Response<CourseResponse>>(StatusCodes.Status200OK)]
+  [ProducesResponseType<Response<IEnumerable<ModuleResponse>>>(StatusCodes.Status200OK)]
   public async Task<IActionResult> ReorderModules([FromBody] ReorderRequest request)
   {
-    var course = await this._moduleService.ReorderModulesAsync(this.User.GetUserId(), request);
-    return this.Ok(new Response<CourseResponse>(null, course.ToResponse()));
+    var modules = await this._moduleService.ReorderModulesAsync(this.User.GetUserId(), request);
+    return this.Ok(new Response<IEnumerable<ModuleResponse>>(null, modules.Select(e => e.ToResponse())));
   }
 
   /// <summary>

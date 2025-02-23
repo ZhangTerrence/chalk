@@ -1,4 +1,4 @@
-export type RegisterRequest = {
+type RegisterRequest = {
   firstName: string;
   lastName: string;
   displayName: string;
@@ -6,7 +6,4 @@ export type RegisterRequest = {
   password: string;
 };
 
-export type LoginRequest = {
-  email: string;
-  password: string;
-};
+export default RegisterRequest;

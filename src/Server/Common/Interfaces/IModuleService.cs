@@ -38,7 +38,7 @@ public interface IModuleService
   /// <param name="requesterId">The requester's id.</param>
   /// <param name="request">The request body. See <see cref="ReorderRequest" /> for more details.</param>
   /// <returns>The updated course.</returns>
-  public Task<Course> ReorderModulesAsync(long requesterId, ReorderRequest request);
+  public Task<IEnumerable<Module>> ReorderModulesAsync(long requesterId, ReorderRequest request);
 
   /// <summary>
   /// Updates a module.

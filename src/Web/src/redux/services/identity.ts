@@ -1,39 +1,40 @@
 import baseApi from "@/redux/services/base.ts";
 
-import type { Response } from "@/lib/types/_index.ts";
-import type { LoginRequest, RegisterRequest } from "@/lib/types/account.ts";
-import type { UserResponse } from "@/lib/types/user.ts";
+import LoginRequest from "@/lib/api/requests/identity/LoginRequest";
+import RegisterRequest from "@/lib/api/requests/identity/RegisterRequest";
+import Response from "@/lib/api/responses/Response.ts";
+import UserResponse from "@/lib/api/responses/UserResponse.ts";
 
-export const accountApi = baseApi.injectEndpoints({
+export const identityApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     register: builder.mutation<null, RegisterRequest>({
-      query: (body) => ({
-        url: "/account/register",
+      query: (request) => ({
+        url: "/register",
         method: "POST",
-        body: body,
+        body: request,
       }),
     }),
     login: builder.mutation<Response<UserResponse>, LoginRequest>({
-      query: (body) => ({
-        url: "/account/login",
+      query: (request) => ({
+        url: "/login",
         method: "POST",
-        body: body,
+        body: request,
       }),
       invalidatesTags: (response) => [{ type: "user", id: response?.data.id }],
     }),
     refresh: builder.query<Response<UserResponse>, null>({
       query: () => ({
-        url: "/account/refresh",
+        url: "/refresh",
       }),
       providesTags: (response) => [{ type: "user", id: response?.data.id }],
     }),
     logout: builder.mutation<null, null>({
       query: () => ({
-        url: "/account/logout",
+        url: "/logout",
         method: "DELETE",
       }),
     }),
   }),
 });
 
-export const { useRegisterMutation, useLoginMutation, useLogoutMutation, useLazyRefreshQuery } = accountApi;
+export const { useRegisterMutation, useLoginMutation, useLogoutMutation, useLazyRefreshQuery } = identityApi;

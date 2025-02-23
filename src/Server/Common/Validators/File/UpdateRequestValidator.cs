@@ -12,7 +12,7 @@ internal class UpdateRequestValidator : AbstractValidator<UpdateRequest>
       .WithMessage("Must specify whether the file is for a module, assignment, or submission.")
       .IsInEnum()
       .WithMessage("Invalid choice.");
-    this.RuleFor(e => e.EntityId)
+    this.RuleFor(e => e.ContainerId)
       .NotNull()
       .WithMessage("Must specify the id of the module, assignment, or submission.");
     this.RuleFor(e => e.Name)
